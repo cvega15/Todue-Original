@@ -17,4 +17,4 @@ telephone # ?
 
 
 General approach:
-TBD
+TBD --  use this: https://tools.usps.com/go/ZipLookupAction_input. we can use the inspect element tool on google to download straight from the source. this iwll make it so we dont have to go through the hasstle of waiting on their servers and can just take the data directly.
