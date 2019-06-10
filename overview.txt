@@ -1,0 +1,20 @@
+///////////
+
+This software will run locally to generate a complete address in the form:
+
+		0001 Main St
+		99999 City State
+		Country
+
+with any given county or region on the list. You may provide any of the following in order to get a randomly generated, real, address:
+zip
+street (city)
+city
+country
+telephone # ?
+
+///////////////////
+
+
+General approach:
+TBD
