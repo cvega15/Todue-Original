@@ -1,4 +1,7 @@
+import time
 import datetime
+import timeit
+import logger                                                   # see logger module
 
 
 #this is used for storing a list of tasks as well as adding them
@@ -12,10 +15,16 @@ class Tasks(object):
         task_to_add = Task(task_name, time_due)
         self.tasks_list.append(task_to_add)
 
+        logger.log("Adding Task")
+
+
     def display_tasks(self):                                      #displays all of the tasks and their information
 
         for task in self.tasks_list:
             task.display_task()
+        
+
+        logger.log("Displaying Tasks")
     
     def edit_task(self):                         # calls the edit_name and edit_due_date functions with parameters passed in
         selected_name = input("Which task do you want to change?")
@@ -34,7 +43,7 @@ class Task(object):
     def __init__(self, name="Untitled", due_date="Jan 1, 2099"):                                           #constructor
 
         self.name = name                                          #name of the task
-        self.due_date = due_date                                  #datetime object of when it's due
+        self.due_date = Timer(due_date)                                 #datetime object of when it's due
 
     def edit_name(self, new_name):                                #edits the string name of the task and changes it to the name_add passed in
         self.name = new_name
@@ -46,3 +55,15 @@ class Task(object):
         print(self.name)
         print(self.due_date)
 
+
+class Timer(object):
+
+    def __init__(self, date):
+        self.date = date
+
+    def date_diff(self):
+        dt = datetime.datetime
+        now = dt.now()
+        return dt(year=self.date, month=self.date, day=self.date) - dt(year=now.year, month=now.month, day=now.day, minute=now.minute) # will need a way to differentiate days, hours, minutes
+
+    # done
