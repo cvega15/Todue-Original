@@ -1,6 +1,6 @@
 import classes
 
-user_tasks = classes.tasks()
+user_tasks = classes.Tasks()
 
 print("hello, welcome to le task scheduling program!")
 
