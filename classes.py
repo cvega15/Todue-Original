@@ -32,9 +32,14 @@ class Tasks(object):
         if edit.lower().strip() == "rename":
             rename = input("What is the new name?")
             selected_name.edit_name(rename)
+
+            logger.log("Renamed Task")
+
         else:
             date = input("When is it due?")
             selected_name.edit_due_date(date)
+
+            logger.log("Changed Due Date")
 
 
 #a task class which holds information about it's name as well as it's due date
