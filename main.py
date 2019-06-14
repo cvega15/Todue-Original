@@ -1,4 +1,5 @@
 import classes
+import logger
 
 user_tasks = classes.Tasks()
 
@@ -20,4 +21,4 @@ while True:
     else:
         break
 
-print('program finished')
+logger.log("End")
