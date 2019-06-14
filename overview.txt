@@ -1,20 +1,13 @@
-///////////
+////
 
-This software will run locally to generate a complete address in the form:
-
-		0001 Main St
-		99999 City State
-		Country
-
-with any given county or region on the list. You may provide any of the following in order to get a randomly generated, real, address:
-zip
-street (city)
-city
-country
-telephone # ?
-
-///////////////////
+Countdown for timers:
 
 
-General approach:
-TBD --  use this: https://tools.usps.com/go/ZipLookupAction_input. we can use the inspect element tool on google to download straight from the source. this iwll make it so we dont have to go through the hasstle of waiting on their servers and can just take the data directly.
+Classes:
+	Timer Class:
+		Time Left
+		(Time start Time end Time current)
+	User Class:
+		List of all timers
+	Display Class:
+		shows the graphic of how long is left
