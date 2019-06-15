@@ -1,5 +1,5 @@
 from datetime import datetime
-# converts a string into a datetime object and returns that datetime object
+# converts a string into a datetime object and returns that datetime object (see main > adding task/changing due date)
 def string_to_datetime(to_convert):
 
     format = "%Y-%m-%d %H:%M:%S"
