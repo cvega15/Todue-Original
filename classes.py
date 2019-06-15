@@ -1,8 +1,7 @@
 import time
-import datetime
+from datetime import datetime
 import timeit
 import logger                                                   # see logger module
-
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
@@ -56,8 +55,8 @@ class Task(object):
     
     def display_task(self):                                       #displays the task -- This will be eventually passed to the display class
 
-        print(self.name)
-        print(self.due_date)
+        print("task name: " + str(self.name))
+        print("due date: " + str(self.due_date.date))
 
 
 class Timer(object):

@@ -1,5 +1,7 @@
 import classes
 import logger
+import utils
+from datetime import datetime
 
 logger.start()
 user_tasks = classes.User_tasks()
@@ -14,8 +16,9 @@ while True:
         logger.log("User Create New Task")
 
         task_name = input('please enter in a task name: \n>')
-        due_date = input('now make up a due date: \n>')
-        user_tasks.add_task(task_name, due_date)
+        due_date = input('please enter a due date in the following format(yyyy-mm-dd hh:mm:ss): \n>')
+
+        user_tasks.add_task(task_name, utils.string_to_datetime(due_date))
         
     elif user_input == 2:
         logger.log("User Display Task")
@@ -30,14 +33,16 @@ while True:
         edit_selection = int(input('1) rename task \n2) change due date \n3) cancel: \n>'))
 
         if(edit_selection == 1):
+            
             name_change = input('enter name change: \n>')
             user_tasks.edit_task(to_edit, name_change, None)
 
             logger.log("name changed")
 
         elif(edit_selection == 2):
-            date_chage = input('enter date change: \n>')
-            user_tasks.edit_task(to_edit, None, date_chage)
+
+            date_change = input('please enter a change date in the following format(yyyy-mm-dd hh:mm:ss): \n>')
+            user_tasks.edit_task(to_edit, None, utils.string_to_datetime(due_date))
 
             logger.log("date changed")
 
