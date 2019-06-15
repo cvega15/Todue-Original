@@ -1,7 +1,9 @@
 import time
 from datetime import datetime
 import timeit
-import logger                                                   # see logger module
+import logger 
+import utils                                                  # see logger module
+
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
@@ -28,15 +30,23 @@ class User_tasks(object):
     def edit_task(self, task_name, name_change, date_change):     # calls the edit_name and edit_due_date functions with parameters passed in
 
         for task in self.tasks_list:
-            if(task.name == task_name):
+            if task.name == task_name:
 
-                if(name_change):
+                if name_change:
                     task.edit_name(name_change)
                     return
 
-                if(date_change):
+                if date_change:
                     task.edit_due_date(date_change)
                     return
+    
+    def save(self):
+
+        logger.log("User Data Saved")
+    
+    def retireive(self):
+
+        logger.log("User Data Retrieved")
 
 
 #a task class which holds information about it's name as well as it's due date
@@ -63,11 +73,12 @@ class Timer(object):
 
     def __init__(self, date):
         self.date = date
+    
+    def convert(self): # takes the date passed in and converts it to readable format for date_diff()
+        pass
 
     def date_diff(self):
 
         dt = datetime.datetime
         now = dt.now()
-        return dt(year=self.date, month=self.date, day=self.date) - dt(year=now.year, month=now.month, day=now.day, minute=now.minute) # will need a way to differentiate days, hours, minutes
-
-    # done
+        return dt(year=self.date, month=self.date, day=self.date, minute=self.date) - dt(year=now.year, month=now.month, day=now.day, minute=now.minute) # will need a way to differentiate days, hours, minutes

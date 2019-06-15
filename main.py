@@ -4,9 +4,10 @@ import utils
 from datetime import datetime
 
 logger.start()
+# this is where we have to recall, at the beginning before anything starts
 user_tasks = classes.User_tasks()
 
-print("hello, le task scheduling program has arrived! this'll be ebic")         #is this so ppl who view this understand its a meme? ----->      #meme
+print("hello, le task scheduling program has arrived! this'll be ebic")        # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
 
 while True:
     print("1) add task \n2) display tasks \n3) edit task\n4) quit")
@@ -16,9 +17,9 @@ while True:
         logger.log("User Create New Task")
 
         task_name = input('please enter in a task name: \n>')
-        due_date = input('please enter a due date in the following format(yyyy-mm-dd hh:mm:ss): \n>')
+        due_date = input('please enter a due date in the following format(yyyy-mm-dd hh:mm): \n>')
 
-        user_tasks.add_task(task_name, utils.string_to_datetime(due_date))
+        user_tasks.add_task(task_name, utils.string_to_datetime(due_date + ":00"))
         
     elif user_input == 2:
         logger.log("User Display Task")
@@ -41,8 +42,8 @@ while True:
 
         elif(edit_selection == 2):
 
-            date_change = input('please enter a change date in the following format(yyyy-mm-dd hh:mm:ss): \n>')
-            user_tasks.edit_task(to_edit, None, utils.string_to_datetime(due_date))
+            date_change = input('please enter a change date in the following format(yyyy-mm-dd hh:mm): \n>')
+            user_tasks.edit_task(to_edit, None, utils.string_to_datetime(date_change + ":00"))
 
             logger.log("date changed")
 
@@ -52,6 +53,7 @@ while True:
 
 
     else:
+        user_tasks.save()
         print('quitting')
         break
 
