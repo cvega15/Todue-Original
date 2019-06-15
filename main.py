@@ -50,4 +50,4 @@ while True:
         print('quitting')
         break
 
-logger.log("End--------------------------------------------------")
+logger.log("End")
