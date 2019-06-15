@@ -6,14 +6,11 @@ def string_to_datetime(to_convert):
     due_date = datetime.strptime(to_convert, format)  
 
     return due_date
-    
-def datetime_to_mins(to_convert):
+
+# cnoverts a date_time object into a readable format for calculating time_delta (see classes.py > Timer) 
+def datetime_to_string(to_convert):
     seperated = to_convert.split(" ")
-    for item in seperated:
-        item = item.split(":")
-        print(item)
-        
-
-
-    # return mins
-datetime_to_mins("yyyy-mm-dd hh:mm:00")
+    date = seperated[0].split("-")
+    time = seperated[1].split(":")
+    seperated = date + time
+    return seperated
