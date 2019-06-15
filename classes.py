@@ -23,7 +23,6 @@ class User_tasks(object):
 
         for task in self.tasks_list:
             task.display_task()
-        
 
         logger.log("Displaying Tasks")
     
