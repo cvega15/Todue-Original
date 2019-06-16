@@ -1,6 +1,2 @@
-Sat Jun 15 11:39:25 2019 >>> Start
-Sat Jun 15 11:39:25 2019 >>> User_Tasks Created
-Sat Jun 15 11:39:28 2019 >>> User Create New Task
-Sat Jun 15 11:40:02 2019 >>> Adding Task
-Sat Jun 15 11:40:14 2019 >>> User Data Saved
-Sat Jun 15 11:40:14 2019 >>> End
+Sat Jun 15 17:23:07 2019 >>> Start
+Sat Jun 15 17:23:07 2019 >>> User_Tasks Created
