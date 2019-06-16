@@ -4,7 +4,7 @@ import os
 
 location = os.path.dirname(os.path.abspath(__file__))
 def start():
-     # creates the log file and adds the first line
+     # creates the log file and adds the first line --  if file exists, it overrides what is in it
     logger = os.path.join(location, "Log.txt")
     with open(logger, "w+") as handle:
         print(str(time.ctime()) + " >>> Start", file=handle)
