@@ -2,12 +2,24 @@ import classes
 import logger
 import utils
 from datetime import datetime
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget
 
 logger.start()
 # this is where we have to recall, at the beginning before anything starts
 user_tasks = classes.User_tasks()
 
-print("hello, le task scheduling program has arrived! this'll be ebic")        # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
+print("hello, le task scheduling program has arrived! this'll be ebic") #awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
+
+def app():
+    application = QApplication([])
+    window = QWidget()
+    window.setWindowTitle('testing')
+    window.show()
+    application.exec_()
+
+app()
+
 
 while True:
     print("1) add task \n2) display tasks \n3) edit task\n4) quit")
