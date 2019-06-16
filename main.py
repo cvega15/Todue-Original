@@ -11,29 +11,34 @@ user_tasks = classes.User_tasks()
 
 print("hello, le task scheduling program has arrived! this'll be ebic") #awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
 
-def app():
+class Window(QtWidgets.QWidget):
 
-    application = QtWidgets.QApplication([])
+    def __init__(self):
+        super().__init__()
 
-    window = QtWidgets.QWidget()
-    button = QtWidgets.QPushButton(window)
-    label = QtWidgets.QLabel(window)
-    vertical_box = QtWidgets.QVBoxLayout()
+        self.init_gui()
+    
+    def init_gui(self):
+        self.button = QtWidgets.QPushButton('test button')
+        self.label = QtWidgets.QLabel('I have not been clicked yet')
 
-    vertical_box.addWidget(button)
-    vertical_box.addWidget(label)
+        horizontal_box = QtWidgets.QHBoxLayout()
+        horizontal_box.addStretch()
+        horizontal_box.addWidget(self.label)
+        horizontal_box.addStretch()
 
-    window.setWindowTitle('Schedule app')
-    window.setLayout(vertical_box)
-    window.setGeometry(300, 200, 600, 600)
+        vertical_box = QtWidgets.QVBoxLayout()
+        vertical_box.addWidget(self.button)
+        vertical_box.addLayout(horizontal_box)
 
-    button.setText('button')
-    label.setText('hello world')
-      
-    window.show()
-    application.exec_()
+        self.setWindowTitle('to due')
+        self.setGeometry(300, 200, 600, 600)
+        self.show()
+        self.setLayout(vertical_box)
 
-app()
+application = QtWidgets.QApplication(sys.argv)
+le_window = Window()
+sys.exit(application.exec_())
 
 
 while True:
