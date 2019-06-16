@@ -10,7 +10,7 @@ def start():
         print(str(time.ctime()) + " >>> Start", file=handle)
 
 def log(message):
-    # appends to log file
+    # appends to log file with specified message
     logger = os.path.join(location, "log.txt")
     with open(logger, "a") as handle:
         print(str(time.ctime()) + " >>> " + str(message), file=handle)
