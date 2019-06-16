@@ -1,7 +1,7 @@
 import time
 import os
 
-# finds the location of the executed py file and sets this as the destination for the Log.txt
+# finds the location of the executed py file and sets this as the destination for the log.txt
 location = os.path.dirname(os.path.abspath(__file__))
 def start():
      # creates the log file and adds the first line
