@@ -2,7 +2,8 @@ import time
 from datetime import datetime
 import timeit
 import logger 
-import utils                                                  # see logger module
+import utils  
+import os                                                # see logger module
 
 
 #this is used for storing a list of tasks as well as adding them
@@ -34,13 +35,19 @@ class User_tasks(object):
 
                 if name_change:
                     task.edit_name(name_change)
-                    return
+
+                    logger.log("Changing Name")
 
                 if date_change:
                     task.edit_due_date(date_change)
-                    return
+
+                    logger.log("Changing Date")
     
     def save(self):
+        location = os.path.dirname(os.path.abspath(__file__))
+        saver = os.path.join(location, "save_files.txt")
+        with open(saver, "w+") as handle:
+            print(str(self.tasks_list), file=handle)
 
         logger.log("User Data Saved")
     
@@ -67,6 +74,7 @@ class Task(object):
 
         print("task name: " + str(self.name))
         print("due date: " + str(self.due_date.date))
+        print("time left: " + str(self.due_date.date_diff))
 
 
 class Timer(object):
@@ -75,10 +83,10 @@ class Timer(object):
         self.date = date
     
     def convert(self): # takes the date passed in and converts it to readable format for date_diff()
-        pass
+        self.date = utils.datetime_to_string(self.date)
 
     def date_diff(self):
-
         dt = datetime.datetime
         now = dt.now()
-        return dt(year=self.date, month=self.date, day=self.date, minute=self.date) - dt(year=now.year, month=now.month, day=now.day, minute=now.minute) # will need a way to differentiate days, hours, minutes
+        return dt(year=self.date[0], month=self.date[1], day=self.date[2], minute=utils.date_to_minutes(self.date)) \
+        - dt(year=now.year, month=now.month, day=now.day, minute=now.hour * 60 + now.minute + now.second // 60)
