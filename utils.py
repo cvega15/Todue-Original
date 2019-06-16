@@ -14,3 +14,8 @@ def datetime_to_string(to_convert):
     time = seperated[1].split(":")
     seperated = date + time
     return seperated
+    # should return [yyyy, mm, dd, H, M, S]
+
+def date_to_minutes(to_convert):
+    # converts a datetime string (see above) into minutes
+    return (to_convert[3] * 60 + to_convert[4] + to_convert[5] // 60)
