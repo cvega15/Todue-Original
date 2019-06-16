@@ -3,7 +3,7 @@ import logger
 import utils
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5 import QtWidgets
 
 logger.start()
 # this is where we have to recall, at the beginning before anything starts
@@ -12,9 +12,24 @@ user_tasks = classes.User_tasks()
 print("hello, le task scheduling program has arrived! this'll be ebic") #awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
 
 def app():
-    application = QApplication([])
-    window = QWidget()
-    window.setWindowTitle('testing')
+
+    application = QtWidgets.QApplication([])
+
+    window = QtWidgets.QWidget()
+    button = QtWidgets.QPushButton(window)
+    label = QtWidgets.QLabel(window)
+    vertical_box = QtWidgets.QVBoxLayout()
+
+    vertical_box.addWidget(button)
+    vertical_box.addWidget(label)
+
+    window.setWindowTitle('Schedule app')
+    window.setLayout(vertical_box)
+    window.setGeometry(300, 200, 600, 600)
+
+    button.setText('button')
+    label.setText('hello world')
+      
     window.show()
     application.exec_()
 
