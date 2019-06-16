@@ -3,15 +3,18 @@ import logger
 import utils
 from datetime import datetime
 import sys
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import (QLineEdit, QLabel, QSlider, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QScrollArea)
+from PyQt5.QtCore import Qt
 
 logger.start()
 # this is where we have to recall, at the beginning before anything starts
 user_tasks = classes.User_tasks()
 
-print("hello, le task scheduling program has arrived! this'll be ebic") #awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
+print("Le task scheduling software has arrived") #awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
+print('░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░\n░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░\n░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░\n░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░\n░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░\n░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░ \n░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░\n░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░\n░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░\n░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░\n▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░\n▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌\n▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░\n░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░\n░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░\n░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░\n░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░\n░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░\n░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░')
+print("WOow i've worked really hard on this, i can't wait to see it run flawlesly :D") #---> IMPORTANT, I added a doge meme
 
-class Window(QtWidgets.QWidget):
+class Window(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -19,24 +22,69 @@ class Window(QtWidgets.QWidget):
         self.init_gui()
     
     def init_gui(self):
-        self.button = QtWidgets.QPushButton('test button')
-        self.label = QtWidgets.QLabel('I have not been clicked yet')
 
-        horizontal_box = QtWidgets.QHBoxLayout()
+        vertical_layout = QVBoxLayout()
+        header_layout = QHBoxLayout()
+        self.add_task = QPushButton('+')
+        self.add_task.resize(20, 32)
+        self.add_task_label = QLabel('Add Task')
+        self.tasks_area = QScrollArea()
+
+        header_layout.addWidget(self.add_task)
+        header_layout.addWidget(self.add_task_label)
+        header_layout.addStretch()
+
+        vertical_layout.addLayout(header_layout)
+        vertical_layout.addWidget(self.tasks_area)
+        vertical_layout.addStretch()
+
+        self.setLayout(vertical_layout)
+        self.setWindowTitle('to due')
+        self.setGeometry(300, 200, 600, 600)
+        
+        self.add_task.clicked.connect(self.button_click)
+        '''
+        self.line_edit = QLineEdit()
+        self.print_to_console = QPushButton('print to console')
+        self.button = QPushButton('test button')
+        self.label = QLabel('I have not been clicked yet')
+        self.slider = QSlider(Qt.Horizontal)
+
+        self.slider.setMinimum(1)
+        self.slider.setMaximum(10)
+        self.slider.setValue(5)
+        self.slider.setTickInterval(2)
+        self.slider.setTickPosition(QSlider.TicksBelow)
+
+        horizontal_box = QHBoxLayout()
         horizontal_box.addStretch()
         horizontal_box.addWidget(self.label)
         horizontal_box.addStretch()
 
-        vertical_box = QtWidgets.QVBoxLayout()
+        vertical_box = QVBoxLayout()
         vertical_box.addWidget(self.button)
+        vertical_box.addWidget(self.line_edit)
+        vertical_box.addWidget(self.print_to_console)
         vertical_box.addLayout(horizontal_box)
+        vertical_box.addWidget(self.slider)
 
+        self.setLayout(vertical_box)
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
-        self.show()
-        self.setLayout(vertical_box)
 
-application = QtWidgets.QApplication(sys.argv)
+        self.button.clicked.connect(self.button_click)
+        self.print_to_console.clicked.connect(self.button_click)
+        '''
+        self.show()
+    
+    def button_click(self):
+
+        sender = self.sender()
+        if sender.text() == "+":
+            print('task added')
+    
+
+application = QApplication(sys.argv)
 le_window = Window()
 sys.exit(application.exec_())
 
@@ -81,8 +129,6 @@ while True:
 
         else:
             break
-
-
 
     else:
         user_tasks.save()
