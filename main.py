@@ -3,7 +3,7 @@ import logger
 import utils
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import (QLineEdit, QLabel, QSlider, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QScrollArea)
+from PyQt5.QtWidgets import (QLineEdit, QLabel, QSlider, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import Qt
 
 logger.start()
@@ -25,12 +25,15 @@ class Window(QWidget):
 
         vertical_layout = QVBoxLayout()
         header_layout = QHBoxLayout()
-        self.add_task = QPushButton('+')
-        self.add_task.resize(20, 32)
+
+        btn_add_task = QPushButton('+')
+        btn_add_task.clicked.connect(self.button_click)
+        btn_add_task.setVerticalPolicy(500)
+
         self.add_task_label = QLabel('Add Task')
         self.tasks_area = QScrollArea()
 
-        header_layout.addWidget(self.add_task)
+        header_layout.addWidget(btn_add_task)
         header_layout.addWidget(self.add_task_label)
         header_layout.addStretch()
 
@@ -42,7 +45,6 @@ class Window(QWidget):
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
         
-        self.add_task.clicked.connect(self.button_click)
         '''
         self.line_edit = QLineEdit()
         self.print_to_console = QPushButton('print to console')
@@ -83,11 +85,11 @@ class Window(QWidget):
         if sender.text() == "+":
             print('task added')
     
-
-application = QApplication(sys.argv)
-le_window = Window()
-sys.exit(application.exec_())
-
+def run():
+    application = QApplication(sys.argv)
+    le_window = Window()
+    sys.exit(application.exec_())
+run()
 
 while True:
     print("1) add task \n2) display tasks \n3) edit task\n4) quit")
