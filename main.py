@@ -3,7 +3,7 @@ import logger
 import utils
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import (QLineEdit, QLabel, QSlider, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import (QLineEdit, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import Qt
 
 logger.start()
@@ -12,78 +12,110 @@ user_tasks = classes.User_tasks()
 
 print("Le task scheduling software has arrived") #awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
 print('░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░\n░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░\n░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░\n░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░\n░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░\n░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░ \n░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░\n░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░\n░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░\n░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░\n▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░\n▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌\n▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░\n░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░\n░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░\n░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░\n░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░\n░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░\n░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░')
-print("WOow i've worked really hard on this, i can't wait to see it run flawlesly :D") #---> IMPORTANT, I added a doge meme
+print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D") #!!!!VERY IMPORTANT!!!!: I added a doge meme
 
 class Window(QWidget):
 
     def __init__(self):
-        super().__init__()
+        super(Window, self).__init__()
 
-        self.init_gui()
+        self.setWindowTitle('to due')
+        self.setGeometry(300, 200, 600, 600)
+
+        self.init_gui()    
     
     def init_gui(self):
 
-        vertical_layout = QVBoxLayout()
-        header_layout = QHBoxLayout()
+        #create layout and add stuff
+        self.create_task_area()
+        self.vertical_layout = QVBoxLayout(self)
+        self.vertical_layout.addLayout(self.create_header())
+        self.vertical_layout.addWidget(self.tasks_area)
 
-        btn_add_task = QPushButton('+')
-        btn_add_task.clicked.connect(self.button_click)
-        btn_add_task.setVerticalPolicy(500)
-
-        self.add_task_label = QLabel('Add Task')
-        self.tasks_area = QScrollArea()
-
-        header_layout.addWidget(btn_add_task)
-        header_layout.addWidget(self.add_task_label)
-        header_layout.addStretch()
-
-        vertical_layout.addLayout(header_layout)
-        vertical_layout.addWidget(self.tasks_area)
-        vertical_layout.addStretch()
-
-        self.setLayout(vertical_layout)
-        self.setWindowTitle('to due')
-        self.setGeometry(300, 200, 600, 600)
-        
-        '''
-        self.line_edit = QLineEdit()
-        self.print_to_console = QPushButton('print to console')
-        self.button = QPushButton('test button')
-        self.label = QLabel('I have not been clicked yet')
-        self.slider = QSlider(Qt.Horizontal)
-
-        self.slider.setMinimum(1)
-        self.slider.setMaximum(10)
-        self.slider.setValue(5)
-        self.slider.setTickInterval(2)
-        self.slider.setTickPosition(QSlider.TicksBelow)
-
-        horizontal_box = QHBoxLayout()
-        horizontal_box.addStretch()
-        horizontal_box.addWidget(self.label)
-        horizontal_box.addStretch()
-
-        vertical_box = QVBoxLayout()
-        vertical_box.addWidget(self.button)
-        vertical_box.addWidget(self.line_edit)
-        vertical_box.addWidget(self.print_to_console)
-        vertical_box.addLayout(horizontal_box)
-        vertical_box.addWidget(self.slider)
-
-        self.setLayout(vertical_box)
-        self.setWindowTitle('to due')
-        self.setGeometry(300, 200, 600, 600)
-
-        self.button.clicked.connect(self.button_click)
-        self.print_to_console.clicked.connect(self.button_click)
-        '''
+        #show the window
         self.show()
-    
+        
     def button_click(self):
 
         sender = self.sender()
         if sender.text() == "+":
             print('task added')
+
+    def create_header(self):
+
+        #create horizontal layout
+        header_layout = QHBoxLayout()
+
+        #add task button
+        btn_add_task = QPushButton('+')
+        btn_add_task.setFixedSize(50, 50)
+        btn_add_task.clicked.connect(self.button_click)
+
+        #create text next to the add task button
+        task_label = QLabel('Add Task')
+
+        #add widgets to the header layout
+        header_layout.addWidget(btn_add_task)
+        header_layout.addWidget(task_label)
+
+        return header_layout
+
+    def create_task_area(self):
+
+        #create a scroll area to hold tasks
+        self.tasks_area = QScrollArea(self)
+        self.tasks_area.setWidgetResizable(True)
+
+        widget = QWidget()
+        self.tasks_area.setWidget(widget)
+        self.tasks_layout = QVBoxLayout(widget)
+
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        self.tasks_layout.addWidget(self.create_task())
+        
+        self.tasks_layout.addStretch(1)
+
+
+    def create_task(self):
+
+        #create the groupbox
+        task_group = QGroupBox('task group')
+    
+        #create vbox 
+        name_and_date = QVBoxLayout()
+
+        #create a grid 2x2 layout for the time until feature
+        countdowns = QGridLayout()
+
+        #create and add data for the countdowns grid
+        days = QLabel('10')
+        hours = QLabel('20')
+        minutes = QLabel('30')
+        seconds = QLabel('40')
+        countdowns.addWidget(days, 0, 0)
+        countdowns.addWidget(days, 0, 1)
+        countdowns.addWidget(days, 1, 0)
+        countdowns.addWidget(days, 1, 1)
+
+        #create and add data for the name_and_date layout
+        task_name = QLabel('task name')
+        date_due = QLabel('due date')
+        name_and_date.addWidget(task_name)
+        name_and_date.addWidget(date_due)
+
+        #combine objects into group        
+        #task_group.setLayout(name_and_date)
+        #task_group.setLayout(countdowns)
+
+        return task_group
     
 def run():
     application = QApplication(sys.argv)
