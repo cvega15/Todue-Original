@@ -1,2 +1,5 @@
-Mon Jun 17 18:05:23 2019 >>> Start
-Mon Jun 17 18:05:23 2019 >>> User_Tasks Created
+Mon Jun 17 20:30:21 2019 >>> Start
+Mon Jun 17 20:30:21 2019 >>> Save Found
+Mon Jun 17 20:30:21 2019 >>> Retrieving Files
+Mon Jun 17 20:30:21 2019 >>> User_Tasks Created
+Mon Jun 17 20:30:23 2019 >>> User Display Task
