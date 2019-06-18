@@ -9,9 +9,9 @@ import os                                                # see logger module
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
 
-    def __init__(self):                                           #constructor
-
-        self.tasks_list = []                                      #the tasks list which holds an array of tasks
+    def __init__(self, task_list):                                           #constructor
+        task_list = list(task_list)
+        self.tasks_list = task_list                                      #the tasks list which holds an array of tasks
         logger.log("User_Tasks Created")
 
     def add_task(self, task_name="Untitled", time_due="Jan 1, 2099"):  # adds a task with information passed into the parameters
@@ -51,7 +51,7 @@ class User_tasks(object):
 
         logger.log("User Data Saved")
     
-    def retireive(self):
+    def retreive(self):
 
         logger.log("User Data Retrieved")
 
