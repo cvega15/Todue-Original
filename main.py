@@ -191,11 +191,10 @@ save_file = os.path.join(save_location, "save_files.txt")
 with open(save_file, "r+") as handle:
     first = handle.read(1)
     if not first:
-        no_save_file = []
         logger.log("No Save Found")
-        run_program(no_save_file)
+        run_program("")
         
     else: 
         logger.log("Save Found")
         logger.log("Retrieving Files")
-        run_program(first)
+        run_program(first)  # AttributeError: 'str' object has no attribute 'display_task'

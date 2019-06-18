@@ -1,6 +1,6 @@
 from datetime import datetime
 # converts a string into a datetime object and returns that datetime object (see main > adding task/changing due date)
-def string_to_datetime(to_convert):
+def string_to_datetime(to_convert="2099-12-31 12:00:00"):
 
     format = "%Y-%m-%d %H:%M:%S"
     due_date = datetime.strptime(to_convert, format)  
