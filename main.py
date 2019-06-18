@@ -45,7 +45,7 @@ class Window(QWidget):
 
             self.tasks_layout.addWidget(Task())
             print('task added')
-
+        
     def create_header(self):
 
         #create horizontal layout
@@ -81,24 +81,21 @@ class Task(QWidget):
     def __init__(self, parent=None):
         super(Task, self).__init__()
 
-        #create the main layour for the qframe
-        main_layout = QHBoxLayout()
-
-        #set the task's layout to the main layout
-        self.setLayout(main_layout)
+        self.setStyleSheet('border: 1px solid red')
+        self.main_layout = QHBoxLayout()
 
         #create the left part of the task, this will be a horizontal layour with the name and the date
         name_and_date = QVBoxLayout()
         delete = QPushButton('-')
         delete.clicked.connect(self.button_click)
         delete.setFixedSize(25, 25)
-        #delete.clicked.connect(self.button_click)
+
         name = QLabel('task name ')
         date = QLabel('task due date')
         name_and_date.addWidget(name)
         name_and_date.addWidget(date)
         name_and_date.addWidget(delete)
-        main_layout.addLayout(name_and_date)
+        self.main_layout.addLayout(name_and_date)
 
         #create all the countdowns
         countdowns = QGridLayout()
@@ -110,7 +107,9 @@ class Task(QWidget):
         countdowns.addWidget(hours, 0, 1)
         countdowns.addWidget(minutes, 1, 0)
         countdowns.addWidget(seconds, 1, 1)
-        main_layout.addLayout(countdowns)
+        self.main_layout.addLayout(countdowns)
+
+        self.setLayout(self.main_layout)
 
     def button_click(self):
 
@@ -124,8 +123,6 @@ def run():
     application = QApplication(sys.argv)
     le_window = Window()
     sys.exit(application.exec_())
-
-
 run()
 
 
