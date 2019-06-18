@@ -42,12 +42,9 @@ class Window(QWidget):
 
         sender = self.sender()
         if sender.text() == "+":
-            self.post_number += 1
-            self.add_task()
-            print('task added')
-        elif sender.text() == "-":
 
-            print('task deleted')
+            self.tasks_layout.addWidget(Task())
+            print('task added')
 
     def create_header(self):
 
@@ -77,29 +74,26 @@ class Window(QWidget):
         widget = QWidget()
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
+        self.tasks_layout.addStretch(1)
 
+class Task(QWidget):
 
-        #self.tasks_layout.addStretch(1)
-
-    def create_task(self):
-
-        #create the qframe for the task
-        task = QFrame()
-        task.setFrameStyle(1)
-        #task.setGeometry(20, 20, 60, 60)
+    def __init__(self, parent=None):
+        super(Task, self).__init__()
 
         #create the main layour for the qframe
         main_layout = QHBoxLayout()
 
         #set the task's layout to the main layout
-        task.setLayout(main_layout)
+        self.setLayout(main_layout)
 
         #create the left part of the task, this will be a horizontal layour with the name and the date
         name_and_date = QVBoxLayout()
         delete = QPushButton('-')
-        delete.setFixedSize(25, 25)
         delete.clicked.connect(self.button_click)
-        name = QLabel('task name ' + str(self.post_number))
+        delete.setFixedSize(25, 25)
+        #delete.clicked.connect(self.button_click)
+        name = QLabel('task name ')
         date = QLabel('task due date')
         name_and_date.addWidget(name)
         name_and_date.addWidget(date)
@@ -118,13 +112,13 @@ class Window(QWidget):
         countdowns.addWidget(seconds, 1, 1)
         main_layout.addLayout(countdowns)
 
-        return task
+    def button_click(self):
 
-    def add_task(self):
-        to_add = self.create_task()
-        self.tasks_layout.addWidget(to_add)
+        sender = self.sender()
+        if sender.text() == "-":
 
-        #self.tasks_layout.addStretch()
+            self.deleteLater()
+            print('task added')
 
 def run():
     application = QApplication(sys.argv)
