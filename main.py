@@ -3,7 +3,7 @@ import logger
 import utils
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import (QLineEdit, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import (QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import Qt
 
 logger.start()
@@ -39,7 +39,11 @@ class Window(QWidget):
 
         sender = self.sender()
         if sender.text() == "+":
+            self.add_task()
             print('task added')
+        elif sender.text() == "-":
+            
+            print('task deleted')
 
     def create_header(self):
 
@@ -71,52 +75,51 @@ class Window(QWidget):
         self.tasks_layout = QVBoxLayout(widget)
 
         self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        self.tasks_layout.addWidget(self.create_task())
-        
-        self.tasks_layout.addStretch(1)
 
+        self.tasks_layout.addStretch(1)
 
     def create_task(self):
 
-        #create the groupbox
-        task_group = QGroupBox('task group')
-    
-        #create vbox 
+        #create the qframe for the task
+        task = QFrame()
+        task.setFrameStyle(1)
+
+        #create the main layour for the qframe
+        main_layout = QHBoxLayout()
+
+        #set the task's layout to the main layout
+        task.setLayout(main_layout)
+
+        #create the left part of the task, this will be a horizontal layour with the name and the date
         name_and_date = QVBoxLayout()
+        delete = QPushButton('-')
+        delete.setFixedSize(25, 25)
+        delete.clicked.connect(self.button_click)
+        name = QLabel('task name')
+        date = QLabel('task due date')
+        name_and_date.addWidget(name)
+        name_and_date.addWidget(date)
+        name_and_date.addWidget(delete)
+        main_layout.addLayout(name_and_date)
 
-        #create a grid 2x2 layout for the time until feature
+        #create all the countdowns
         countdowns = QGridLayout()
-
-        #create and add data for the countdowns grid
-        days = QLabel('10')
-        hours = QLabel('20')
-        minutes = QLabel('30')
-        seconds = QLabel('40')
+        days = QLabel('10 D')
+        hours = QLabel('20 H')
+        minutes = QLabel('30 M')
+        seconds = QLabel('40 S')
         countdowns.addWidget(days, 0, 0)
-        countdowns.addWidget(days, 0, 1)
-        countdowns.addWidget(days, 1, 0)
-        countdowns.addWidget(days, 1, 1)
+        countdowns.addWidget(hours, 0, 1)
+        countdowns.addWidget(minutes, 1, 0)
+        countdowns.addWidget(seconds, 1, 1)
+        main_layout.addLayout(countdowns)
 
-        #create and add data for the name_and_date layout
-        task_name = QLabel('task name')
-        date_due = QLabel('due date')
-        name_and_date.addWidget(task_name)
-        name_and_date.addWidget(date_due)
+        return task
 
-        #combine objects into group        
-        #task_group.setLayout(name_and_date)
-        #task_group.setLayout(countdowns)
+    def add_task(self):
+        to_add = self.create_task()
+        self.tasks_layout.addWidget(to_add)
 
-        return task_group
-    
 def run():
     application = QApplication(sys.argv)
     le_window = Window()
