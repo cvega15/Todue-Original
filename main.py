@@ -5,14 +5,16 @@ from datetime import datetime
 import sys
 from PyQt5.QtWidgets import (QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import Qt
+import os
 
 logger.start()
-# this is where we have to recall, at the beginning before anything starts
-user_tasks = classes.User_tasks()
 
-print("Le task scheduling software has arrived") #awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
+
+print("Le task scheduling software has arrived")  # awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
+
 print('░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░\n░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░\n░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░\n░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░\n░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░\n░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░ \n░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░\n░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░\n░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░\n░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░\n▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░\n▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌\n▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░\n░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░\n░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░\n░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░\n░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░\n░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░\n░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░')
-print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D") #!!!!VERY IMPORTANT!!!!: I added a doge meme
+print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D")  # !!!!VERY IMPORTANT!!!!: I added a doge meme          <------    XDDDDDDDDDDDDDDDDDDDDDDD
+
 
 class Window(QWidget):
 
@@ -22,8 +24,8 @@ class Window(QWidget):
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
 
-        self.init_gui()    
-    
+        self.init_gui()
+
     def init_gui(self):
 
         #create layout and add stuff
@@ -34,7 +36,7 @@ class Window(QWidget):
 
         #show the window
         self.show()
-        
+
     def button_click(self):
 
         sender = self.sender()
@@ -42,7 +44,7 @@ class Window(QWidget):
             self.add_task()
             print('task added')
         elif sender.text() == "-":
-            
+
             print('task deleted')
 
     def create_header(self):
@@ -120,56 +122,80 @@ class Window(QWidget):
         to_add = self.create_task()
         self.tasks_layout.addWidget(to_add)
 
+
 def run():
     application = QApplication(sys.argv)
     le_window = Window()
     sys.exit(application.exec_())
+
+
 run()
 
-while True:
-    print("1) add task \n2) display tasks \n3) edit task\n4) quit")
-    user_input = int(input('>'))
 
-    if user_input == 1:
-        logger.log("User Create New Task")
+def run_program(saved=""):
 
-        task_name = input('please enter in a task name: \n>')
-        due_date = input('please enter a due date in the following format(yyyy-mm-dd hh:mm): \n>')
+    user_tasks = classes.User_tasks(saved)
 
-        user_tasks.add_task(task_name, utils.string_to_datetime(due_date + ":00"))
-        
-    elif user_input == 2:
-        logger.log("User Display Task")
+    while True:
+        print("1) add task \n2) display tasks \n3) edit task\n4) quit")
+        user_input = int(input('>'))
 
-        user_tasks.display_tasks()
+        if user_input == 1:
+            logger.log("User Create New Task")
 
-    elif user_input == 3:
-        logger.log("User editing task")
-        user_tasks.display_tasks()
+            task_name = input('please enter in a task name: \n>')
+            due_date = input('please enter a due date in the following format(yyyy-mm-dd hh:mm): \n>')
 
-        to_edit = input('please enter in the name of the task that you want to edit: \n>')
-        edit_selection = int(input('1) rename task \n2) change due date \n3) cancel: \n>'))
-
-        if(edit_selection == 1):
+            user_tasks.add_task(task_name, utils.string_to_datetime(due_date + ":00"))
             
-            name_change = input('enter name change: \n>')
-            user_tasks.edit_task(to_edit, name_change, None)
+        elif user_input == 2:
+            logger.log("User Display Task")
 
-            logger.log("name changed")
+            user_tasks.display_tasks()
 
-        elif(edit_selection == 2):
+        elif user_input == 3:
+            logger.log("User editing task")
+            user_tasks.display_tasks()
 
-            date_change = input('please enter a change date in the following format(yyyy-mm-dd hh:mm): \n>')
-            user_tasks.edit_task(to_edit, None, utils.string_to_datetime(date_change + ":00"))
+            to_edit = input('please enter in the name of the task that you want to edit: \n>')
+            edit_selection = int(input('1) rename task \n2) change due date \n3) cancel: \n>'))
 
-            logger.log("date changed")
+            if(edit_selection == 1):
+                
+                name_change = input('enter name change: \n>')
+                user_tasks.edit_task(to_edit, name_change, None)
+
+                logger.log("Name Changed")
+
+            elif(edit_selection == 2):
+
+                date_change = input('please enter a change date in the following format(yyyy-mm-dd hh:mm): \n>')
+                user_tasks.edit_task(to_edit, None, utils.string_to_datetime(date_change + ":00"))
+
+                logger.log("Date Changed")
+
+            else:
+                break
 
         else:
+            user_tasks.save()
+            print('quitting')
             break
 
-    else:
-        user_tasks.save()
-        print('quitting')
-        break
+    logger.log("End")
 
-logger.log("End")
+
+# saver check
+save_location = os.path.dirname(os.path.abspath(__file__))
+save_file = os.path.join(save_location, "save_files.txt")
+with open(save_file, "r+") as handle:
+    first = handle.read(1)
+    if not first:
+        no_save_file = []
+        logger.log("No Save Found")
+        run_program(no_save_file)
+        
+    else: 
+        logger.log("Save Found")
+        logger.log("Retrieving Files")
+        run_program(first)
