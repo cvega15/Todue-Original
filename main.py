@@ -21,6 +21,7 @@ class Window(QWidget):
 
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
+        self.post_number = 0
 
         self.init_gui()    
     
@@ -39,10 +40,11 @@ class Window(QWidget):
 
         sender = self.sender()
         if sender.text() == "+":
+            self.post_number += 1
             self.add_task()
             print('task added')
         elif sender.text() == "-":
-            
+
             print('task deleted')
 
     def create_header(self):
@@ -74,15 +76,15 @@ class Window(QWidget):
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
 
-        self.tasks_layout.addWidget(self.create_task())
 
-        self.tasks_layout.addStretch(1)
+        #self.tasks_layout.addStretch(1)
 
     def create_task(self):
 
         #create the qframe for the task
         task = QFrame()
         task.setFrameStyle(1)
+        #task.setGeometry(20, 20, 60, 60)
 
         #create the main layour for the qframe
         main_layout = QHBoxLayout()
@@ -95,7 +97,7 @@ class Window(QWidget):
         delete = QPushButton('-')
         delete.setFixedSize(25, 25)
         delete.clicked.connect(self.button_click)
-        name = QLabel('task name')
+        name = QLabel('task name ' + str(self.post_number))
         date = QLabel('task due date')
         name_and_date.addWidget(name)
         name_and_date.addWidget(date)
@@ -119,6 +121,8 @@ class Window(QWidget):
     def add_task(self):
         to_add = self.create_task()
         self.tasks_layout.addWidget(to_add)
+
+        #self.tasks_layout.addStretch()
 
 def run():
     application = QApplication(sys.argv)
