@@ -207,9 +207,10 @@ def run_program(saved=""):
             user_tasks.serialize()
             user_tasks.save()
             print('quitting')
+            logger.log("End")
             break
 
-    logger.log("End")
+    
 
 # saver check
 save_location = os.path.dirname(os.path.abspath(__file__))
