@@ -3,12 +3,13 @@ from datetime import datetime
 import timeit
 import logger 
 import utils  
-import os                                                # see logger module
+import os                                          
+import json
 
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
-
+# whole init needs redoing with main for the save functionality
     def __init__(self, task_list):                                           #constructor
         task_list = list(task_list)
         self.tasks_list = task_list                                      #the tasks list which holds an array of tasks
@@ -42,16 +43,28 @@ class User_tasks(object):
                     task.edit_due_date(date_change)
 
                     logger.log("Changing Date")
+
+    def serialize(self):
+
+        serialized_task_list = []
+
+        for task in self.tasks_list:
+            serialized_task_list.append(task.serialize())
+        self.json_dump = json.dumps(serialized_task_list)
+
+        logger.log("Serialized")   
     
     def save(self):
+
         location = os.path.dirname(os.path.abspath(__file__))
         saver = os.path.join(location, "save_files.txt")
         with open(saver, "w+") as handle:
-            print(str(self.tasks_list), file=handle)
+            print(self.json_dump, file=handle)
 
         logger.log("User Data Saved")
     
     def retreive(self):
+        # write the json.loads(string) on the main.py under loading at the bottom
 
         logger.log("User Data Retrieved")
 
@@ -76,6 +89,10 @@ class Task(object):
         print("due date: " + str(self.due_date.date))
         print("time left: " + str(self.due_date.date_diff))
 
+    def serialize(self):
+        return {"task name":self.name, 
+                "due date":self.due_date.date}
+
 
 class Timer(object):
 
@@ -90,3 +107,4 @@ class Timer(object):
         now = dt.now()
         return dt(year=self.date[0], month=self.date[1], day=self.date[2], minute=utils.date_to_minutes(self.date)) \
         - dt(year=now.year, month=now.month, day=now.day, minute=now.hour * 60 + now.minute + now.second // 60)
+# still unfinished countdown ^^^^ (call convert?)
