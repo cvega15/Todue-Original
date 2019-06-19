@@ -3,22 +3,20 @@ import logger
 import utils
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import (QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
+from PyQt5.QtCore import (Qt, QDate, QDateTime, QTime)
 import os
 
 logger.start()
 
-
 print("Le task scheduling software has arrived")  # awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
-
 print('░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░\n░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░\n░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░\n░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░\n░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░\n░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░ \n░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░\n░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░\n░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░\n░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░\n▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░\n▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌\n▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░\n░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░\n░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░\n░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░\n░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░\n░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░\n░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░')
 print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D")  # !!!!VERY IMPORTANT!!!!: I added a doge meme          <------    XDDDDDDDDDDDDDDDDDDDDDDD
-
 
 class App(QWidget):
 
     def __init__(self):
+
         super(App, self).__init__()
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
@@ -26,20 +24,20 @@ class App(QWidget):
         self.init_gui()
 
     def init_gui(self):
+
         self.create_task_area()
         self.vertical_layout = QVBoxLayout(self)
         self.vertical_layout.addLayout(self.create_header())
         self.vertical_layout.addWidget(self.tasks_area)
         self.show()
 
-    def add_button_click(self):
-        Task_Add_Box()
-        
     def add_task(self):
+
         self.tasks_layout.addWidget(Task())
         print('task added')
 
     def create_header(self):
+
         header_layout = QHBoxLayout()
         btn_add_task = QPushButton('+')
         btn_add_task.setFixedSize(50, 50)
@@ -54,46 +52,64 @@ class App(QWidget):
         #create a scroll area to hold tasks
         self.tasks_area = QScrollArea(self)
         self.tasks_area.setWidgetResizable(True)
-
         widget = QWidget()
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
         self.tasks_layout.addStretch(1)
-
-class Task_Add_Box(QDialog):
-
-    def __init__(self, parent=None):
-        super(Task_Add_Box, self).__init__()
+    
+    def task_adder(self):
 
         self.adder = QDialog()
         self.adder.setGeometry(50, 50, 250, 200)
-        main_layout = QHBoxLayout()
-        self.adder.setLayout(main_layout)
+        main_layout = QVBoxLayout()
+        task_name = QLabel('Task Name')
+        task_name_input = QLineEdit()
+        due_date = QLabel('Due Date')
+        due_date_input = QDateEdit()
+        due_date_input.setMinimumDate(QDate.currentDate())
+        due_time = QLabel('Due Time')
+        due_time_input = QTimeEdit()
+        main_layout.addWidget(task_name)
+        main_layout.addWidget(task_name_input)
+        main_layout.addWidget(due_date)
+        main_layout.addWidget(due_date_input)
+
+        main_layout.addWidget(due_time)
+        main_layout.addWidget(due_time_input)
+        main_layout.addSpacing(20)
+
+        buttons = QHBoxLayout()
         button_ok = QPushButton("Add")
-        button_ok.clicked.connect(self.ok_press)
+        button_ok.clicked.connect(self.dialog_add_press)
         button_close = QPushButton("Cancel")
-        button_close.clicked.connect(self.cancel_press)
-        main_layout.addWidget(button_ok)
-        main_layout.addWidget(button_close)
+        button_close.clicked.connect(self.dialog_cancel_press)
+        buttons.addWidget(button_ok)
+        buttons.addWidget(button_close)
+        main_layout.addLayout(buttons)
+        self.adder.setLayout(main_layout)
+
         self.adder.addAction
         self.adder.setWindowTitle("Add a Task")
         self.adder.exec_()
 
-    def ok_press(self):
-        
+    def dialog_add_press(self):
+        print('ok pressed')
+        self.add_task()
         self.adder.reject()
 
-    def cancel_press(self):
+    def dialog_cancel_press(self):
         print('cancel pressed')
         self.adder.reject()
+
+    def add_button_click(self):
+        self.task_adder()
+        
 
 class Task(QFrame):
 
     def __init__(self, parent=None):
         super(Task, self).__init__()
-
         self.setFrameStyle(1)
-
         self.main_layout = QHBoxLayout()
 
         #create the left part of the task, this will be a horizontal layour with the name and the date
