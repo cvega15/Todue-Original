@@ -11,9 +11,11 @@ import json
 class User_tasks(object):
 # whole init needs redoing with main for the save functionality
     def __init__(self, task_list):                                           #constructor
-        task_list = list(task_list)
-        self.tasks_list = task_list                                      #the tasks list which holds an array of tasks
+        self.tasks_list = list(task_list)                                      #the tasks list which holds an array of tasks - for starting, this needs to be initialized if save file found
         logger.log("User_Tasks Created")
+
+        if self.tasks_list:
+            self.deserialize()
 
     def add_task(self, task_name="Untitled", time_due="Jan 1, 2099"):  # adds a task with information passed into the parameters
 
@@ -59,14 +61,20 @@ class User_tasks(object):
         location = os.path.dirname(os.path.abspath(__file__))
         saver = os.path.join(location, "save_files.txt")
         with open(saver, "w+") as handle:
-            print(self.json_dump, file=handle)
+            print(self.json_dump, file=handle, end="")
 
         logger.log("User Data Saved")
     
-    def retreive(self):
+    def deserialize(self):
         # write the json.loads(string) on the main.py under loading at the bottom
-
         logger.log("User Data Retrieved")
+        task_temp = []
+
+        for item in self.tasks_list:
+            task = Task(item["task name"]. item["due date"])
+            task_temp.append(task)
+
+        self.tasks_list = task_temp
 
 
 #a task class which holds information about it's name as well as it's due date
@@ -91,7 +99,7 @@ class Task(object):
 
     def serialize(self):
         return {"task name":self.name, 
-                "due date":self.due_date.date}
+                "due date":self.due_date.serialize()}
 
 
 class Timer(object):
@@ -101,6 +109,9 @@ class Timer(object):
     
     def convert(self): # takes the date passed in and converts it to readable format for date_diff()
         self.date = utils.datetime_to_string(self.date)
+    
+    def serialize(self):
+        return utils.datetime_to_string_for_save(self.date)
 
     def date_diff(self):
         dt = datetime.datetime

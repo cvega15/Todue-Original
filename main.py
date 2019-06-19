@@ -6,12 +6,15 @@ import sys
 from PyQt5.QtWidgets import (QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (Qt, QDate, QDateTime, QTime)
 import os
+import json
 
 logger.start()
+
 
 print("Le task scheduling software has arrived")  # awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
 print('░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░\n░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░\n░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░\n░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░\n░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░\n░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░ \n░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░\n░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░\n░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░\n░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░\n▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░\n▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌\n▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░\n░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░\n░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░\n░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░\n░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░\n░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░\n░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░')
 print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D")  # !!!!VERY IMPORTANT!!!!: I added a doge meme          <------    XDDDDDDDDDDDDDDDDDDDDDDD
+
 
 class App(QWidget):
 
@@ -56,7 +59,7 @@ class App(QWidget):
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
         self.tasks_layout.addStretch(1)
-    
+
     def task_adder(self):
 
         self.adder = QDialog()
@@ -103,7 +106,7 @@ class App(QWidget):
 
     def add_button_click(self):
         self.task_adder()
-        
+
 
 class Task(QFrame):
 
@@ -147,10 +150,13 @@ class Task(QFrame):
             self.deleteLater()
             print('task added')
 
+
 def run():
     application = QApplication(sys.argv)
     le_window = App()
     sys.exit(application.exec_())
+
+
 run()
 
 def run_program(saved=""):
@@ -199,6 +205,7 @@ def run_program(saved=""):
                 break
 
         else:
+            user_tasks.serialize()
             user_tasks.save()
             print('quitting')
             break
@@ -209,12 +216,29 @@ def run_program(saved=""):
 save_location = os.path.dirname(os.path.abspath(__file__))
 save_file = os.path.join(save_location, "save_files.txt")
 with open(save_file, "r+") as handle:
-    first = handle.read(1)
+    first = handle.read(1).strip()
     if not first:
         logger.log("No Save Found")
         run_program("")
         
-    else: 
+    elif first: 
         logger.log("Save Found")
         logger.log("Retrieving Files")
-        run_program(first)  # AttributeError: 'str' object has no attribute 'display_task'
+        task_dict = json.loads(first)
+        run_program(task_dict)
+
+        # error for the loads json function:
+        # Traceback (most recent call last):
+        # File "c:\dev\zip_code\main.py", line 79, in <module>
+        #     task_dict = json.loads(first)
+        # File "C:\Users\Thomas\Miniconda3\lib\json\__init__.py", line 348, in loads
+        #     return _default_decoder.decode(s)
+        # File "C:\Users\Thomas\Miniconda3\lib\json\decoder.py", line 337, in decode
+        #     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+        # File "C:\Users\Thomas\Miniconda3\lib\json\decoder.py", line 355, in raw_decode
+        #     raise JSONDecodeError("Expecting value", s, err.value) from None
+        # json.decoder.JSONDecodeError: Expecting value: line 1 column 2 (char 1)
+
+    else:
+        print("No") #             <- meme
+        exit()
