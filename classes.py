@@ -71,7 +71,7 @@ class User_tasks(object):
         task_temp = []
 
         for item in self.tasks_list:
-            task = Task(item["task name"]. item["due date"])
+            task = Task(item["task name"], item["due date"])
             task_temp.append(task)
 
         self.tasks_list = task_temp

@@ -156,7 +156,6 @@ def run():
     le_window = App()
     sys.exit(application.exec_())
 
-
 run()
 
 def run_program(saved=""):
@@ -215,8 +214,8 @@ def run_program(saved=""):
 # saver check
 save_location = os.path.dirname(os.path.abspath(__file__))
 save_file = os.path.join(save_location, "save_files.txt")
-with open(save_file, "r+") as handle:
-    first = handle.read(1).strip()
+with open(save_file, "r") as handle:
+    first = handle.read()
     if not first:
         logger.log("No Save Found")
         run_program("")
@@ -224,6 +223,7 @@ with open(save_file, "r+") as handle:
     elif first: 
         logger.log("Save Found")
         logger.log("Retrieving Files")
+        print(first)
         task_dict = json.loads(first)
         run_program(task_dict)
 
