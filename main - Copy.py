@@ -143,10 +143,10 @@ class Task(QFrame):
 
         #create all the countdowns
         countdowns = QGridLayout()
-        days = QLabel('10 D')
-        hours = QLabel('20 H')
-        minutes = QLabel('30 M')
-        seconds = QLabel('40 S')
+        days = QLabel('D: ')
+        hours = QLabel('H: ')
+        minutes = QLabel('M: ')
+        seconds = QLabel('S: ')
         countdowns.addWidget(days, 0, 0)
         countdowns.addWidget(hours, 0, 1)
         countdowns.addWidget(minutes, 1, 0)

@@ -1,8 +1,4 @@
-Wed Jun 19 22:23:13 2019 >>> Start
-Wed Jun 19 22:23:13 2019 >>> User_Tasks Created
-Wed Jun 19 22:23:20 2019 >>> Adding Task
-Wed Jun 19 22:23:20 2019 >>> task added
-Wed Jun 19 22:23:39 2019 >>> Adding Task
-Wed Jun 19 22:23:39 2019 >>> task added
-Wed Jun 19 22:23:55 2019 >>> Adding Task
-Wed Jun 19 22:23:55 2019 >>> task added
+Wed Jun 19 22:47:29 2019 >>> Start
+Wed Jun 19 22:47:29 2019 >>> User_Tasks Created
+Wed Jun 19 22:47:36 2019 >>> Adding Task
+Wed Jun 19 22:47:36 2019 >>> task added
