@@ -3,7 +3,7 @@ import logger
 import utils
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import (QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import (QMessageBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (Qt, QDate, QDateTime, QTime)
 import os
 import json
@@ -66,19 +66,19 @@ class App(QWidget):
         self.adder.setGeometry(50, 50, 250, 200)
         main_layout = QVBoxLayout()
         task_name = QLabel('Task Name')
-        task_name_input = QLineEdit()
+        self.task_name_input = QLineEdit()
         due_date = QLabel('Due Date')
-        due_date_input = QDateEdit()
-        due_date_input.setMinimumDate(QDate.currentDate())
+        self.due_date_input = QDateEdit()
+        self.due_date_input.setMinimumDate(QDate.currentDate())
         due_time = QLabel('Due Time')
-        due_time_input = QTimeEdit()
+        self.due_time_input = QTimeEdit()
         main_layout.addWidget(task_name)
-        main_layout.addWidget(task_name_input)
+        main_layout.addWidget(self.task_name_input)
         main_layout.addWidget(due_date)
-        main_layout.addWidget(due_date_input)
+        main_layout.addWidget(self.due_date_input)
 
         main_layout.addWidget(due_time)
-        main_layout.addWidget(due_time_input)
+        main_layout.addWidget(self.due_time_input)
         main_layout.addSpacing(20)
 
         buttons = QHBoxLayout()
@@ -96,10 +96,22 @@ class App(QWidget):
         self.adder.exec_()
 
     def dialog_add_press(self):
-        print('ok pressed')
-        self.add_task()
-        self.adder.reject()
+        if(self.due_time_input.time() < QTime.currentTime() and self.due_date_input.date() == QDate.currentDate() or self.task_name_input.text() == ''):
+            error = QMessageBox()
+            error.setText("Error")
+            if(self.task_name_input.text() == ''):
+                error.setInformativeText("Please enter a task name")
+            else:
+                error.setInformativeText("please enter a future date")
+            error.setWindowTitle("Error")
+            error.setStandardButtons(QMessageBox.Ok)
+            retval = error.exec_()
 
+            print('error, please use a future date/time')
+        else:
+            self.add_task()
+            self.adder.reject()
+    
     def dialog_cancel_press(self):
         print('cancel pressed')
         self.adder.reject()
@@ -150,13 +162,9 @@ class Task(QFrame):
             self.deleteLater()
             print('task added')
 
-
-def run():
-    application = QApplication(sys.argv)
-    le_window = App()
-    sys.exit(application.exec_())
-
-run()
+application = QApplication(sys.argv)
+le_window = App()
+sys.exit(application.exec_())
 
 def run_program(saved=""):
 
@@ -209,8 +217,6 @@ def run_program(saved=""):
             print('quitting')
             logger.log("End")
             break
-
-    
 
 # saver check
 save_location = os.path.dirname(os.path.abspath(__file__))
