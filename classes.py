@@ -104,18 +104,29 @@ class Task(object):
 
 class Timer(object):
 
+ 
     def __init__(self, date):
         self.date = date
-    
-    def convert(self): # takes the date passed in and converts it to readable format for date_diff()
-        self.date = utils.datetime_to_string(self.date)
-    
+        self.convert()
+    def convert(self):
+        # converts the string to a datetime object
+        format = "%Y-%m-%d %H:%M:%S"
+        self.date = datetime.strptime(self.date, format)
+
     def serialize(self):
         return utils.datetime_to_string_for_save(self.date)
 
     def date_diff(self):
-        dt = datetime.datetime
-        now = dt.now()
-        return dt(year=self.date[0], month=self.date[1], day=self.date[2], minute=utils.date_to_minutes(self.date)) \
-        - dt(year=now.year, month=now.month, day=now.day, minute=now.hour * 60 + now.minute + now.second // 60)
-# still unfinished countdown ^^^^ (call convert?)
+        now = datetime.now()
+        time_since = self.date - now
+        return time_since
+
+    def timer_display(self):
+        # use for the countodown display
+        total_mins = int(self.date_diff().total_seconds() / 60)
+        return total_mins
+
+
+#   test      # 
+# x = Timer("2019-07-12 9:00:00")
+# print(x.timer_display())
