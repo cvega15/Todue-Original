@@ -35,7 +35,7 @@ class User_tasks(object):
     def edit_task(self, task_id, name_change, date_change):     # calls the edit_name and edit_due_date functions with parameters passed in
 
         for task in self.tasks_list:
-            if task.id_number == task_id:
+            if task_id in task:
 
                 if name_change:
                     task.edit_name(name_change)
