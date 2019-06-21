@@ -32,6 +32,10 @@ class App(QWidget):
         self.vertical_layout.addWidget(self.tasks_area)
         self.show()
 
+        for task in user_tasks.tasks_list:
+            task_to_add = Task(task['id'], task['task_name'], datetime.strptime(task['time_due'], "%Y-%m-%d %H:%M:%S"))
+            self.tasks_layout.addWidget(task_to_add)
+
     #create the header for the gui (i dont think it needs to be it's own function tbh, might change later)
     def create_header(self):
 
@@ -96,18 +100,19 @@ class App(QWidget):
     def dialog_add_press(self):
 
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
+            
+            #create random identifier for le taske
             task_identifier = random.randint(0, 1000)
 
             #add to the backend tasks list
             user_tasks.add_task(task_identifier, self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
-            print(str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
-            logger.log('task added')
 
             #create a gui task
-            task_to_add = Task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), task_identifier)
+            task_to_add = Task(task_identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
             self.tasks_layout.addWidget(task_to_add)
 
             print('task added')
+            logger.log('task added')
             self.adder.reject()
     
     #used in the input window and closes it
@@ -118,7 +123,7 @@ class App(QWidget):
 class Task(QFrame):
 
     #initialze the Task class and all it's variables as well as create the gui
-    def __init__(self, task_name, due_date, identifier):
+    def __init__(self, identifier, task_name, due_date):
         super(Task, self).__init__()
         self.due_date = due_date
         self.task_name = task_name
@@ -243,7 +248,7 @@ class Task(QFrame):
             self.due_date = datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())
             
             #edit the backend as well with the newly set variables
-            user_tasks.edit_task(self.identifier, self.task_name, self.due_date)
+            user_tasks.edit_task(self.identifier, self.task_name, str(self.due_date))
 
             #close the editing box
             self.editor.reject()

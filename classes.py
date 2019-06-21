@@ -30,8 +30,8 @@ class User_tasks(object):
     def edit_task(self, task_id, name_change, date_change):     # calls the edit_name and edit_due_date functions with parameters passed in
 
         for task in self.tasks_list:
-            if task_id in task:
-
+            if task_id == task['id']:
+                print('yay it worked!')
                 task['task_name'] = name_change
                 logger.log("Changing Name")
                 task['time_due'] = date_change
@@ -40,11 +40,11 @@ class User_tasks(object):
         self.save()
     
     def delete_task(self, task_id):
-        
-        for task in self.tasks_list:
-            if task_id in task:
-                del task
 
+        for task in self.tasks_list:
+            if task_id == task['id']:
+                self.tasks_list.remove(task)
+                
         self.save()
 
     def serialize(self):
