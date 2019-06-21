@@ -2,9 +2,10 @@ import classes
 import logger
 import utils
 from datetime import datetime
+from datetime import timedelta
 import sys
 from PyQt5.QtWidgets import (QMessageBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
-from PyQt5.QtCore import (Qt, QDate, QDateTime, QTime)
+from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
 import os
 import json
 
@@ -112,6 +113,7 @@ class App(QWidget):
 
             self.tasks_layout.addWidget(task_to_add)
             print('task added')
+            #self.user_tasks.add_task(self.task_name_input.text(), )
             self.adder.reject()
     
     def dialog_cancel_press(self):
@@ -125,47 +127,77 @@ class Task(QFrame):
 
     def __init__(self, task_name, due_date):
         super(Task, self).__init__()
+        self.due_date = due_date
+        self.task_name = task_name
         self.setFrameStyle(1)
         self.main_layout = QHBoxLayout()
 
         #create the left part of the task, this will be a horizontal layour with the name and the date
-        name_and_date = QVBoxLayout()
-        delete = QPushButton('-')
-        delete.clicked.connect(self.button_click)
-        delete.setFixedSize(25, 25)
+        self.name_and_date = QVBoxLayout()
+        self.delete_and_edit = QHBoxLayout()
+        self.delete = QPushButton('X')
+        self.edit = QPushButton('/')
+        self.delete.clicked.connect(self.button_click)
+        self.delete.setFixedSize(25, 25)
+        self.edit.clicked.connect(self.button_click_edit)
+        self.edit.setFixedSize(25, 25)
+        self.delete_and_edit.addWidget(self.delete)
+        self.delete_and_edit.addWidget(self.edit)
+        self.delete_and_edit.addStretch()
 
-        name = QLabel(task_name)
-        date = QLabel(str(due_date))
-        name_and_date.addWidget(name)
-        name_and_date.addWidget(date)
-        name_and_date.addWidget(delete)
-        self.main_layout.addLayout(name_and_date)
+        self.name = QLabel(self.task_name)
+        self.date = QLabel(str(self.due_date))
+        self.name_and_date.addWidget(self.name)
+        self.name_and_date.addWidget(self.date)
+        self.name_and_date.addLayout(self.delete_and_edit)
+        self.main_layout.addLayout(self.name_and_date)
+        self.main_layout.addStretch()
 
         #create all the countdowns
         countdowns = QGridLayout()
-        days = QLabel('D: ')
-        hours = QLabel('H: ')
-        minutes = QLabel('M: ')
-        seconds = QLabel('S: ')
-        countdowns.addWidget(days, 0, 0)
-        countdowns.addWidget(hours, 0, 1)
-        countdowns.addWidget(minutes, 1, 0)
-        countdowns.addWidget(seconds, 1, 1)
+        self.time_til = (self.due_date - datetime.today())
+
+        self.le_days = QLabel('D: ')
+        self.le_hours = QLabel('H: ')
+        self.le_minutes = QLabel('M: ')
+        self.le_seconds = QLabel('S: ')
+
+        countdowns.addWidget(self.le_days, 0, 0)
+        countdowns.addWidget(self.le_hours, 0, 1)
+        countdowns.addWidget(self.le_minutes, 1, 0)
+        countdowns.addWidget(self.le_seconds, 1, 1)
         self.main_layout.addLayout(countdowns)
 
         self.setLayout(self.main_layout)
+        
+        timer = QTimer(self)
+        timer.timeout.connect(self.update_time)
+        timer.start(1000)
+
+    def update_time(self):
+
+        self.time_til = (self.due_date - datetime.today())
+
+        self.le_days.setText('Days: ' + str(self.time_til.days))
+        self.le_hours.setText('Hr: ' + str((self.time_til.days * 24 + self.time_til.seconds) // 3600))
+        self.le_minutes.setText('Min: ' + str((self.time_til.seconds % 3600) // 60))
+        self.le_seconds.setText('Sec: ' + str(self.time_til.seconds % 60))
 
     def button_click(self):
 
         sender = self.sender()
-        if sender.text() == "-":
+        if sender.text() == "X":
 
             self.deleteLater()
             print('task deleted')
+    
+    def button_click_edit(self):
+        pass
 
 application = QApplication(sys.argv)
 le_window = App()
 sys.exit(application.exec_())
+
 '''
 def run_program(saved=""):
 
