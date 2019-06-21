@@ -1,14 +1,14 @@
 import classes
 import logger
 import utils
+import sys
+import os
+import random
+import json
 from datetime import datetime
 from datetime import timedelta
-import random
-import sys
 from PyQt5.QtWidgets import (QMessageBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
-import os
-import json
 
 logger.start()
 saved = ""
@@ -106,7 +106,7 @@ class App(QWidget):
             task_identifier = random.randint(0, 1000)
 
             #add to the backend tasks list
-            user_tasks.add_task(self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
+            user_tasks.add_task(self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())), task_identifier)
             print(str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
             logger.log('task added')
 
@@ -249,9 +249,8 @@ class Task(QFrame):
             #change the due date
             self.due_date = datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())
             
-            #edit the backend as well
-            
-
+            #edit the backend as well with the newly set variables
+            user_tasks.edit_task(self.identifier, self.task_name, self.due_date)
 
             #close the editing box
             self.editor.reject()
