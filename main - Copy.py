@@ -106,7 +106,7 @@ class App(QWidget):
             task_identifier = random.randint(0, 1000)
 
             #add to the backend tasks list
-            user_tasks.add_task(self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())), task_identifier)
+            user_tasks.add_task(task_identifier, self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
             print(str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
             logger.log('task added')
 
