@@ -1,8 +1,4 @@
-import time
-from datetime import datetime
-import timeit
 import logger 
-import utils  
 import os                                          
 import json
 import random
@@ -11,13 +7,12 @@ import random
 class User_tasks(object):
 
     # whole init needs redoing with main for the save functionality
-    def __init__(self, task_list):                                           #constructor
-        
-        self.tasks_list = list(task_list)                                      #the tasks list which holds an array of tasks - for starting, this needs to be initialized if save file found
+    def __init__(self):                                           #constructor
+
+        self.tasks_list = []                                      #the tasks list which holds an array of tasks - for starting, this needs to be initialized if save file found
         logger.log("User_Tasks Created")
 
-        if self.tasks_list: # checks if the task has anything to open from the save file
-            self.deserialize()
+        self.retrieve()
 
     def add_task(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099"):  # adds a task with information passed into the parameters
         
@@ -54,33 +49,29 @@ class User_tasks(object):
 
     def serialize(self):
 
-        serialized_task_list = []
-
-        for task in self.tasks_list:
-            serialized_task_list.append(task.serialize())
-        self.json_dump = json.dumps(serialized_task_list)
+        self.json_dump = json.dumps(self.tasks_list)
 
         logger.log("Serialized")   
     
     def save(self):
 
-        location = os.path.dirname(os.path.abspath(__file__))
-        saver = os.path.join(location, "save_files.txt")
+        self.serialize()
+        save_location = os.path.dirname(os.path.abspath(__file__))
+        saver = os.path.join(save_location, "save_files.txt")
         with open(saver, "w+") as handle:
             print(self.json_dump, file=handle, end="")
 
         logger.log("User Data Saved")
-    
-    def deserialize(self):
-        # write the json.loads(string) on the main.py under loading at the bottom
-        logger.log("User Data Retrieved")
-        task_temp = []
 
-        for item in self.tasks_list:
-            task_temp.append(item)
+    def retrieve(self):
+        save_location = os.path.dirname(os.path.abspath(__file__))
+        save_file = os.path.join(save_location, "save_files.txt")
+        with open(save_file, "r") as handle:
+            first = handle.read()
+            if not first:
+                logger.log("No Save Found")
 
-        self.tasks_list = task_temp
-
-#   test      # 
-# x = Timer("2019-07-12 9:00:00")
-# print(x.timer_display())
+            elif first:
+                logger.log("Save Found")
+                logger.log("User Data Retrieved")
+                self.tasks_list = json.loads(first)
