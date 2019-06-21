@@ -5,6 +5,7 @@ import logger
 import utils  
 import os                                          
 import json
+import random
 
 
 #this is used for storing a list of tasks as well as adding them
@@ -14,13 +15,13 @@ class User_tasks(object):
         self.tasks_list = list(task_list)                                      #the tasks list which holds an array of tasks - for starting, this needs to be initialized if save file found
         logger.log("User_Tasks Created")
 
-        if self.tasks_list:
+        if self.tasks_list: # checks if the task has anything to open from the save file
             self.deserialize()
 
-    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099"):  # adds a task with information passed into the parameters
+    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099", id_number=random.randint(0, 1000)):  # adds a task with information passed into the parameters
 
-        task_to_add = Task(task_name, time_due)
-        self.tasks_list.append(task_to_add)
+        task_to_add = Task(task_name, time_due, id_number)
+        self.tasks_list.append({"task": task_to_add, "id": id_number})
 
         logger.log("Adding Task")
 
@@ -45,6 +46,9 @@ class User_tasks(object):
                     task.edit_due_date(date_change)
 
                     logger.log("Changing Date")
+    
+    def delete_task(self, task_id):
+        pass
 
     def serialize(self):
 
@@ -80,10 +84,11 @@ class User_tasks(object):
 #a task class which holds information about it's name as well as it's due date
 class Task(object):
 
-    def __init__(self, name="Untitled", due_date="Jan 1, 2099"):                                           #constructor
+    def __init__(self, name="Untitled", due_date="Jan 1, 2099", id_number=random.randint(0, 1000)):  # constructor
 
         self.name = name                                          #name of the task
-        self.due_date = Timer(due_date)                           #datetime object of when it's due
+        self.due_date = Timer(due_date)  # datetime object of when it's due
+        self.id_number  = id_number                         
 
     def edit_name(self, new_name):                                #edits the string name of the task and changes it to the name_add passed in
         self.name = new_name
@@ -99,7 +104,8 @@ class Task(object):
 
     def serialize(self):
         return {"task name":self.name, 
-                "due date":self.due_date.serialize()}
+                "due date":self.due_date.serialize(),
+                "id number":self.id_number}
 
 
 class Timer(object):
