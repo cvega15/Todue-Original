@@ -57,8 +57,8 @@ class App(QWidget):
     #goes through the entire user_tasks list and creates gui tasks based of those
     def refresh_tasks(self):
 
-        for task in self.tasks_layout:
-            task.deleteLater()
+        #for task in self.tasks_layout:
+         #   task.deleteLater()
 
         for task in user_tasks.tasks_list:
             task_to_add = Task(task.identifier, task.task_name, task.due_date, task.time_made)
@@ -172,10 +172,13 @@ class Task(QFrame):
         
     #constantly updates the time until in days, hours, minutes ad seconds
     def update_time(self):
-        self.le_days.setText()
-        self.le_hours.setText()
-        self.le_minutes.setText()
-        self.le_seconds.setText()
+
+        time_til = (self.due_date - datetime.today())
+
+        self.le_days.setText(time_til.days)
+        self.le_hours.setText(time_til.days * 24 + time_til.seconds) // 3600
+        self.le_minutes.setText(time_til.seconds % 3600) // 60
+        self.le_seconds.setText(time_til.seconds % 60)
 
     #delete button connect
     def button_click(self):

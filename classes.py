@@ -97,40 +97,14 @@ class User_tasks(object):
                 logger.log("User Data Retrieved")
                 self.tasks_list = json.loads(first)
 
-    #timer stuff----
-    def timer_call(self):
-        for task in self.tasks_list:
-            task.update_time_tils()
-        self.timer()
-
-    def timer(self):
-        timer = Timer(1, self.timer_call)
-        timer.start()
-    #-----------------
-
-
-
 class Task(object):
 
     def __init__(self, id_number, task_name, time_due, time_made):
 
-        self.id_number = id_number #save in json
-        self.task_name = task_name #save in json
-        self.time_due = time_due #save in json
-        self.time_made = time_made #save in json
-        self.days_til = 0
-        self.hours_til = 0
-        self.minutes_til = 0
-        self.seconds_til = 0
-
-    def update_time_tils(self):
-
-        time_til = (self.time_due - datetime.today())
-
-        self.days_til = (time_til.days)
-        self.hours_til = (time_til.days * 24 + time_til.seconds) // 3600
-        self.minutes_til = (time_til.seconds % 3600) // 60
-        self.seconds_til = (time_til.seconds % 60)
+        self.id_number = id_number
+        self.task_name = task_name
+        self.time_due = time_due
+        self.time_made = time_made
 
     def edit_task(self, new_task_name, new_due_date):
 
@@ -143,8 +117,4 @@ class Task(object):
         print("task name: " + self.task_name)
         print("due date: " + str(self.time_due))
         print("date created: " + str(self.time_made))
-        print("Days: " + str(self.days_til))
-        print("Hours: " + str(self.hours_til))
-        print("Minutes: " + str(self.minutes_til))
-        print("Seconds: " + str(self.seconds_til) + "\n")
 
