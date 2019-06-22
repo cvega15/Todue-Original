@@ -32,9 +32,7 @@ class App(QWidget):
         self.vertical_layout.addWidget(self.tasks_area)
         self.show()
 
-        for task in user_tasks.tasks_list:
-            task_to_add = Task(task['id'], task['task_name'], datetime.strptime(task['time_due'], "%Y-%m-%d %H:%M:%S"))
-            self.tasks_layout.addWidget(task_to_add)
+        self.refresh_tasks()
 
     #create the header for the gui (i dont think it needs to be it's own function tbh, might change later)
     def create_header(self):
@@ -58,6 +56,16 @@ class App(QWidget):
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
         self.tasks_layout.addStretch(1)
+
+    #goes through the entire user_tasks list and creates gui tasks based of those
+    def refresh_tasks(self):
+
+        for task in self.tasks_layout:
+            task.deleteLater()
+
+        for task in user_tasks.tasks_list:
+            task_to_add = Task(task.identifier, task.task_name, task.due_date, task.time_made)
+            self.tasks_layout.addWidget(task_to_add)
 
     #creates an input window for the user to input task information
     def task_adder(self):
@@ -101,16 +109,10 @@ class App(QWidget):
 
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
             
-            #create random identifier for le taske
-            task_identifier = random.randint(0, 1000)
-
             #add to the backend tasks list
-            user_tasks.add_task(task_identifier, self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
+            user_tasks.add_task(None, self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
 
-            #create a gui task
-            task_to_add = Task(task_identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
-            self.tasks_layout.addWidget(task_to_add)
-
+            self.refresh_tasks()
             print('task added')
             logger.log('task added')
             self.adder.reject()
@@ -123,11 +125,12 @@ class App(QWidget):
 class Task(QFrame):
 
     #initialze the Task class and all it's variables as well as create the gui
-    def __init__(self, identifier, task_name, due_date):
+    def __init__(self, identifier, task_name, due_date, time_made):
         super(Task, self).__init__()
         self.due_date = due_date
         self.task_name = task_name
         self.identifier = identifier
+        self.time_made = time_made
 
         self.setFrameStyle(1)
         self.main_layout = QHBoxLayout()
@@ -170,19 +173,12 @@ class Task(QFrame):
 
         self.setLayout(self.main_layout)
         
-        timer = QTimer(self)
-        timer.timeout.connect(self.update_time)
-        timer.start(1000)
-
     #constantly updates the time until in days, hours, minutes ad seconds
     def update_time(self):
-
-        self.time_til = (self.due_date - datetime.today())
-
-        self.le_days.setText('Days: ' + str(self.time_til.days))
-        self.le_hours.setText('Hr: ' + str((self.time_til.days * 24 + self.time_til.seconds) // 3600))
-        self.le_minutes.setText('Min: ' + str((self.time_til.seconds % 3600) // 60))
-        self.le_seconds.setText('Sec: ' + str(self.time_til.seconds % 60))
+        self.le_days.setText()
+        self.le_hours.setText()
+        self.le_minutes.setText()
+        self.le_seconds.setText()
 
     #delete button connect
     def button_click(self):
@@ -275,75 +271,6 @@ def input_error_box(due_time_input, due_date_input, task_name_input):
         else:
             return True
 
-#runs the application
 application = QApplication(sys.argv)
 le_window = App()
 sys.exit(application.exec_())
-
-'''
-def run_program(saved=""):
-
-    while True:
-
-        elif user_input == 3:
-            logger.log("User editing task")
-            user_tasks.display_tasks()
-
-            to_edit = input('please enter in the name of the task that you want to edit: \n>')
-            edit_selection = int(input('1) rename task \n2) change due date \n3) cancel: \n>'))
-
-            if(edit_selection == 1):
-                
-                name_change = input('enter name change: \n>')
-                user_tasks.edit_task(to_edit, name_change, None)
-
-                logger.log("Name Changed")
-
-            elif(edit_selection == 2):
-
-                date_change = input('please enter a change date in the following format(yyyy-mm-dd hh:mm): \n>')
-                user_tasks.edit_task(to_edit, None, utils.string_to_datetime(date_change + ":00"))
-
-                logger.log("Date Changed")
-
-            else:
-                break
-
-        else:
-            user_tasks.serialize()
-            user_tasks.save()
-            print('quitting')
-            logger.log("End")
-            break
-'''
-# saver check
-save_location = os.path.dirname(os.path.abspath(__file__))
-save_file = os.path.join(save_location, "save_files.txt")
-with open(save_file, "r") as handle:
-    first = handle.read()
-    if not first:
-        logger.log("No Save Found")
-        run_program("")
-        
-    elif first: 
-        logger.log("Save Found")
-        logger.log("Retrieving Files")
-        print(first)
-        task_dict = json.loads(first)
-        run_program(task_dict)
-
-        # error for the loads json function:
-        # Traceback (most recent call last):
-        # File "c:\dev\zip_code\main.py", line 79, in <module>
-        #     task_dict = json.loads(first)
-        # File "C:\Users\Thomas\Miniconda3\lib\json\__init__.py", line 348, in loads
-        #     return _default_decoder.decode(s)
-        # File "C:\Users\Thomas\Miniconda3\lib\json\decoder.py", line 337, in decode
-        #     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-        # File "C:\Users\Thomas\Miniconda3\lib\json\decoder.py", line 355, in raw_decode
-        #     raise JSONDecodeError("Expecting value", s, err.value) from None
-        # json.decoder.JSONDecodeError: Expecting value: line 1 column 2 (char 1)
-
-    else:
-        print("No") #             <- meme
-        exit()

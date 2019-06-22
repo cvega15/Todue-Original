@@ -1,17 +1,15 @@
-////
+Planned Features/Todo:
 
-Countdown for timers:
-
-
-Classes:
-	Timer Class:
-		Time Left
-		(Time start Time end Time current)
-	User Class:
-		List of all timers
-	Display Class:
-		shows the graphic of how long is left
-	Log Class:
-		Only function is to print whatever is happening in the other classes and add it to log.txt
-
-		---> Make sure ever line has a log input in which it sends the current thing to log.txt
+1. Clean up and comment code in main.py
+2. Clean up and comment code in classes.py
+3. Make gui tasks add from top to bottom not bottom to top
+4. For each gui task class make the timers use only one main timer instead of mutiple different ones
+5. For each gui task fix the grid layout spacing for the DHMS
+6. For each gui task add a time until graphics bar
+7. For main gui add a sort tasks by name button which reorganizes the tasks by alphabetical order
+8. For main gui add a sort tasks by shortest time which reorganizes the tasks by whichever has least time left first
+9. For main gui add a sort tasks by longest time which reorganizes the tasks by whichever has the most time left first
+10. Add ability to run in the background
+11. Add notification features, automatically notify user 1 day before task is due and 1 hour before task is due
+12. Add reccuring notification feature, user will enter how many times a day they want to be reminded of task
+13. Add custom styling to gui

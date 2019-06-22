@@ -2,6 +2,9 @@ import logger
 import os                                          
 import json
 import random
+import time
+from threading import Timer
+from datetime import datetime
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
@@ -10,31 +13,30 @@ class User_tasks(object):
     def __init__(self):                                           #constructor
 
         self.tasks_list = []                                      #the tasks list which holds an array of tasks - for starting, this needs to be initialized if save file found
+        self.load()
+
         logger.log("User_Tasks Created")
 
-        self.retrieve()
-
-    def add_task(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099"):  # adds a task with information passed into the parameters
+    def add_task(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today()):  # adds a task with parameters, uses today as default time_made parameter
         
-        self.tasks_list.append({"id": id_number, "task_name": task_name, "time_due": time_due})
+        self.tasks_list.append(Task(id_number, task_name, time_due, time_made)) #append a Task to le tasks liste
         self.save()
         logger.log("Adding Task")
 
     def display_tasks(self):                                      #displays all of the tasks and their information
         
         for task in self.tasks_list:
-            print(task)
+            task.display_task()
 
         logger.log("Displaying Tasks")
     
     def edit_task(self, task_id, name_change, date_change):     # calls the edit_name and edit_due_date functions with parameters passed in
 
         for task in self.tasks_list:
-            if task_id == task['id']:
-                print('yay it worked!')
-                task['task_name'] = name_change
+            if task.task_id == task['id']:
+                task.task_name = name_change
                 logger.log("Changing Name")
-                task['time_due'] = date_change
+                task.time_due = date_change
                 logger.log("Changing Date")
 
         self.save()
@@ -42,7 +44,7 @@ class User_tasks(object):
     def delete_task(self, task_id):
 
         for task in self.tasks_list:
-            if task_id == task['id']:
+            if task.task_id == task['id']:
                 self.tasks_list.remove(task)
                 
         self.save()
@@ -63,9 +65,11 @@ class User_tasks(object):
 
         logger.log("User Data Saved")
 
-    def retrieve(self):
+    def load(self):
+
         save_location = os.path.dirname(os.path.abspath(__file__))
         save_file = os.path.join(save_location, "save_files.txt")
+
         with open(save_file, "r") as handle:
             first = handle.read()
             if not first:
@@ -75,3 +79,55 @@ class User_tasks(object):
                 logger.log("Save Found")
                 logger.log("User Data Retrieved")
                 self.tasks_list = json.loads(first)
+
+    #timer stuff----
+    def timer_call(self):
+        for task in self.tasks_list:
+            task.update_time_tils()
+        self.timer()
+
+    def timer(self):
+        timer = Timer(1, self.timer_call)
+        timer.start()
+    #-----------------
+
+
+
+class Task(object):
+
+    def __init__(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099", time_made="Jan 1, 2099"):\
+
+        self.id_number = id_number #save in json
+        self.task_name = task_name #save in json
+        self.time_due = time_due #save in json
+        self.time_made = time_made #save in json
+        self.days_til = 0
+        self.hours_til = 0
+        self.minutes_til = 0
+        self.seconds_til = 0
+
+    def update_time_tils(self):
+
+        time_til = (self.time_due - datetime.today())
+
+        self.days_til = (time_til.days)
+        self.hours_til = (time_til.days * 24 + time_til.seconds) // 3600
+        self.minutes_til = (time_til.seconds % 3600) // 60
+        self.seconds_til = (time_til.seconds % 60)
+
+    def edit_task(self, new_task_name, new_due_date):
+
+        self.task_name = new_task_name
+        self.time_due = new_due_date
+
+    def display_task(self):
+        
+        print("task id: " + str(self.id_number))
+        print("task name: " + self.task_name)
+        print("due date: " + str(self.time_due))
+        print("date created: " + str(self.time_made))
+        print("Days: " + str(self.days_til))
+        print("Hours: " + str(self.hours_til))
+        print("Minutes: " + str(self.minutes_til))
+        print("Seconds: " + str(self.seconds_til) + "\n")
+
