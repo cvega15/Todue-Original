@@ -1,8 +1,8 @@
 import logger 
 import os                                          
 import json
-import random
 import time
+import uuid
 from threading import Timer
 from datetime import datetime
 
@@ -10,27 +10,36 @@ from datetime import datetime
 class User_tasks(object):
 
     # whole init needs redoing with main for the save functionality
-    def __init__(self):                                           #constructor
-
-        self.tasks_list = []                                      #the tasks list which holds an array of tasks - for starting, this needs to be initialized if save file found
+    def __init__(self): 
+        # creates task list which holds the tasks and loads the tasks if there are any
+        self.tasks_list = []
         self.load()
 
         logger.log("User_Tasks Created")
 
-    def add_task(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today()):  # adds a task with parameters, uses today as default time_made parameter
-        
-        self.tasks_list.append(Task(id_number, task_name, time_due, time_made)) #append a Task to le tasks liste
+    def add_task(self, id_number=uuid.uuid4(), task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today()):
+        '''
+         adds a task with parameters, uses today as default time_made parameter
+        '''
+        # creates a Task object with params
+        self.tasks_list.append(Task(id_number, task_name, time_due, time_made)) 
         self.save()
         logger.log("Adding Task")
 
-    def display_tasks(self):                                      #displays all of the tasks and their information
+    def display_tasks(self):
+        '''
+        displays tasks and their featues
+        '''
         
         for task in self.tasks_list:
             task.display_task()
 
         logger.log("Displaying Tasks")
     
-    def edit_task(self, task_id, name_change, date_change):     # calls the edit_name and edit_due_date functions with parameters passed in
+    def edit_task(self, task_id, name_change, date_change):
+        '''
+        calls the edit_name and edit_due_date functions with parameters passed in
+        '''
 
         for task in self.tasks_list:
             if task.task_id == task['id']:
@@ -42,6 +51,9 @@ class User_tasks(object):
         self.save()
     
     def delete_task(self, task_id):
+        '''
+        removes task from the list
+        '''
 
         for task in self.tasks_list:
             if task.task_id == task['id']:
@@ -51,12 +63,15 @@ class User_tasks(object):
 
     def serialize(self):
 
-        self.json_dump = json.dumps(self.tasks_list)
+        # creates the json format for saving
+        self.json_dump = json.dumps(self.tasks_list) 
 
         logger.log("Serialized")   
     
     def save(self):
-
+        '''
+        finds the location of the file and prints the json format into the file
+        '''
         self.serialize()
         save_location = os.path.dirname(os.path.abspath(__file__))
         saver = os.path.join(save_location, "save_files.txt")
@@ -66,7 +81,9 @@ class User_tasks(object):
         logger.log("User Data Saved")
 
     def load(self):
-
+        '''
+        reads the file and decodes the json into the tasks_list
+        '''
         save_location = os.path.dirname(os.path.abspath(__file__))
         save_file = os.path.join(save_location, "save_files.txt")
 
@@ -95,7 +112,7 @@ class User_tasks(object):
 
 class Task(object):
 
-    def __init__(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099", time_made="Jan 1, 2099"):\
+    def __init__(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099", time_made="Jan 1, 2099"):
 
         self.id_number = id_number #save in json
         self.task_name = task_name #save in json

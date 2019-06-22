@@ -1,10 +1,7 @@
 import classes
 import logger
-import utils
 import sys
 import os
-import random
-import json
 from datetime import datetime
 from datetime import timedelta
 from PyQt5.QtWidgets import (QMessageBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
@@ -274,3 +271,4 @@ def input_error_box(due_time_input, due_date_input, task_name_input):
 application = QApplication(sys.argv)
 le_window = App()
 sys.exit(application.exec_())
+logger.log("End")
