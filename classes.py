@@ -112,7 +112,7 @@ class User_tasks(object):
 
 class Task(object):
 
-    def __init__(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099", time_made="Jan 1, 2099"):
+    def __init__(self, id_number, task_name, time_due, time_made):
 
         self.id_number = id_number #save in json
         self.task_name = task_name #save in json
