@@ -2,7 +2,6 @@ import logger
 import os                                          
 import json
 import time
-import uuid
 from threading import Timer
 from datetime import datetime
 import random
@@ -18,7 +17,7 @@ class User_tasks(object):
 
         logger.log("User_Tasks Created")
     #int(uuid.uuid1())
-    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today(), id_number=random.randint(1, 1000)):
+    def add_task(self, task_name, time_due, time_made, id_number):
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
@@ -47,8 +46,7 @@ class User_tasks(object):
             if task.id_number == task_id:
 
                 task.edit_task(name_change, date_change)
-                logger.log("Changing Name")
-                logger.log("Changing Date")
+                logger.log("Editing Task")
         
         self.save()
     
@@ -61,12 +59,16 @@ class User_tasks(object):
             if task.id_number == task_id:
                 print("backend deleting: " + task.task_name)
                 self.tasks_list.remove(task)
+        
+        logger.log("Deleted Task")
                 
         self.save()
 
     def save(self):
 
         to_save = []
+
+        logger.log("Saved Data")
 
         for task in self.tasks_list:
             to_save.append(task.get_dict())

@@ -13,7 +13,6 @@ logger.start()
 user_tasks = classes.User_tasks()
 
 print("Le task scheduling software has arrived")  # awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
-print('░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░\n░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░\n░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░\n░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░\n░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░\n░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░ \n░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░\n░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░\n░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░\n░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░\n▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░\n▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌\n▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░\n░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░\n░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░\n░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░\n░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░\n░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░\n░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░')
 print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D")  # !!!!VERY IMPORTANT!!!!: I added a doge meme          <------    XDDDDDDDDDDDDDDDDDDDDDDD
 print("UwU, i'm a pwogwammewr, pwease give me sheckles to suppowt my famiwy of 14 childwen :3")
 
@@ -48,10 +47,10 @@ class App(QWidget):
         header_layout.addWidget(btn_add_task)
         header_layout.addWidget(task_label)
 
-        sort_by_label = QLabel('sort by')
+        sort_by_label = QLabel('Sort By')
 
         sort_by = QComboBox()
-        sort_by.addItems(["Shortest Time", "longest Time", "Alphabetic"])
+        sort_by.addItems(["Shortest Time", "Longest Time", "Alphabetic"])
         #sort_by.currentIndexChanged.connect()
         header_layout.addStretch()
         header_layout.addWidget(sort_by_label)
@@ -69,6 +68,7 @@ class App(QWidget):
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
         self.tasks_layout.setAlignment(Qt.AlignTop)
+        logger.log("Draw GUI")
 
     #goes through the entire user_tasks list and creates gui tasks based of those
     def refresh_tasks(self):
@@ -126,14 +126,14 @@ class App(QWidget):
             #user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), int(uuid.uuid1()))
             
             
-            #v1
-            #user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), random.randint(1, 1000))
+            # correct ver
+            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), str(uuid.uuid4()))
             
-            #v2
-            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
+            #broken cus def value doesnt work
+            # user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
             
 
-            logger.log('task added')
+            logger.log('Task Added')
             self.adder.reject()
             self.refresh_tasks()
     
