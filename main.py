@@ -7,6 +7,7 @@ from datetime import timedelta
 from PyQt5.QtWidgets import (QMessageBox, QComboBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
 import uuid
+import random
 
 logger.start()
 user_tasks = classes.User_tasks()
@@ -120,8 +121,17 @@ class App(QWidget):
 
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
             
+
             #add to the backend tasks list
-            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), int(uuid.uuid1()))
+            #user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), int(uuid.uuid1()))
+            
+            
+            #v1
+            #user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), random.randint(1, 1000))
+            
+            #v2
+            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
+            
 
             logger.log('task added')
             self.adder.reject()

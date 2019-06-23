@@ -5,6 +5,7 @@ import time
 import uuid
 from threading import Timer
 from datetime import datetime
+import random
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
@@ -16,8 +17,8 @@ class User_tasks(object):
         self.load()
 
         logger.log("User_Tasks Created")
-    
-    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today(), id_number=int(uuid.uuid1())):
+    #int(uuid.uuid1())
+    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today(), id_number=random.randint(1, 1000)):
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
