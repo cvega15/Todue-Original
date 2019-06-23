@@ -1,3 +1,7 @@
-Sat Jun 22 14:29:21 2019 >>> Start
-Sat Jun 22 14:29:21 2019 >>> No Save Found
-Sat Jun 22 14:29:21 2019 >>> User_Tasks Created
+Sun Jun 23 10:52:50 2019 >>> Start
+Sun Jun 23 10:52:50 2019 >>> Save Found
+Sun Jun 23 10:52:50 2019 >>> User Data Retrieved
+Sun Jun 23 10:52:50 2019 >>> Adding Task
+Sun Jun 23 10:52:50 2019 >>> Adding Task
+Sun Jun 23 10:52:50 2019 >>> Adding Task
+Sun Jun 23 10:52:50 2019 >>> User_Tasks Created

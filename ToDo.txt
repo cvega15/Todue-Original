@@ -1,10 +1,11 @@
 Planned Features/Todo:
 
-1. Clean up and comment code in main.py
-2. Clean up and comment code in classes.py
-3. Make gui tasks add from top to bottom not bottom to top
-4. For each gui task class make the timers use only one main timer instead of mutiple different ones
+1. 
+2. 
+3.
+4. 
 5. For each gui task fix the grid layout spacing for the DHMS
+5.5. make countdown stop at 0
 6. For each gui task add a time until graphics bar
 7. For main gui add a sort tasks by name button which reorganizes the tasks by alphabetical order
 8. For main gui add a sort tasks by shortest time which reorganizes the tasks by whichever has least time left first

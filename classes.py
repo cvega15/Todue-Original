@@ -17,12 +17,12 @@ class User_tasks(object):
 
         logger.log("User_Tasks Created")
 
-    def add_task(self, id_number=uuid.uuid4(), task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today()):
+    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today(), id_number=int(uuid.uuid4())):
         '''
          adds a task with parameters, uses today as default time_made parameter
         '''
         # creates a Task object with params
-        self.tasks_list.append(Task(id_number, task_name, time_due, time_made)) 
+        self.tasks_list.append(Task(task_name, time_due, time_made, id_number)) 
         self.save()
         logger.log("Adding Task")
 
@@ -42,13 +42,13 @@ class User_tasks(object):
         '''
 
         for task in self.tasks_list:
-            if task.task_id == task['id']:
-                task.task_name = name_change
-                logger.log("Changing Name")
-                task.time_due = date_change
-                logger.log("Changing Date")
+            if task.id_number == task_id:
 
-        self.save()
+                task.edit_task(name_change, date_change)
+                logger.log("Changing Name")
+                logger.log("Changing Date")
+                self.save()
+                return
     
     def delete_task(self, task_id):
         '''
@@ -56,34 +56,28 @@ class User_tasks(object):
         '''
 
         for task in self.tasks_list:
-            if task.task_id == task['id']:
+            if task.id_number == task_id:
                 self.tasks_list.remove(task)
                 
         self.save()
 
-    def serialize(self):
-
-        # creates the json format for saving
-        self.json_dump = json.dumps(self.tasks_list) 
-
-        logger.log("Serialized")   
-    
     def save(self):
-        '''
-        finds the location of the file and prints the json format into the file
-        '''
-        self.serialize()
+
+        to_save = []
+
+        for task in self.tasks_list:
+            to_save.append(task.get_dict())
+
         save_location = os.path.dirname(os.path.abspath(__file__))
         saver = os.path.join(save_location, "save_files.txt")
-        with open(saver, "w+") as handle:
-            print(self.json_dump, file=handle, end="")
 
-        logger.log("User Data Saved")
+        json_dump = json.dumps(to_save)
+
+        with open(saver, "w+") as handle:
+            print(json_dump, file=handle, end="")
 
     def load(self):
-        '''
-        reads the file and decodes the json into the tasks_list
-        '''
+
         save_location = os.path.dirname(os.path.abspath(__file__))
         save_file = os.path.join(save_location, "save_files.txt")
 
@@ -95,16 +89,20 @@ class User_tasks(object):
             elif first:
                 logger.log("Save Found")
                 logger.log("User Data Retrieved")
-                self.tasks_list = json.loads(first)
+                
+                tasks_list = json.loads(first)
+
+                for task in tasks_list:
+                   self.add_task(task['task name'], datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"), datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"), task["task id"])
 
 class Task(object):
 
-    def __init__(self, id_number, task_name, time_due, time_made):
+    def __init__(self, task_name, time_due, time_made, id_number):
 
-        self.id_number = id_number
         self.task_name = task_name
         self.time_due = time_due
         self.time_made = time_made
+        self.id_number = id_number
 
     def edit_task(self, new_task_name, new_due_date):
 
@@ -113,8 +111,19 @@ class Task(object):
 
     def display_task(self):
         
-        print("task id: " + str(self.id_number))
         print("task name: " + self.task_name)
         print("due date: " + str(self.time_due))
         print("date created: " + str(self.time_made))
+        print("task id: " + str(self.id_number))
 
+    def get_dict(self):
+
+        le_dict = {
+            "task name" :  self.task_name,
+            "due date" :  self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
+            "date created" :  self.time_made.strftime("%m-/%d-/%Y, %H:%M:%S"),
+            "task id" :  self.id_number
+        }
+        return le_dict
+
+        

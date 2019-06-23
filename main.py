@@ -4,7 +4,7 @@ import sys
 import os
 from datetime import datetime
 from datetime import timedelta
-from PyQt5.QtWidgets import (QMessageBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import (QMessageBox, QComboBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
 
 logger.start()
@@ -31,6 +31,10 @@ class App(QWidget):
 
         self.refresh_tasks()
 
+        timer = QTimer(self)
+        timer.timeout.connect(self.countdown_update)
+        timer.start(1000)
+
     #create the header for the gui (i dont think it needs to be it's own function tbh, might change later)
     def create_header(self):
 
@@ -41,6 +45,16 @@ class App(QWidget):
         task_label = QLabel('Add Task')
         header_layout.addWidget(btn_add_task)
         header_layout.addWidget(task_label)
+
+        sort_by_label = QLabel('sort by')
+
+        sort_by = QComboBox()
+        sort_by.addItems(["Shortest Time", "longest Time", "Alphabetic"])
+        #sort_by.currentIndexChanged.connect()
+        header_layout.addStretch()
+        header_layout.addWidget(sort_by_label)
+        header_layout.addWidget(sort_by)
+
         return header_layout
 
     #create the task area for the gui, this will hold all of the tasks (probably doesn't need to be it's own function and can be made in the init_gui class)
@@ -52,17 +66,16 @@ class App(QWidget):
         widget = QWidget()
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
-        self.tasks_layout.addStretch(1)
+        self.tasks_layout.setAlignment(Qt.AlignTop)
 
     #goes through the entire user_tasks list and creates gui tasks based of those
     def refresh_tasks(self):
-
-        #for task in self.tasks_layout:
-         #   task.deleteLater()
+    
+        for task_num in range(self.tasks_layout.count()):
+            self.tasks_layout.itemAt(task_num).widget().deleteLater()
 
         for task in user_tasks.tasks_list:
-            task_to_add = Task(task.identifier, task.task_name, task.due_date, task.time_made)
-            self.tasks_layout.addWidget(task_to_add)
+            self.tasks_layout.addWidget(Task(task.task_name, task.time_due, task.time_made, task.id_number))
 
     #creates an input window for the user to input task information
     def task_adder(self):
@@ -107,29 +120,35 @@ class App(QWidget):
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
             
             #add to the backend tasks list
-            user_tasks.add_task(None, self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
+            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
 
-            self.refresh_tasks()
-            print('task added')
             logger.log('task added')
             self.adder.reject()
+            self.refresh_tasks()
     
     #used in the input window and closes it
     def dialog_cancel_press(self):
         print('cancel pressed')
         self.adder.reject()
 
+    #updates all of the tasks timers at the same time
+    def countdown_update(self):
+        for task in range(self.tasks_layout.count()):
+            self.tasks_layout.itemAt(task).widget().update_time()
+
+
 class Task(QFrame):
 
     #initialze the Task class and all it's variables as well as create the gui
-    def __init__(self, identifier, task_name, due_date, time_made):
+    def __init__(self, task_name, due_date, time_made, identifier):
         super(Task, self).__init__()
+        self.setFrameStyle(1)
+
         self.due_date = due_date
         self.task_name = task_name
         self.identifier = identifier
         self.time_made = time_made
 
-        self.setFrameStyle(1)
         self.main_layout = QHBoxLayout()
 
         #create the left part of the task, this will be a horizontal layout with the name and the date
@@ -155,6 +174,7 @@ class Task(QFrame):
 
         #create all the countdowns
         countdowns = QGridLayout()
+        countdowns.setColumnMinimumWidth(0, 60)
         self.time_til = (self.due_date - datetime.today())
 
         self.le_days = QLabel('D: ')
@@ -162,23 +182,28 @@ class Task(QFrame):
         self.le_minutes = QLabel('M: ')
         self.le_seconds = QLabel('S: ')
 
-        countdowns.addWidget(self.le_days, 0, 0)
-        countdowns.addWidget(self.le_hours, 0, 1)
-        countdowns.addWidget(self.le_minutes, 1, 0)
-        countdowns.addWidget(self.le_seconds, 1, 1)
+        countdowns.addWidget(self.le_days, 0, 0, Qt.AlignRight)
+        countdowns.addWidget(self.le_hours, 0, 1, Qt.AlignLeft)
+        countdowns.addWidget(self.le_minutes, 1, 0, Qt.AlignLeft)
+        countdowns.addWidget(self.le_seconds, 1, 1, Qt.AlignLeft)
+        self.update_time()
+
         self.main_layout.addLayout(countdowns)
+        self.setFixedHeight(100)
 
         self.setLayout(self.main_layout)
+    
+
         
     #constantly updates the time until in days, hours, minutes ad seconds
     def update_time(self):
 
         time_til = (self.due_date - datetime.today())
 
-        self.le_days.setText(time_til.days)
-        self.le_hours.setText(time_til.days * 24 + time_til.seconds) // 3600
-        self.le_minutes.setText(time_til.seconds % 3600) // 60
-        self.le_seconds.setText(time_til.seconds % 60)
+        self.le_days.setText("D: " + str(time_til.days))
+        self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
+        self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
+        self.le_seconds.setText("S: " + str(time_til.seconds % 60))
 
     #delete button connect
     def button_click(self):
@@ -187,6 +212,8 @@ class Task(QFrame):
         if sender.text() == "X":
             user_tasks.delete_task(self.identifier)
             self.deleteLater()
+            le_window.refresh_tasks()
+
             print('task deleted')
     
     #opens an edit window for the user to input a new task name, date or time
@@ -236,18 +263,11 @@ class Task(QFrame):
         #make sure inputs are valid using input_error_box method or else it will show an error message
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
 
-            #rename the task
-            self.task_name = self.task_name_input.text()
-            self.name.setText(self.task_name)
-
-            #change the due date
-            self.due_date = datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())
-            
-            #edit the backend as well with the newly set variables
-            user_tasks.edit_task(self.identifier, self.task_name, str(self.due_date))
+            user_tasks.edit_task(self.identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
 
             #close the editing box
             self.editor.reject()
+            le_window.refresh_tasks()
 
     #cancels the edit window
     def edit_cancel_press(self):
@@ -257,19 +277,19 @@ class Task(QFrame):
 #functions for an error box which pops up when the users input date/time is less that the current date/time or the name is empty
 def input_error_box(due_time_input, due_date_input, task_name_input):
 
-        if(due_time_input.time() < QTime.currentTime() and due_date_input.date() == QDate.currentDate() or task_name_input.text() == ''):
-            error = QMessageBox()
-            error.setText("Error")
-            if(task_name_input.text() == ''):
-                error.setInformativeText("Please enter a task name")
-            else:
-                error.setInformativeText("please enter a future date")
+    if(due_time_input.time() < QTime.currentTime() and due_date_input.date() == QDate.currentDate() or task_name_input.text() == ''):
+        error = QMessageBox()
+        error.setText("Error")
+        if(task_name_input.text() == ''):
+            error.setInformativeText("Please enter a task name")
+        else:
+            error.setInformativeText("please enter a future date")
             error.setWindowTitle("Error")
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
             print('error, please use a future date/time')
-        else:
-            return True
+    else:
+        return True
 
 application = QApplication(sys.argv)
 le_window = App()
