@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 from PyQt5.QtWidgets import (QMessageBox, QComboBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
+import uuid
 
 logger.start()
 user_tasks = classes.User_tasks()
@@ -40,7 +41,7 @@ class App(QWidget):
 
         header_layout = QHBoxLayout()
         btn_add_task = QPushButton('+')
-        btn_add_task.setFixedSize(50, 50)
+        btn_add_task.setFixedSize(40, 40)
         btn_add_task.clicked.connect(self.task_adder)
         task_label = QLabel('Add Task')
         header_layout.addWidget(btn_add_task)
@@ -120,7 +121,7 @@ class App(QWidget):
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
             
             #add to the backend tasks list
-            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
+            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), int(uuid.uuid1()))
 
             logger.log('task added')
             self.adder.reject()
@@ -147,6 +148,7 @@ class Task(QFrame):
         self.due_date = due_date
         self.task_name = task_name
         self.identifier = identifier
+        #print(str(self.identifier))
         self.time_made = time_made
 
         self.main_layout = QHBoxLayout()
@@ -165,7 +167,7 @@ class Task(QFrame):
         self.delete_and_edit.addStretch()
 
         self.name = QLabel(self.task_name)
-        self.date = QLabel(str(self.due_date))
+        self.date = QLabel(self.due_date.strftime("Due: %m/%d/%Y Time: %I:%M %p"))
         self.name_and_date.addWidget(self.name)
         self.name_and_date.addWidget(self.date)
         self.name_and_date.addLayout(self.delete_and_edit)
@@ -175,14 +177,15 @@ class Task(QFrame):
         #create all the countdowns
         countdowns = QGridLayout()
         countdowns.setColumnMinimumWidth(0, 60)
+        countdowns.setColumnMinimumWidth(1, 60)
         self.time_til = (self.due_date - datetime.today())
 
-        self.le_days = QLabel('D: ')
-        self.le_hours = QLabel('H: ')
-        self.le_minutes = QLabel('M: ')
-        self.le_seconds = QLabel('S: ')
+        self.le_days = QLabel('D: 0')
+        self.le_hours = QLabel('H: 0')
+        self.le_minutes = QLabel('M: 0')
+        self.le_seconds = QLabel('S: 0')
 
-        countdowns.addWidget(self.le_days, 0, 0, Qt.AlignRight)
+        countdowns.addWidget(self.le_days, 0, 0, Qt.AlignLeft)
         countdowns.addWidget(self.le_hours, 0, 1, Qt.AlignLeft)
         countdowns.addWidget(self.le_minutes, 1, 0, Qt.AlignLeft)
         countdowns.addWidget(self.le_seconds, 1, 1, Qt.AlignLeft)
@@ -193,25 +196,24 @@ class Task(QFrame):
 
         self.setLayout(self.main_layout)
     
-
-        
     #constantly updates the time until in days, hours, minutes ad seconds
     def update_time(self):
 
         time_til = (self.due_date - datetime.today())
 
-        self.le_days.setText("D: " + str(time_til.days))
-        self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
-        self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
-        self.le_seconds.setText("S: " + str(time_til.seconds % 60))
+        if time_til.days > -1:
+            self.le_days.setText("D: " + str(time_til.days))
+            self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
+            self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
+            self.le_seconds.setText("S: " + str(time_til.seconds % 60))
 
     #delete button connect
     def button_click(self):
 
         sender = self.sender()
         if sender.text() == "X":
+            print('frontend deleting: ' + str(self.task_name))
             user_tasks.delete_task(self.identifier)
-            self.deleteLater()
             le_window.refresh_tasks()
 
             print('task deleted')

@@ -16,12 +16,13 @@ class User_tasks(object):
         self.load()
 
         logger.log("User_Tasks Created")
-
-    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today(), id_number=int(uuid.uuid4())):
+    
+    def add_task(self, task_name="Untitled", time_due="Jan 1, 2099", time_made=datetime.today(), id_number=int(uuid.uuid1())):
         '''
-         adds a task with parameters, uses today as default time_made parameter
+        adds a task with parameters, uses today as default time_made parameter
         '''
         # creates a Task object with params
+        print(str(id_number))
         self.tasks_list.append(Task(task_name, time_due, time_made, id_number)) 
         self.save()
         logger.log("Adding Task")
@@ -47,16 +48,17 @@ class User_tasks(object):
                 task.edit_task(name_change, date_change)
                 logger.log("Changing Name")
                 logger.log("Changing Date")
-                self.save()
-                return
+        
+        self.save()
     
     def delete_task(self, task_id):
         '''
         removes task from the list
         '''
-
+        print('passed in id: ' + str(task_id))
         for task in self.tasks_list:
             if task.id_number == task_id:
+                print("backend deleting: " + task.task_name)
                 self.tasks_list.remove(task)
                 
         self.save()

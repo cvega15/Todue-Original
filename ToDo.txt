@@ -4,8 +4,8 @@ Planned Features/Todo:
 2. 
 3.
 4. 
-5. For each gui task fix the grid layout spacing for the DHMS
-5.5. make countdown stop at 0
+5.
+5.5.
 6. For each gui task add a time until graphics bar
 7. For main gui add a sort tasks by name button which reorganizes the tasks by alphabetical order
 8. For main gui add a sort tasks by shortest time which reorganizes the tasks by whichever has least time left first
@@ -13,4 +13,5 @@ Planned Features/Todo:
 10. Add ability to run in the background
 11. Add notification features, automatically notify user 1 day before task is due and 1 hour before task is due
 12. Add reccuring notification feature, user will enter how many times a day they want to be reminded of task
+12.5 allow user to input a description of the task
 13. Add custom styling to gui
