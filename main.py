@@ -230,7 +230,7 @@ class Task(QFrame):
             self.setStyleSheet(""" 
             QFrame.Task
             {
-                background-color: rgba(188, 20, 0, 0.2);
+                background-color: rgba(70, 130, 180, 0.2);
                 background-clip: padding;
                 border-right-width: """ + str(frame_width - (time_til.seconds * frame_width) // self.creation_due_difference) + """px;
             }
