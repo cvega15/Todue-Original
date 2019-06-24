@@ -21,7 +21,6 @@ class User_tasks(object):
         adds a task with parameters, uses today as default time_made parameter
         '''
         # creates a Task object with params
-        print(str(id_number))
         self.tasks_list.append(Task(task_name, time_due, time_made, id_number)) 
         self.save()
         logger.log("Adding Task")

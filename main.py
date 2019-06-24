@@ -153,12 +153,16 @@ class Task(QFrame):
     def __init__(self, task_name, due_date, time_made, identifier):
         super(Task, self).__init__()
         self.setFrameStyle(1)
-        self.setStyleSheet("QWidget#Form {background-image: url(satania.jpg);}")
-
+        self.setStyleSheet(""" QFrame.Task{
+            background-color: red;
+            border-right-width: 400px;
+            background-clip: padding;
+        }
+        """)
+        
         self.due_date = due_date
         self.task_name = task_name
         self.identifier = identifier
-        #print(str(self.identifier))
         self.time_made = time_made
 
         self.main_layout = QHBoxLayout()
