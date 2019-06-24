@@ -60,7 +60,7 @@ class App(QWidget):
         sort_by_label = QLabel('Sort By')
 
         sort_by = QComboBox()
-        sort_by.addItems(["Date Created", "Closest Due Date", "Time left"])
+        sort_by.addItems(["Alphabetic", "Date Created", "Closest Due Date", "Time left"])
         #sort_by.currentIndexChanged.connect()
         header_layout.addStretch()
         header_layout.addWidget(sort_by_label)
