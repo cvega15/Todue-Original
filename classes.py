@@ -4,6 +4,7 @@ import json
 import time
 from threading import Timer
 from datetime import datetime
+from operator import itemgetter
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
@@ -97,6 +98,27 @@ class User_tasks(object):
 
                 for task in tasks_list:
                    self.add_task(task['task name'], datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"), datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"), task["task id"])
+    
+    # https://www.geeksforgeeks.org/python-sort-python-dictionaries-by-key-or-value/
+    # https://www.google.com/search?q=how+to+sort+a+list+of+dictionaries+in+python&oq=how+to+sort+a+list+of+dictionaries+&aqs=chrome.0.0j69i57j0l2.5950j0j4&sourceid=chrome&ie=UTF-8#kpvalbx=1
+    def sort_alphabet(self):
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter("task name"))
+        self.save()
+        print(self.tasks_list)
+        
+
+    def sort_time(self):
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter("due date"), reverse = True)
+        self.save()
+
+
+    def sort_time_reverse(self):
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter("due date"))
+        self.save()
+
+    def sort_date_added(self):
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter("date created"))
+
 
 class Task(object):
 
