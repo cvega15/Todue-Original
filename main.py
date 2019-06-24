@@ -153,12 +153,6 @@ class Task(QFrame):
     def __init__(self, task_name, due_date, time_made, identifier):
         super(Task, self).__init__()
         self.setFrameStyle(1)
-        self.setStyleSheet(""" QFrame.Task{
-            background-color: red;
-            border-right-width: 400px;
-            background-clip: padding;
-        }
-        """)
         
         self.due_date = due_date
         self.task_name = task_name
@@ -216,7 +210,27 @@ class Task(QFrame):
 
         time_til = (self.due_date - datetime.today())
 
+
+
+        print(self.frameSize().width())
+
+        big_diff = (self.due_date - self.time_made).seconds
+        diff = time_til.seconds
+
+        print('total difference: ' + str(big_diff))
+        print('current difference: ' + str(diff))
+        print('ratio: ' + str((diff * self.frameSize().width()) // big_diff))
+
+
         if time_til.days > -1:
+            self.setStyleSheet(""" 
+            QFrame.Task
+            {
+                background-color: red;
+                background-clip: padding;
+                border-right-width: """ + str((diff * (self.frameSize().width())) // big_diff) + """px;
+            }
+            """)
             self.le_days.setText("D: " + str(time_til.days))
             self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
             self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
