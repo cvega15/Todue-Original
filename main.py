@@ -21,6 +21,17 @@ class App(QWidget):
     def __init__(self):
 
         super(App, self).__init__()
+
+        self.setStyleSheet(
+            '''
+
+
+
+
+
+            '''
+        )
+
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
         self.create_task_area()
@@ -33,7 +44,7 @@ class App(QWidget):
 
         timer = QTimer(self)
         timer.timeout.connect(self.countdown_update)
-        timer.start(1000)
+        timer.start(100)
 
     #create the header for the gui (i dont think it needs to be it's own function tbh, might change later)
     def create_header(self):
@@ -159,6 +170,8 @@ class Task(QFrame):
         self.identifier = identifier
         self.time_made = time_made
 
+        self.creation_due_difference = (self.due_date - self.time_made).seconds
+
         self.main_layout = QHBoxLayout()
 
         #create the left part of the task, this will be a horizontal layout with the name and the date
@@ -210,25 +223,16 @@ class Task(QFrame):
 
         time_til = (self.due_date - datetime.today())
 
-
-
-        print(self.frameSize().width())
-
-        big_diff = (self.due_date - self.time_made).seconds
-        diff = time_til.seconds
-
-        print('total difference: ' + str(big_diff))
-        print('current difference: ' + str(diff))
-        print('ratio: ' + str((diff * self.frameSize().width()) // big_diff))
-
-
         if time_til.days > -1:
+            frame_width = self.frameSize().width()
+
+
             self.setStyleSheet(""" 
             QFrame.Task
             {
-                background-color: red;
+                background-color: rgba(188, 20, 0, 0.2);
                 background-clip: padding;
-                border-right-width: """ + str((diff * (self.frameSize().width())) // big_diff) + """px;
+                border-right-width: """ + str(frame_width - (time_til.seconds * frame_width) // self.creation_due_difference) + """px;
             }
             """)
             self.le_days.setText("D: " + str(time_til.days))
