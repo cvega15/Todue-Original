@@ -4,10 +4,9 @@ import sys
 import os
 from datetime import datetime
 from datetime import timedelta
-from PyQt5.QtWidgets import (QMessageBox, QComboBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import (QMessageBox, QComboBox, QGraphicsScene, QGraphicsView, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
 import uuid
-import random
 
 logger.start()
 user_tasks = classes.User_tasks()
@@ -50,7 +49,7 @@ class App(QWidget):
         sort_by_label = QLabel('Sort By')
 
         sort_by = QComboBox()
-        sort_by.addItems(["Shortest Time", "Longest Time", "Alphabetic"])
+        sort_by.addItems(["Date Created", "Closest Due Date", "Time left"])
         #sort_by.currentIndexChanged.connect()
         header_layout.addStretch()
         header_layout.addWidget(sort_by_label)
@@ -154,6 +153,7 @@ class Task(QFrame):
     def __init__(self, task_name, due_date, time_made, identifier):
         super(Task, self).__init__()
         self.setFrameStyle(1)
+        self.setStyleSheet("QWidget#Form {background-image: url(satania.jpg);}")
 
         self.due_date = due_date
         self.task_name = task_name
@@ -203,6 +203,7 @@ class Task(QFrame):
 
         self.main_layout.addLayout(countdowns)
         self.setFixedHeight(100)
+
 
         self.setLayout(self.main_layout)
     
@@ -306,4 +307,4 @@ def input_error_box(due_time_input, due_date_input, task_name_input):
 application = QApplication(sys.argv)
 le_window = App()
 sys.exit(application.exec_())
-logger.log("End")
+

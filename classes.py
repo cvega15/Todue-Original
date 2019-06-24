@@ -4,7 +4,6 @@ import json
 import time
 from threading import Timer
 from datetime import datetime
-import random
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
@@ -130,5 +129,3 @@ class Task(object):
             "task id" :  self.id_number
         }
         return le_dict
-
-        
