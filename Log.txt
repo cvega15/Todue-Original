@@ -1,25 +1,19 @@
-Mon Jun 24 19:04:40 2019 >>> Start
-Mon Jun 24 19:04:40 2019 >>> Save Found
-Mon Jun 24 19:04:40 2019 >>> User Data Retrieved
-Mon Jun 24 19:04:40 2019 >>> Saved Data
-Mon Jun 24 19:04:40 2019 >>> Adding Task
-Mon Jun 24 19:04:40 2019 >>> Saved Data
-Mon Jun 24 19:04:40 2019 >>> Adding Task
-Mon Jun 24 19:04:40 2019 >>> Saved Data
-Mon Jun 24 19:04:40 2019 >>> Adding Task
-Mon Jun 24 19:04:40 2019 >>> User_Tasks Created
-Mon Jun 24 19:04:40 2019 >>> Draw GUI
-Mon Jun 24 19:04:44 2019 >>> Sorted by Time
-Mon Jun 24 19:04:44 2019 >>> Saved Data
-Mon Jun 24 19:04:45 2019 >>> Sorted by Reverse Time
-Mon Jun 24 19:04:45 2019 >>> Saved Data
-Mon Jun 24 19:04:46 2019 >>> Sorted by Add Date
-Mon Jun 24 19:04:46 2019 >>> Saved Data
-Mon Jun 24 19:04:47 2019 >>> Sorted Alphabetically
-Mon Jun 24 19:04:47 2019 >>> Saved Data
-Mon Jun 24 19:04:48 2019 >>> Sorted by Reverse Time
-Mon Jun 24 19:04:48 2019 >>> Saved Data
-Mon Jun 24 19:04:50 2019 >>> Sorted by Time
-Mon Jun 24 19:04:50 2019 >>> Saved Data
-Mon Jun 24 19:04:51 2019 >>> Sorted Alphabetically
-Mon Jun 24 19:04:51 2019 >>> Saved Data
+Mon Jun 24 19:27:19 2019 >>> Start
+Mon Jun 24 19:27:19 2019 >>> Save Found
+Mon Jun 24 19:27:19 2019 >>> User Data Retrieved
+Mon Jun 24 19:27:19 2019 >>> Saved Data
+Mon Jun 24 19:27:19 2019 >>> Adding Task
+Mon Jun 24 19:27:19 2019 >>> Saved Data
+Mon Jun 24 19:27:19 2019 >>> Adding Task
+Mon Jun 24 19:27:19 2019 >>> Saved Data
+Mon Jun 24 19:27:19 2019 >>> Adding Task
+Mon Jun 24 19:27:19 2019 >>> User_Tasks Created
+Mon Jun 24 19:27:19 2019 >>> Draw GUI
+Mon Jun 24 19:27:23 2019 >>> Sorted by Add Date
+Mon Jun 24 19:27:23 2019 >>> Saved Data
+Mon Jun 24 19:27:25 2019 >>> Sorted Alphabetically
+Mon Jun 24 19:27:25 2019 >>> Saved Data
+Mon Jun 24 19:27:27 2019 >>> Sorted by Time
+Mon Jun 24 19:27:27 2019 >>> Saved Data
+Mon Jun 24 19:27:33 2019 >>> Sorted by Reverse Time
+Mon Jun 24 19:27:33 2019 >>> Saved Data

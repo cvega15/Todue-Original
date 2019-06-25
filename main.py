@@ -62,7 +62,7 @@ class App(QWidget):
         sort_by_label = QLabel('Sort By')
 
         sort_by = QComboBox()
-        sort_by.addItems(["Alphabetic", "Date Created", "Closest Due Date", "Time left"])
+        sort_by.addItems(["Alphabetic", "Date Created", "Furthest Due Date", "Time Left"])
         sort_by.currentIndexChanged.connect(self.sort_by_func)
         header_layout.addStretch()
         header_layout.addWidget(sort_by_label)
@@ -78,7 +78,7 @@ class App(QWidget):
             print('sorting by date created')
             user_tasks.sort_date_added()
         elif i == 2:
-            print('sorting by closest due date')
+            print('sorting by furthest due date')
             user_tasks.sort_time()
         else:
             print('sorting by amount of time left')
