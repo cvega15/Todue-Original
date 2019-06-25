@@ -102,22 +102,21 @@ class User_tasks(object):
     # https://www.geeksforgeeks.org/python-sort-python-dictionaries-by-key-or-value/
     # https://www.google.com/search?q=how+to+sort+a+list+of+dictionaries+in+python&oq=how+to+sort+a+list+of+dictionaries+&aqs=chrome.0.0j69i57j0l2.5950j0j4&sourceid=chrome&ie=UTF-8#kpvalbx=1
     def sort_alphabet(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter("task name"))
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().task_name))
         self.save()
         print(self.tasks_list)
         
-
     def sort_time(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter("due date"), reverse = True)
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().time_due), reverse = True)
         self.save()
 
-
     def sort_time_reverse(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter("due date"))
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().time_due))
         self.save()
 
     def sort_date_added(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter("date created"))
+        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().time_made))
+        self.save()
 
 
 class Task(object):
