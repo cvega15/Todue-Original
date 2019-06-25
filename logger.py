@@ -20,3 +20,22 @@ def log(message):
     with open(logger, "a") as handle:
         print(str(time.ctime()) + " >>> " + str(message), file=handle)
         
+
+def error(message):
+    # logs a error from python code
+    logger = os.path.join(location, "log.txt")
+    with open(logger, "a") as handle:
+        print(str(time.ctime()) + " >>> " + str(message), file=handle)
+
+'''
+logf = open("download.log", "w")
+for download in download_list:
+    try:
+        # code to process download here
+    except Exception as e:     # most generic exception you can catch
+        logf.write("Failed to download {0}: {1}\n".format(str(download), str(e)))
+        # optional: delete local version of failed download
+    finally:
+        # optional clean up code
+        pass
+'''
