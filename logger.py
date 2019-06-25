@@ -25,9 +25,13 @@ def error(message):
     # logs a error from python code
     logger = os.path.join(location, "log.txt")
     with open(logger, "a") as handle:
-        print(str(time.ctime()) + " >>> " + str(message), file=handle)
+        print(str(time.ctime()) + " >>> ERROR owo: " + str(message), file=handle)
 
 '''
+
+Something liek this will go around the main loop in the main file. Then it will run this error! owo
+so like try: execpt: finally:
+
 logf = open("download.log", "w")
 for download in download_list:
     try:
