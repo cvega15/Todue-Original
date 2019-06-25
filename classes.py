@@ -127,8 +127,6 @@ class User_tasks(object):
         logger.log("Sorted by Add Date")
         self.save()
 
-
-
 class Task(object):
 
     def __init__(self, task_name, time_due, time_made, id_number):

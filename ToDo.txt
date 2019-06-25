@@ -12,9 +12,9 @@ Planned Features/Todo:
 8. 
 9. 
 10. Add ability to run in the background
-11. Add notification features, automatically notify user 1 day before task is due and 1 hour before task is due
+11.
 12. Add reccuring notification feature, user will enter how many times a day they want to be reminded of task
 12.5 allow user to input a description of the task
 13. Add custom styling to gui
 14: Add Color Picker (Theme)
-15: make pop up windows not windows but like notifications that fade away after a little bit
+15: make pop up windows not windows for errors  but like notifications that fade away after a little bit
