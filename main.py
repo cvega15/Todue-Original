@@ -83,7 +83,7 @@ class App(QWidget):
         else:
             print('sorting by amount of time left')
             user_tasks.sort_time_reverse()
-        
+        self.refresh_tasks()
 
     #create the task area for the gui, this will hold all of the tasks (probably doesn't need to be it's own function and can be made in the init_gui class)
     def create_task_area(self):
