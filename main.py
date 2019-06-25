@@ -1,20 +1,17 @@
 import classes
 import logger
-import utils
 import sys
 import os
-import random
-import json
 from datetime import datetime
 from datetime import timedelta
-from PyQt5.QtWidgets import (QMessageBox, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import (QMessageBox, QComboBox, QGraphicsScene, QGraphicsView, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
+import uuid
 
 logger.start()
 user_tasks = classes.User_tasks()
 
 print("Le task scheduling software has arrived")  # awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
-print('░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░\n░░░░░░░░▌▒█░░░░░░░░░░░▄▀▒▌░░░\n░░░░░░░░▌▒▒█░░░░░░░░▄▀▒▒▒▐░░░\n░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░░░\n░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░░░\n░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░░░ \n░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌░░\n░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐░░\n░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌░\n░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌░\n▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐░\n▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌\n▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐░\n░▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌░\n░▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐░░\n░░▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌░░\n░░░░▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀░░░\n░░░░░░▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀░░░░░\n░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░')
 print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D")  # !!!!VERY IMPORTANT!!!!: I added a doge meme          <------    XDDDDDDDDDDDDDDDDDDDDDDD
 print("UwU, i'm a pwogwammewr, pwease give me sheckles to suppowt my famiwy of 14 childwen :3")
 
@@ -24,6 +21,19 @@ class App(QWidget):
     def __init__(self):
 
         super(App, self).__init__()
+
+        self.setStyleSheet(
+            '''
+                QFrame.App
+                {
+                    background-color: black;
+                }
+
+                
+
+            '''
+        )
+
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
         self.create_task_area()
@@ -32,21 +42,48 @@ class App(QWidget):
         self.vertical_layout.addWidget(self.tasks_area)
         self.show()
 
-        for task in user_tasks.tasks_list:
-            task_to_add = Task(task['id'], task['task_name'], datetime.strptime(task['time_due'], "%Y-%m-%d %H:%M:%S"))
-            self.tasks_layout.addWidget(task_to_add)
+        self.refresh_tasks()
+
+        timer = QTimer(self)
+        timer.timeout.connect(self.countdown_update)
+        timer.start(1000)
 
     #create the header for the gui (i dont think it needs to be it's own function tbh, might change later)
     def create_header(self):
 
         header_layout = QHBoxLayout()
         btn_add_task = QPushButton('+')
-        btn_add_task.setFixedSize(50, 50)
+        btn_add_task.setFixedSize(40, 40)
         btn_add_task.clicked.connect(self.task_adder)
         task_label = QLabel('Add Task')
         header_layout.addWidget(btn_add_task)
         header_layout.addWidget(task_label)
+
+        sort_by_label = QLabel('Sort By')
+
+        sort_by = QComboBox()
+        sort_by.addItems(["Alphabetic", "Date Created", "Closest Due Date", "Time left"])
+        sort_by.currentIndexChanged.connect(self.sort_by_func)
+        header_layout.addStretch()
+        header_layout.addWidget(sort_by_label)
+        header_layout.addWidget(sort_by)
+
         return header_layout
+
+    def sort_by_func(self, i):
+        if i == 0:
+            print('sorting alphabetically')
+            user_tasks.sort_alphabet()
+        elif i == 1:
+            print('sorting by date created')
+            user_tasks.sort_date_added()
+        elif i == 2:
+            print('sorting by closest due date')
+            user_tasks.sort_time()
+        else:
+            print('sorting by amount of time left')
+            user_tasks.sort_time_reverse()
+        self.refresh_tasks()
 
     #create the task area for the gui, this will hold all of the tasks (probably doesn't need to be it's own function and can be made in the init_gui class)
     def create_task_area(self):
@@ -57,7 +94,17 @@ class App(QWidget):
         widget = QWidget()
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
-        self.tasks_layout.addStretch(1)
+        self.tasks_layout.setAlignment(Qt.AlignTop)
+        logger.log("Draw GUI")
+
+    #goes through the entire user_tasks list and creates gui tasks based of those
+    def refresh_tasks(self):
+    
+        for task_num in range(self.tasks_layout.count()):
+            self.tasks_layout.itemAt(task_num).widget().deleteLater()
+
+        for task in user_tasks.tasks_list:
+            self.tasks_layout.addWidget(Task(task.task_name, task.time_due, task.time_made, task.id_number))
 
     #creates an input window for the user to input task information
     def task_adder(self):
@@ -100,36 +147,41 @@ class App(QWidget):
     def dialog_add_press(self):
 
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
-            
-            #create random identifier for le taske
-            task_identifier = random.randint(0, 1000)
 
-            #add to the backend tasks list
-            user_tasks.add_task(task_identifier, self.task_name_input.text(), str(datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())))
+            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), str(uuid.uuid4()))
 
-            #create a gui task
-            task_to_add = Task(task_identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
-            self.tasks_layout.addWidget(task_to_add)
-
-            print('task added')
-            logger.log('task added')
+            logger.log('Task Added')
             self.adder.reject()
+            self.refresh_tasks()
     
     #used in the input window and closes it
     def dialog_cancel_press(self):
-        print('cancel pressed')
         self.adder.reject()
+
+    #updates all of the tasks timers at the same time
+    def countdown_update(self):
+
+        for task in range(self.tasks_layout.count()):
+            try:
+                self.tasks_layout.itemAt(task).widget().update_time()
+            except:
+                pass
+
 
 class Task(QFrame):
 
     #initialze the Task class and all it's variables as well as create the gui
-    def __init__(self, identifier, task_name, due_date):
+    def __init__(self, task_name, due_date, time_made, identifier):
         super(Task, self).__init__()
+        self.setFrameStyle(1)
+
         self.due_date = due_date
         self.task_name = task_name
         self.identifier = identifier
+        self.time_made = time_made
 
-        self.setFrameStyle(1)
+        self.creation_due_difference = (self.due_date - self.time_made).total_seconds()
+
         self.main_layout = QHBoxLayout()
 
         #create the left part of the task, this will be a horizontal layout with the name and the date
@@ -146,7 +198,7 @@ class Task(QFrame):
         self.delete_and_edit.addStretch()
 
         self.name = QLabel(self.task_name)
-        self.date = QLabel(str(self.due_date))
+        self.date = QLabel(self.due_date.strftime("Due: %m/%d/%Y Time: %I:%M %p"))
         self.name_and_date.addWidget(self.name)
         self.name_and_date.addWidget(self.date)
         self.name_and_date.addLayout(self.delete_and_edit)
@@ -155,44 +207,58 @@ class Task(QFrame):
 
         #create all the countdowns
         countdowns = QGridLayout()
+        countdowns.setColumnMinimumWidth(0, 60)
+        countdowns.setColumnMinimumWidth(1, 60)
         self.time_til = (self.due_date - datetime.today())
 
-        self.le_days = QLabel('D: ')
-        self.le_hours = QLabel('H: ')
-        self.le_minutes = QLabel('M: ')
-        self.le_seconds = QLabel('S: ')
+        self.le_days = QLabel('D: 0')
+        self.le_hours = QLabel('H: 0')
+        self.le_minutes = QLabel('M: 0')
+        self.le_seconds = QLabel('S: 0')
 
-        countdowns.addWidget(self.le_days, 0, 0)
-        countdowns.addWidget(self.le_hours, 0, 1)
-        countdowns.addWidget(self.le_minutes, 1, 0)
-        countdowns.addWidget(self.le_seconds, 1, 1)
+        countdowns.addWidget(self.le_days, 0, 0, Qt.AlignLeft)
+        countdowns.addWidget(self.le_hours, 0, 1, Qt.AlignLeft)
+        countdowns.addWidget(self.le_minutes, 1, 0, Qt.AlignLeft)
+        countdowns.addWidget(self.le_seconds, 1, 1, Qt.AlignLeft)
+        self.update_time()
+
         self.main_layout.addLayout(countdowns)
+        self.setFixedHeight(100)
+
 
         self.setLayout(self.main_layout)
-        
-        timer = QTimer(self)
-        timer.timeout.connect(self.update_time)
-        timer.start(1000)
-
+    
     #constantly updates the time until in days, hours, minutes ad seconds
     def update_time(self):
 
-        self.time_til = (self.due_date - datetime.today())
+        time_til = (self.due_date - datetime.today())
 
-        self.le_days.setText('Days: ' + str(self.time_til.days))
-        self.le_hours.setText('Hr: ' + str((self.time_til.days * 24 + self.time_til.seconds) // 3600))
-        self.le_minutes.setText('Min: ' + str((self.time_til.seconds % 3600) // 60))
-        self.le_seconds.setText('Sec: ' + str(self.time_til.seconds % 60))
+        if time_til.days > -1:
 
+            frame_width = self.frameSize().width()
+
+            self.setStyleSheet(""" 
+            QFrame.Task
+            {
+                background-color: rgba(70, 130, 180, 0.2);
+                background-clip: padding;
+                border-right-width: """ + str(frame_width - (time_til.total_seconds() * frame_width) // self.creation_due_difference) + """px;
+            }
+            """)
+            
+            self.le_days.setText("D: " + str(time_til.days))
+            self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
+            self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
+            self.le_seconds.setText("S: " + str(time_til.seconds % 60))
+#test
     #delete button connect
     def button_click(self):
 
         sender = self.sender()
         if sender.text() == "X":
             user_tasks.delete_task(self.identifier)
-            self.deleteLater()
-            print('task deleted')
-    
+            le_window.refresh_tasks()
+
     #opens an edit window for the user to input a new task name, date or time
     def button_click_edit(self):
 
@@ -240,110 +306,34 @@ class Task(QFrame):
         #make sure inputs are valid using input_error_box method or else it will show an error message
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
 
-            #rename the task
-            self.task_name = self.task_name_input.text()
-            self.name.setText(self.task_name)
-
-            #change the due date
-            self.due_date = datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime())
-            
-            #edit the backend as well with the newly set variables
-            user_tasks.edit_task(self.identifier, self.task_name, str(self.due_date))
+            user_tasks.edit_task(self.identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
 
             #close the editing box
             self.editor.reject()
+            le_window.refresh_tasks()
 
     #cancels the edit window
     def edit_cancel_press(self):
-        print('cancel pressed')
         self.editor.reject()
 
 #functions for an error box which pops up when the users input date/time is less that the current date/time or the name is empty
 def input_error_box(due_time_input, due_date_input, task_name_input):
 
-        if(due_time_input.time() < QTime.currentTime() and due_date_input.date() == QDate.currentDate() or task_name_input.text() == ''):
-            error = QMessageBox()
-            error.setText("Error")
-            if(task_name_input.text() == ''):
-                error.setInformativeText("Please enter a task name")
-            else:
-                error.setInformativeText("please enter a future date")
+    if(due_time_input.time() < QTime.currentTime() and due_date_input.date() == QDate.currentDate() or task_name_input.text() == ''):
+        error = QMessageBox()
+        error.setText("Error")
+        if(task_name_input.text() == ''):
+            error.setInformativeText("Please enter a task name")
+        else:
+            error.setInformativeText("please enter a future date")
             error.setWindowTitle("Error")
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
-            print('error, please use a future date/time')
-        else:
-            return True
 
-#runs the application
+    else:
+        return True
+
 application = QApplication(sys.argv)
 le_window = App()
 sys.exit(application.exec_())
 
-'''
-def run_program(saved=""):
-
-    while True:
-
-        elif user_input == 3:
-            logger.log("User editing task")
-            user_tasks.display_tasks()
-
-            to_edit = input('please enter in the name of the task that you want to edit: \n>')
-            edit_selection = int(input('1) rename task \n2) change due date \n3) cancel: \n>'))
-
-            if(edit_selection == 1):
-                
-                name_change = input('enter name change: \n>')
-                user_tasks.edit_task(to_edit, name_change, None)
-
-                logger.log("Name Changed")
-
-            elif(edit_selection == 2):
-
-                date_change = input('please enter a change date in the following format(yyyy-mm-dd hh:mm): \n>')
-                user_tasks.edit_task(to_edit, None, utils.string_to_datetime(date_change + ":00"))
-
-                logger.log("Date Changed")
-
-            else:
-                break
-
-        else:
-            user_tasks.serialize()
-            user_tasks.save()
-            print('quitting')
-            logger.log("End")
-            break
-'''
-# saver check
-save_location = os.path.dirname(os.path.abspath(__file__))
-save_file = os.path.join(save_location, "save_files.txt")
-with open(save_file, "r") as handle:
-    first = handle.read()
-    if not first:
-        logger.log("No Save Found")
-        run_program("")
-        
-    elif first: 
-        logger.log("Save Found")
-        logger.log("Retrieving Files")
-        print(first)
-        task_dict = json.loads(first)
-        run_program(task_dict)
-
-        # error for the loads json function:
-        # Traceback (most recent call last):
-        # File "c:\dev\zip_code\main.py", line 79, in <module>
-        #     task_dict = json.loads(first)
-        # File "C:\Users\Thomas\Miniconda3\lib\json\__init__.py", line 348, in loads
-        #     return _default_decoder.decode(s)
-        # File "C:\Users\Thomas\Miniconda3\lib\json\decoder.py", line 337, in decode
-        #     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-        # File "C:\Users\Thomas\Miniconda3\lib\json\decoder.py", line 355, in raw_decode
-        #     raise JSONDecodeError("Expecting value", s, err.value) from None
-        # json.decoder.JSONDecodeError: Expecting value: line 1 column 2 (char 1)
-
-    else:
-        print("No") #             <- meme
-        exit()

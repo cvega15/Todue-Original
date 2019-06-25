@@ -1,71 +1,90 @@
 import logger 
 import os                                          
 import json
-import random
+import time
+from threading import Timer
+from datetime import datetime
+from operator import itemgetter
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
 
     # whole init needs redoing with main for the save functionality
-    def __init__(self):                                           #constructor
+    def __init__(self): 
+        # creates task list which holds the tasks and loads the tasks if there are any
+        self.tasks_list = []
+        self.load()
 
-        self.tasks_list = []                                      #the tasks list which holds an array of tasks - for starting, this needs to be initialized if save file found
         logger.log("User_Tasks Created")
-
-        self.retrieve()
-
-    def add_task(self, id_number=random.randint(0, 1000), task_name="Untitled", time_due="Jan 1, 2099"):  # adds a task with information passed into the parameters
-        
-        self.tasks_list.append({"id": id_number, "task_name": task_name, "time_due": time_due})
+    #int(uuid.uuid1())
+    def add_task(self, task_name, time_due, time_made, id_number):
+        '''
+        adds a task with parameters, uses today as default time_made parameter
+        '''
+        # creates a Task object with params
+        self.tasks_list.append(Task(task_name, time_due, time_made, id_number)) 
         self.save()
         logger.log("Adding Task")
 
-    def display_tasks(self):                                      #displays all of the tasks and their information
+    def display_tasks(self):
+        '''
+        displays tasks and their featues
+        '''
         
         for task in self.tasks_list:
-            print(task)
+            task.display_task()
 
         logger.log("Displaying Tasks")
     
-    def edit_task(self, task_id, name_change, date_change):     # calls the edit_name and edit_due_date functions with parameters passed in
+    def edit_task(self, task_id, name_change, date_change):
+        '''
+        calls the edit_name and edit_due_date functions with parameters passed in
+        '''
 
         for task in self.tasks_list:
-            if task_id == task['id']:
-                print('yay it worked!')
-                task['task_name'] = name_change
-                logger.log("Changing Name")
-                task['time_due'] = date_change
-                logger.log("Changing Date")
+            if task.id_number == task_id:
 
+                task.edit_task(name_change, date_change)
+                logger.log("Editing Task")
+        
         self.save()
     
     def delete_task(self, task_id):
-
+        '''
+        removes task from the list
+        '''
+        print('passed in id: ' + str(task_id))
         for task in self.tasks_list:
-            if task_id == task['id']:
+            if task.id_number == task_id:
+                print("backend deleting: " + task.task_name)
                 self.tasks_list.remove(task)
+        
+        logger.log("Deleted Task")
                 
         self.save()
 
-    def serialize(self):
-
-        self.json_dump = json.dumps(self.tasks_list)
-
-        logger.log("Serialized")   
-    
     def save(self):
 
-        self.serialize()
+        to_save = []
+
+        logger.log("Saved Data")
+
+        for task in self.tasks_list:
+            to_save.append(task.get_dict())
+
         save_location = os.path.dirname(os.path.abspath(__file__))
         saver = os.path.join(save_location, "save_files.txt")
+
+        json_dump = json.dumps(to_save)
+
         with open(saver, "w+") as handle:
-            print(self.json_dump, file=handle, end="")
+            print(json_dump, file=handle, end="")
 
-        logger.log("User Data Saved")
+    def load(self):
 
-    def retrieve(self):
         save_location = os.path.dirname(os.path.abspath(__file__))
         save_file = os.path.join(save_location, "save_files.txt")
+
         with open(save_file, "r") as handle:
             first = handle.read()
             if not first:
@@ -74,4 +93,62 @@ class User_tasks(object):
             elif first:
                 logger.log("Save Found")
                 logger.log("User Data Retrieved")
-                self.tasks_list = json.loads(first)
+                
+                tasks_list = json.loads(first)
+
+                for task in tasks_list:
+                   self.add_task(task['task name'], datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"), datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"), task["task id"])
+    
+    # https://www.geeksforgeeks.org/python-sort-python-dictionaries-by-key-or-value/
+    # https://www.google.com/search?q=how+to+sort+a+list+of+dictionaries+in+python&oq=how+to+sort+a+list+of+dictionaries+&aqs=chrome.0.0j69i57j0l2.5950j0j4&sourceid=chrome&ie=UTF-8#kpvalbx=1
+    def sort_alphabet(self):
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.task_name)
+        logger.log("Sorted Alphabetically")
+        self.save()
+
+    def sort_time(self):
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due, reverse=True)
+        logger.log("Sorted by Time")
+        self.save()
+
+    def sort_time_reverse(self):
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due)
+        logger.log("Sorted by Reverse Time")
+        self.save()
+
+    def sort_date_added(self):
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_made)
+        logger.log("Sorted by Add Date")
+        self.save()
+
+
+class Task(object):
+
+    def __init__(self, task_name, time_due, time_made, id_number):
+
+        self.task_name = task_name
+        self.time_due = time_due
+        self.time_made = time_made
+        self.id_number = id_number
+
+    def edit_task(self, new_task_name, new_due_date):
+
+        self.task_name = new_task_name
+        self.time_due = new_due_date
+
+    def display_task(self):
+        
+        print("task name: " + self.task_name)
+        print("due date: " + str(self.time_due))
+        print("date created: " + str(self.time_made))
+        print("task id: " + str(self.id_number))
+
+    def get_dict(self):
+
+        le_dict = {
+            "task name" :  self.task_name,
+            "due date" :  self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
+            "date created" :  self.time_made.strftime("%m-/%d-/%Y, %H:%M:%S"),
+            "task id" :  self.id_number
+        }
+        return le_dict
