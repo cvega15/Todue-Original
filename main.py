@@ -250,7 +250,7 @@ class Task(QFrame):
             self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
             self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
             self.le_seconds.setText("S: " + str(time_til.seconds % 60))
-
+#test
     #delete button connect
     def button_click(self):
 
