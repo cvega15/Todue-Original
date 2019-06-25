@@ -18,3 +18,4 @@ Planned Features/Todo:
 13. Add custom styling to gui
 14: Add Color Picker (Theme)
 15: make pop up windows not windows for errors  but like notifications that fade away after a little bit
+16: add mascot
