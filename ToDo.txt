@@ -19,3 +19,6 @@ Planned Features/Todo:
 14: Add Color Picker (Theme)
 15: make pop up windows not windows for errors  but like notifications that fade away after a little bit
 16: add mascot
+
+Bug Fixes owo!
+1. notifications not correctly checking due time/dates
