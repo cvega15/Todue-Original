@@ -5,6 +5,8 @@ import time
 from threading import Timer
 from datetime import datetime
 from operator import itemgetter
+from win10toast import ToastNotifier
+notifier = ToastNotifier()
 
 #this is used for storing a list of tasks as well as adding them
 class User_tasks(object):
@@ -16,7 +18,7 @@ class User_tasks(object):
         self.load()
 
         logger.log("User_Tasks Created")
-    #int(uuid.uuid1())
+
     def add_task(self, task_name, time_due, time_made, id_number):
         '''
         adds a task with parameters, uses today as default time_made parameter
@@ -62,6 +64,11 @@ class User_tasks(object):
         logger.log("Deleted Task")
                 
         self.save()
+
+    def notify_task(self, task_id, message):
+        for task in self.tasks_list:
+            if task.id_number == task_id:
+                task.notify(message)
 
     def save(self):
 
@@ -120,7 +127,6 @@ class User_tasks(object):
         logger.log("Sorted by Add Date")
         self.save()
 
-
 class Task(object):
 
     def __init__(self, task_name, time_due, time_made, id_number):
@@ -130,13 +136,20 @@ class Task(object):
         self.time_made = time_made
         self.id_number = id_number
 
+    def notify(self, message):
+        notifier.show_toast(self.task_name,
+               message,
+               icon_path=None,
+               duration=5,
+               threaded=True)
+
     def edit_task(self, new_task_name, new_due_date):
 
         self.task_name = new_task_name
         self.time_due = new_due_date
 
     def display_task(self):
-        
+
         print("task name: " + self.task_name)
         print("due date: " + str(self.time_due))
         print("date created: " + str(self.time_made))

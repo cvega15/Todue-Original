@@ -46,7 +46,7 @@ class App(QWidget):
 
         timer = QTimer(self)
         timer.timeout.connect(self.countdown_update)
-        timer.start(1000)
+        timer.start(100)
 
     #create the header for the gui (i dont think it needs to be it's own function tbh, might change later)
     def create_header(self):
@@ -70,17 +70,17 @@ class App(QWidget):
 
         return header_layout
 
-    def sort_by_func(self, i):
-        if i == 0:
+    def sort_by_func(self, choice):
+        if choice == 0:
             print('sorting alphabetically')
             user_tasks.sort_alphabet()
-        elif i == 1:
+        elif choice == 1:
             print('sorting by date created')
             user_tasks.sort_date_added()
-        elif i == 2:
+        elif choice == 2:
             print('sorting by furthest due date')
             user_tasks.sort_time()
-        else:
+        elif choice == 3:
             print('sorting by amount of time left')
             user_tasks.sort_time_reverse()
         self.refresh_tasks()
@@ -225,17 +225,24 @@ class Task(QFrame):
         self.main_layout.addLayout(countdowns)
         self.setFixedHeight(100)
 
-
         self.setLayout(self.main_layout)
     
     #constantly updates the time until in days, hours, minutes ad seconds
     def update_time(self):
 
         time_til = (self.due_date - datetime.today())
+        frame_width = self.frameSize().width()
 
         if time_til.days > -1:
 
-            frame_width = self.frameSize().width()
+            if(time_til.seconds == 1):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due")
+            elif(time_til.seconds == 86400):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 day")
+            elif(time_til.seconds == 600):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due in 10 minutes")
+            elif(time_til.seconds == 3600):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 hour")
 
             self.setStyleSheet(""" 
             QFrame.Task
@@ -245,11 +252,13 @@ class Task(QFrame):
                 border-right-width: """ + str(frame_width - (time_til.total_seconds() * frame_width) // self.creation_due_difference) + """px;
             }
             """)
-            
             self.le_days.setText("D: " + str(time_til.days))
             self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
             self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
             self.le_seconds.setText("S: " + str(time_til.seconds % 60))
+        else:
+            self.setStyleSheet('QFrame.Task {background-color: transparent;}')
+
 #test
     #delete button connect
     def button_click(self):
