@@ -225,7 +225,6 @@ class Task(QFrame):
         self.main_layout.addLayout(countdowns)
         self.setFixedHeight(100)
 
-
         self.setLayout(self.main_layout)
     
     #constantly updates the time until in days, hours, minutes ad seconds
@@ -235,6 +234,15 @@ class Task(QFrame):
 
         if time_til.days > -1:
 
+            if(time_til.seconds == 1):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due")
+            elif(time_til.seconds == 86400):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 day")
+            elif(time_til.seconds == 600):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due in 10 minutes")
+            elif(time_til.seconds == 3600):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 hour")
+            
             frame_width = self.frameSize().width()
 
             self.setStyleSheet(""" 
