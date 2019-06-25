@@ -17,3 +17,4 @@ Planned Features/Todo:
 12.5 allow user to input a description of the task
 13. Add custom styling to gui
 14: Add Color Picker (Theme)
+15: make pop up windows not windows but like notifications that fade away after a little bit

@@ -24,10 +24,12 @@ class App(QWidget):
 
         self.setStyleSheet(
             '''
+                QFrame.App
+                {
+                    background-color: black;
+                }
 
-
-
-
+                
 
             '''
         )
@@ -172,7 +174,7 @@ class Task(QFrame):
     def __init__(self, task_name, due_date, time_made, identifier):
         super(Task, self).__init__()
         self.setFrameStyle(1)
-        
+
         self.due_date = due_date
         self.task_name = task_name
         self.identifier = identifier
@@ -257,7 +259,6 @@ class Task(QFrame):
             user_tasks.delete_task(self.identifier)
             le_window.refresh_tasks()
 
-    
     #opens an edit window for the user to input a new task name, date or time
     def button_click_edit(self):
 
