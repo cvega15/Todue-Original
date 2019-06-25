@@ -102,20 +102,23 @@ class User_tasks(object):
     # https://www.geeksforgeeks.org/python-sort-python-dictionaries-by-key-or-value/
     # https://www.google.com/search?q=how+to+sort+a+list+of+dictionaries+in+python&oq=how+to+sort+a+list+of+dictionaries+&aqs=chrome.0.0j69i57j0l2.5950j0j4&sourceid=chrome&ie=UTF-8#kpvalbx=1
     def sort_alphabet(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().task_name))
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.task_name)
+        logger.log("Sorted Alphabetically")
         self.save()
-        print(self.tasks_list)
-        
+
     def sort_time(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().time_due), reverse = True)
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due, reverse=True)
+        logger.log("Sorted by Time")
         self.save()
 
     def sort_time_reverse(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().time_due))
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due)
+        logger.log("Sorted by Reverse Time")
         self.save()
 
     def sort_date_added(self):
-        self.tasks_list = sorted(self.tasks_list, key=itemgetter(self.tasks_list.item().time_made))
+        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_made)
+        logger.log("Sorted by Add Date")
         self.save()
 
 
