@@ -99,9 +99,8 @@ class User_tasks(object):
                 for task in tasks_list:
                    self.add_task(task['task name'], datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"), datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"), task["task id"])
     
-    # https://www.geeksforgeeks.org/python-sort-python-dictionaries-by-key-or-value/
-    # https://www.google.com/search?q=how+to+sort+a+list+of+dictionaries+in+python&oq=how+to+sort+a+list+of+dictionaries+&aqs=chrome.0.0j69i57j0l2.5950j0j4&sourceid=chrome&ie=UTF-8#kpvalbx=1
     def sort_alphabet(self):
+        # takes each object and sorts it by its self.name.... this is the same for the following sort functions
         self.tasks_list = sorted(self.tasks_list, key=lambda task: task.task_name)
         logger.log("Sorted Alphabetically")
         self.save()
