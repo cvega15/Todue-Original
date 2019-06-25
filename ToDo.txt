@@ -1,6 +1,6 @@
 Planned Features/Todo:
 
-1. 
+1. Settings bar where you can edit all the sttings like theme, and other things
 2. 
 3.
 4. 
