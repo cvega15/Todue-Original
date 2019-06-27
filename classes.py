@@ -19,12 +19,12 @@ class User_tasks(object):
 
         logger.log("User_Tasks Created")
 
-    def add_task(self, task_name, time_due, time_made, id_number):
+    def add_task(self, task_name, time_due, time_made, id_number, notifications=[]):
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
         # creates a Task object with params
-        self.tasks_list.append(Task(task_name, time_due, time_made, id_number)) 
+        self.tasks_list.append(Task(task_name, time_due, time_made, id_number, notifications)) 
         self.save()
         logger.log("Adding Task")
 
@@ -38,7 +38,7 @@ class User_tasks(object):
 
         logger.log("Displaying Tasks")
     
-    def edit_task(self, task_id, name_change, date_change):
+    def edit_task(self, task_id, name_change, date_change, notifications):
         '''
         calls the edit_name and edit_due_date functions with parameters passed in
         '''
@@ -46,7 +46,7 @@ class User_tasks(object):
         for task in self.tasks_list:
             if task.id_number == task_id:
 
-                task.edit_task(name_change, date_change)
+                task.edit_task(name_change, date_change, notifications)
                 logger.log("Editing Task")
         
         self.save()
@@ -104,8 +104,13 @@ class User_tasks(object):
                 tasks_list = json.loads(first)
 
                 for task in tasks_list:
-                   self.add_task(task['task name'], datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"), datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"), task["task id"])
+                   self.add_task(task['task name'], datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"), datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"), task["task id"], task["notifications"])
     
+    def get_task(self, task_id):
+        for task in self.tasks_list:
+            if task.id_number == task_id:
+                return task
+
     def sort_alphabet(self):
         # takes each object and sorts it by its self.name.... this is the same for the following sort functions
         self.tasks_list = sorted(self.tasks_list, key=lambda task: task.task_name)
@@ -122,6 +127,10 @@ class User_tasks(object):
         logger.log("Sorted by Reverse Time")
         self.save()
 
+    def notify_tasks(self):
+        for task in self.tasks_list:
+            task.notify_custom()
+
     def sort_date_added(self):
         self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_made)
         logger.log("Sorted by Add Date")
@@ -129,12 +138,13 @@ class User_tasks(object):
 
 class Task(object):
 
-    def __init__(self, task_name, time_due, time_made, id_number):
+    def __init__(self, task_name, time_due, time_made, id_number, notifications):
 
         self.task_name = task_name
         self.time_due = time_due
         self.time_made = time_made
         self.id_number = id_number
+        self.notifications = notifications
 
     def notify(self, message):
         notifier.show_toast(self.task_name,
@@ -143,10 +153,16 @@ class Task(object):
                duration=5,
                threaded=True)
 
-    def edit_task(self, new_task_name, new_due_date):
+    def notify_custom(self):
+        for notification_time in self.notifications:
+            if (datetime.now()).strftime("%I:%M:%S %p") == (notification_time):
+                self.notify('notification for this task')
+
+    def edit_task(self, new_task_name, new_due_date, notifications):
 
         self.task_name = new_task_name
         self.time_due = new_due_date
+        self.notifications = notifications
 
     def display_task(self):
 
@@ -161,6 +177,7 @@ class Task(object):
             "task name" :  self.task_name,
             "due date" :  self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
             "date created" :  self.time_made.strftime("%m-/%d-/%Y, %H:%M:%S"),
-            "task id" :  self.id_number
+            "task id" :  self.id_number,
+            "notifications" : self.notifications
         }
         return le_dict

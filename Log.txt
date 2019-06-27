@@ -1,8 +1,5 @@
-Tue Jun 25 14:58:17 2019 >>> Start
-Tue Jun 25 14:58:17 2019 >>> Save Found
-Tue Jun 25 14:58:17 2019 >>> User Data Retrieved
-Tue Jun 25 14:58:17 2019 >>> User_Tasks Created
-Tue Jun 25 14:58:17 2019 >>> Draw GUI
-Tue Jun 25 14:58:22 2019 >>> Saved Data
-Tue Jun 25 14:58:22 2019 >>> Adding Task
-Tue Jun 25 14:58:22 2019 >>> Task Added
+Wed Jun 26 22:28:55 2019 >>> Start
+Wed Jun 26 22:28:55 2019 >>> Save Found
+Wed Jun 26 22:28:55 2019 >>> User Data Retrieved
+Wed Jun 26 22:28:55 2019 >>> User_Tasks Created
+Wed Jun 26 22:28:55 2019 >>> Draw GUI
