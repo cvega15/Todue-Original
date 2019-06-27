@@ -4,7 +4,7 @@ import sys
 import os
 from datetime import datetime
 from datetime import timedelta
-from PyQt5.QtWidgets import (QMessageBox, QComboBox, QGraphicsScene, QGraphicsView, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import (QTabWidget, QMessageBox, QComboBox, QGraphicsScene, QGraphicsView, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
 import uuid
 
@@ -19,20 +19,7 @@ class App(QWidget):
 
     #initialize all of the variables and call gui functions
     def __init__(self):
-
         super(App, self).__init__()
-
-        self.setStyleSheet(
-            '''
-                QFrame.App
-                {
-                    background-color: black;
-                }
-
-                
-
-            '''
-        )
 
         self.setWindowTitle('to due')
         self.setGeometry(300, 200, 600, 600)
@@ -54,7 +41,7 @@ class App(QWidget):
         header_layout = QHBoxLayout()
         btn_add_task = QPushButton('+')
         btn_add_task.setFixedSize(40, 40)
-        btn_add_task.clicked.connect(self.task_adder)
+        btn_add_task.clicked.connect(lambda: TaskAddEditor('Add a task', 'Add', None))
         task_label = QLabel('Add Task')
         header_layout.addWidget(btn_add_task)
         header_layout.addWidget(task_label)
@@ -70,6 +57,7 @@ class App(QWidget):
 
         return header_layout
 
+    #calls backend sort functions
     def sort_by_func(self, choice):
         if choice == 0:
             print('sorting alphabetically')
@@ -106,67 +94,15 @@ class App(QWidget):
         for task in user_tasks.tasks_list:
             self.tasks_layout.addWidget(Task(task.task_name, task.time_due, task.time_made, task.id_number))
 
-    #creates an input window for the user to input task information
-    def task_adder(self):
-
-        self.adder = QDialog()
-        self.adder.setGeometry(50, 50, 250, 200)
-        main_layout = QVBoxLayout()
-        task_name = QLabel('Task Name')
-        self.task_name_input = QLineEdit()
-        due_date = QLabel('Due Date')
-        self.due_date_input = QDateEdit()
-        self.due_date_input.setMinimumDate(QDate.currentDate())
-        due_time = QLabel('Due Time')
-        self.due_time_input = QTimeEdit()
-
-        main_layout.addWidget(task_name)
-        main_layout.addWidget(self.task_name_input)
-        main_layout.addWidget(due_date)
-        main_layout.addWidget(self.due_date_input)
-
-        main_layout.addWidget(due_time)
-        main_layout.addWidget(self.due_time_input)
-        main_layout.addSpacing(20)
-
-        buttons = QHBoxLayout()
-        button_ok = QPushButton("Add")
-        button_ok.clicked.connect(self.dialog_add_press)
-        button_close = QPushButton("Cancel")
-        button_close.clicked.connect(self.dialog_cancel_press)
-        buttons.addWidget(button_ok)
-        buttons.addWidget(button_close)
-        main_layout.addLayout(buttons)
-        self.adder.setLayout(main_layout)
-
-        self.adder.addAction
-        self.adder.setWindowTitle("Add a Task")
-        self.adder.exec_()
-
-    #used in the input window to create a new Task class
-    def dialog_add_press(self):
-
-        if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
-
-            user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), str(uuid.uuid4()))
-
-            logger.log('Task Added')
-            self.adder.reject()
-            self.refresh_tasks()
-    
-    #used in the input window and closes it
-    def dialog_cancel_press(self):
-        self.adder.reject()
-
     #updates all of the tasks timers at the same time
     def countdown_update(self):
 
+        user_tasks.notify_task
         for task in range(self.tasks_layout.count()):
             try:
                 self.tasks_layout.itemAt(task).widget().update_time()
             except:
                 pass
-
 
 class Task(QFrame):
 
@@ -191,7 +127,7 @@ class Task(QFrame):
         self.edit = QPushButton('/')
         self.delete.clicked.connect(self.button_click)
         self.delete.setFixedSize(25, 25)
-        self.edit.clicked.connect(self.button_click_edit)
+        self.edit.clicked.connect(lambda: TaskAddEditor('Edit task', 'Edit', self.identifier))
         self.edit.setFixedSize(25, 25)
         self.delete_and_edit.addWidget(self.delete)
         self.delete_and_edit.addWidget(self.edit)
@@ -237,12 +173,14 @@ class Task(QFrame):
 
             if(time_til.seconds == 1):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due")
-            elif(time_til.seconds == 86400):
+            elif(time_til.total_seconds == 86400):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 day")
-            elif(time_til.seconds == 600):
+            elif(time_til.total_seconds == 600):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 10 minutes")
-            elif(time_til.seconds == 3600):
+            elif(time_til.total_seconds == 3600):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 hour")
+
+            user_tasks.notify_tasks()
 
             self.setStyleSheet(""" 
             QFrame.Task
@@ -259,7 +197,6 @@ class Task(QFrame):
         else:
             self.setStyleSheet('QFrame.Task {background-color: transparent;}')
 
-#test
     #delete button connect
     def button_click(self):
 
@@ -268,62 +205,178 @@ class Task(QFrame):
             user_tasks.delete_task(self.identifier)
             le_window.refresh_tasks()
 
-    #opens an edit window for the user to input a new task name, date or time
-    def button_click_edit(self):
 
-        #gets the date and time for editing
-        self.date_edit = QDate.fromString(str(self.due_date.date()), 'yyyy-MM-dd')
-        self.time_edit = QTime.fromString(str(self.due_date.time()))
+class TaskAddEditor(QDialog):
 
-        self.editor = QDialog()
-        self.editor.setGeometry(50, 50, 250, 200)
+    #initialize everything
+    def __init__(self, dialog_name, button_name, identifier):
+        super(TaskAddEditor, self).__init__()
+
+        self.dialog_name = dialog_name
+        self.button_name = button_name
+        self.identifier = identifier
+
+        self.setGeometry(50, 50, 300, 250)
+
+        self.le_tabs = QTabWidget()
+        self.le_tabs.tab_1 = QWidget()
+        self.le_tabs.tab_2 = QWidget()
+        
+        self.le_tabs.addTab(self.le_tabs.tab_1, "basic info")
+        self.le_tabs.addTab(self.le_tabs.tab_2, "notifications")
+
+        self.tab_1()
+        self.tab_2()
+
         main_layout = QVBoxLayout()
-        task_name = QLabel('Task Name')
-        self.task_name_input = QLineEdit(self.task_name)
-        due_date = QLabel('Due Date')
-        self.due_date_input = QDateEdit(self.date_edit)
-        self.due_date_input.setMinimumDate(QDate.currentDate())
-        due_time = QLabel('Due Time')
-        self.due_time_input = QTimeEdit(self.time_edit)
-
-        main_layout.addWidget(task_name)
-        main_layout.addWidget(self.task_name_input)
-        main_layout.addWidget(due_date)
-        main_layout.addWidget(self.due_date_input)
-
-        main_layout.addWidget(due_time)
-        main_layout.addWidget(self.due_time_input)
-        main_layout.addSpacing(20)
+        main_layout.addWidget(self.le_tabs)
 
         buttons = QHBoxLayout()
-        button_ok = QPushButton("Edit")
-        button_ok.clicked.connect(self.edit_press)
+
+        button_ok = QPushButton(self.button_name)
         button_close = QPushButton("Cancel")
-        button_close.clicked.connect(self.edit_cancel_press)
+        button_ok.clicked.connect(self.dialog_button_press)
+        button_close.clicked.connect(self.dialog_cancel_press)
         buttons.addWidget(button_ok)
         buttons.addWidget(button_close)
+
         main_layout.addLayout(buttons)
-        self.editor.setLayout(main_layout)
 
-        self.editor.addAction
-        self.editor.setWindowTitle("Edit a Task")
-        self.editor.exec_()
+        self.setLayout(main_layout)
 
-    #function for making changes to the Task classes data i.e name and due date
-    def edit_press(self):
+        self.setWindowTitle(dialog_name)
+        self.exec_()
 
-        #make sure inputs are valid using input_error_box method or else it will show an error message
+    #tab 1
+    def tab_1(self):
+
+        #main layout
+        layout = QVBoxLayout()
+
+        task_name = QLabel('Task Name')
+        due_date = QLabel('Due Date')
+        due_time = QLabel('Due Time')
+
+        if(self.button_name == "Add"):
+            self.task_name_input = QLineEdit()
+            self.due_date_input = QDateEdit()
+            self.due_date_input.setMinimumDate(QDate.currentDate())
+            self.due_time_input = QTimeEdit()
+        else:
+            for task in user_tasks.tasks_list:
+                if task.id_number == self.identifier:
+                    self.task_name_input = QLineEdit(task.task_name)
+                    self.due_date_input = QDateEdit(task.time_due.date())
+                    self.due_date_input.setMinimumDate(QDate.currentDate())
+                    self.due_time_input = QTimeEdit(task.time_due.time())
+
+        layout.addWidget(task_name)
+        layout.addWidget(self.task_name_input)
+        layout.addWidget(due_date)
+        layout.addWidget(self.due_date_input)
+        layout.addWidget(due_time)
+        layout.addWidget(self.due_time_input)
+        layout.addSpacing(20)
+
+        self.le_tabs.tab_1.setLayout(layout)
+
+    #tab 2
+    def tab_2(self):
+
+        layout = QVBoxLayout()
+
+        page_name = QLabel('Notification Settings')
+        layout.addWidget(page_name)
+
+        add_notification_area = QHBoxLayout()
+
+        description = QLabel('Remind me everyday at: ')
+        self.time_input = QTimeEdit()
+        add_notification = QPushButton('+')
+        add_notification.setFixedSize(30, 30)
+        add_notification.clicked.connect(self.add_notification)
+
+        add_notification_area.addWidget(description)
+        add_notification_area.addWidget(self.time_input)
+        add_notification_area.addWidget(add_notification)
+    
+        layout.addLayout(add_notification_area)
+
+        your_notifications = QLabel('Your Notifications:')
+
+        layout.addWidget(your_notifications)
+
+        #create a scroll area to hold notifications
+        notifications_area = QScrollArea(self)
+        notifications_area.setWidgetResizable(True)
+        widget = QWidget()
+        notifications_area.setWidget(widget)
+        self.notifications_layout = QVBoxLayout(widget)
+        notifications_area.setAlignment(Qt.AlignTop)
+        self.notifications_layout.setAlignment(Qt.AlignTop)
+        
+        layout.addWidget(notifications_area)
+
+        if self.identifier is not None:
+            le_task = user_tasks.get_task(self.identifier)
+            for notification_date in le_task.notifications:
+                self.notifications_layout.addWidget(Notification(datetime.strptime(notification_date, "%I:%M:%S %p")))
+
+        self.le_tabs.tab_2.setLayout(layout)
+
+    #adds a notification to the layout of notifications
+    def add_notification(self):
+
+        for notification in range(self.notifications_layout.count()):
+            if datetime.strptime(self.notifications_layout.itemAt(notification).widget().time_input, "%I:%M %p").time() > self.time_input.time().toPyTime():
+                self.notifications_layout.insertWidget(notification, Notification(self.time_input.time().toPyTime()))
+                return 
+            elif (self.notifications_layout.itemAt(notification).widget().time_input) == self.time_input.time().toPyTime().strftime('%I:%M %p'):
+                error = QMessageBox()
+                error.setText("please enter a different time")
+                error.exec_()
+                return 
+            
+        self.notifications_layout.addWidget(Notification(self.time_input.time().toPyTime()))
+
+    #when add is pressed
+    def dialog_button_press(self):
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
 
-            user_tasks.edit_task(self.identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()))
+            notification_dates = []
+            for notification in range(self.notifications_layout.count()):
+                notification_dates.append(datetime.strptime(self.notifications_layout.itemAt(notification).widget().time_input, "%I:%M %p").strftime("%I:%M:%S %p"))
 
-            #close the editing box
-            self.editor.reject()
+            if(self.button_name == 'Add'):
+                user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), str(uuid.uuid4()), notification_dates)
+            else:
+                user_tasks.edit_task(self.identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), notification_dates)
+
+            self.reject()
             le_window.refresh_tasks()
+    
+    #used in the input window and closes it
+    def dialog_cancel_press(self):
+        self.reject()
 
-    #cancels the edit window
-    def edit_cancel_press(self):
-        self.editor.reject()
+class Notification(QFrame):
+
+    #initialize everything
+    def __init__(self, notification_time):
+        super(Notification, self).__init__()
+        self.setFrameStyle(1)
+        main_layout = QHBoxLayout()
+        self.time_input = notification_time.strftime("%I:%M %p")
+        test2 = QLabel(self.time_input)
+        test3 = QPushButton('-')
+        test3.setFixedSize(32, 22)
+        test3.clicked.connect(lambda: self.deleteLater())
+
+        main_layout.addWidget(test2)
+        main_layout.addWidget(test3)
+
+        self.setFixedHeight(45)
+        self.setLayout(main_layout)
 
 #functions for an error box which pops up when the users input date/time is less that the current date/time or the name is empty
 def input_error_box(due_time_input, due_date_input, task_name_input):
@@ -341,6 +394,7 @@ def input_error_box(due_time_input, due_date_input, task_name_input):
 
     else:
         return True
+
 
 application = QApplication(sys.argv)
 le_window = App()
