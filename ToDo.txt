@@ -1,9 +1,9 @@
 Planned Features/Todo:
 
 1. Settings bar where you can edit all the sttings like theme, and other things
-2. 
-3.
-4. 
+2. sqlite                                    -- MOST IMPORTANT FOR FINAL
+3. browser gui                               -- MOST IMPORTANT FOR FINAL
+4. Flask
 5.
 5.5.
 6. 
@@ -20,5 +20,5 @@ Planned Features/Todo:
 15: make pop up windows not windows for errors  but like notifications that fade away after a little bit
 16: add mascot
 
-Bug Fixes owo!
+Bug Fixes
 1. notifications not correctly checking due time/dates
