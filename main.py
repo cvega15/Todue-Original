@@ -8,12 +8,9 @@ from PyQt5.QtWidgets import (QTabWidget, QMessageBox, QComboBox, QGraphicsScene,
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
 import uuid
 
-logger.start()
-user_tasks = classes.User_tasks()
-
-print("Le task scheduling software has arrived")  # awesome ---> # YES :) ------>  #is this so ppl who view this understand its a meme? ----->      #meme
-print("Oh boy i worked really hard on this, i can't wait to see it run without any bugs! :D")  # !!!!VERY IMPORTANT!!!!: I added a doge meme          <------    XDDDDDDDDDDDDDDDDDDDDDDD
-print("UwU, i'm a pwogwammewr, pwease give me sheckles to suppowt my famiwy of 14 childwen :3")
+logger.start("log.txt")
+logger.save_create("save_files.txt")
+user_tasks = classes.TaskCollection()
 
 class App(QWidget):
 
@@ -46,13 +43,13 @@ class App(QWidget):
         header_layout.addWidget(btn_add_task)
         header_layout.addWidget(task_label)
 
-        sort_by_label = QLabel('Sort By')
+        sort_by_menu = QLabel('Sort By')
 
         sort_by = QComboBox()
         sort_by.addItems(["Alphabetic", "Date Created", "Furthest Due Date", "Time Left"])
         sort_by.currentIndexChanged.connect(self.sort_by_func)
         header_layout.addStretch()
-        header_layout.addWidget(sort_by_label)
+        header_layout.addWidget(sort_by_menu)
         header_layout.addWidget(sort_by)
 
         return header_layout
@@ -67,10 +64,10 @@ class App(QWidget):
             user_tasks.sort_date_added()
         elif choice == 2:
             print('sorting by furthest due date')
-            user_tasks.sort_time()
+            user_tasks.sort_time_remaining_asc()
         elif choice == 3:
             print('sorting by amount of time left')
-            user_tasks.sort_time_reverse()
+            user_tasks.sort_time_remaining_desc()
         self.refresh_tasks()
 
     #create the task area for the gui, this will hold all of the tasks (probably doesn't need to be it's own function and can be made in the init_gui class)
@@ -83,7 +80,7 @@ class App(QWidget):
         self.tasks_area.setWidget(widget)
         self.tasks_layout = QVBoxLayout(widget)
         self.tasks_layout.setAlignment(Qt.AlignTop)
-        logger.log("Draw GUI")
+        logger.log("Drawing GUI")
 
     #goes through the entire user_tasks list and creates gui tasks based of those
     def refresh_tasks(self):
@@ -92,7 +89,7 @@ class App(QWidget):
             self.tasks_layout.itemAt(task_num).widget().deleteLater()
 
         for task in user_tasks.tasks_list:
-            self.tasks_layout.addWidget(Task(task.task_name, task.time_due, task.time_made, task.id_number))
+            self.tasks_layout.addWidget(TaskWindow(task.task_name, task.time_due, task.time_made, task.id_number))
 
     #updates all of the tasks timers at the same time
     def countdown_update(self):
@@ -104,11 +101,11 @@ class App(QWidget):
             except:
                 pass
 
-class Task(QFrame):
+class TaskWindow(QFrame):
 
-    #initialze the Task class and all it's variables as well as create the gui
+    #initialze the TaskWindow class and all it's variables as well as create the gui
     def __init__(self, task_name, due_date, time_made, identifier):
-        super(Task, self).__init__()
+        super(TaskWindow, self).__init__()
         self.setFrameStyle(1)
 
         self.due_date = due_date
@@ -145,17 +142,17 @@ class Task(QFrame):
         countdowns = QGridLayout()
         countdowns.setColumnMinimumWidth(0, 60)
         countdowns.setColumnMinimumWidth(1, 60)
-        self.time_til = (self.due_date - datetime.today())
+        self.time_until = (self.due_date - datetime.today())
 
-        self.le_days = QLabel('D: 0')
-        self.le_hours = QLabel('H: 0')
-        self.le_minutes = QLabel('M: 0')
-        self.le_seconds = QLabel('S: 0')
+        self.days = QLabel('D: 0')
+        self.hours = QLabel('H: 0')
+        self.minutes = QLabel('M: 0')
+        self.seconds = QLabel('S: 0')
 
-        countdowns.addWidget(self.le_days, 0, 0, Qt.AlignLeft)
-        countdowns.addWidget(self.le_hours, 0, 1, Qt.AlignLeft)
-        countdowns.addWidget(self.le_minutes, 1, 0, Qt.AlignLeft)
-        countdowns.addWidget(self.le_seconds, 1, 1, Qt.AlignLeft)
+        countdowns.addWidget(self.days, 0, 0, Qt.AlignLeft)
+        countdowns.addWidget(self.hours, 0, 1, Qt.AlignLeft)
+        countdowns.addWidget(self.minutes, 1, 0, Qt.AlignLeft)
+        countdowns.addWidget(self.seconds, 1, 1, Qt.AlignLeft)
         self.update_time()
 
         self.main_layout.addLayout(countdowns)
@@ -166,36 +163,36 @@ class Task(QFrame):
     #constantly updates the time until in days, hours, minutes ad seconds
     def update_time(self):
 
-        time_til = (self.due_date - datetime.today())
+        time_until = (self.due_date - datetime.today())
         frame_width = self.frameSize().width()
 
-        if time_til.days > -1:
+        if time_until.days > -1:
 
-            if(time_til.seconds == 1):
+            if(time_until.seconds == 1):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due")
-            elif(time_til.total_seconds == 86400):
+            elif(time_until.total_seconds == 86400):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 day")
-            elif(time_til.total_seconds == 600):
+            elif(time_until.total_seconds == 600):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 10 minutes")
-            elif(time_til.total_seconds == 3600):
+            elif(time_until.total_seconds == 3600):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 hour")
 
             user_tasks.notify_tasks()
 
-            self.setStyleSheet(""" 
-            QFrame.Task
-            {
+            self.setStyleSheet(f"""  
+                QFrame.TaskWindow
+                {{
                 background-color: rgba(70, 130, 180, 0.2);
                 background-clip: padding;
-                border-right-width: """ + str(frame_width - (time_til.total_seconds() * frame_width) // self.creation_due_difference) + """px;
-            }
-            """)
-            self.le_days.setText("D: " + str(time_til.days))
-            self.le_hours.setText("H: " + str((time_til.days * 24 + time_til.seconds) // 3600))
-            self.le_minutes.setText("M: " + str((time_til.seconds % 3600) // 60))
-            self.le_seconds.setText("S: " + str(time_til.seconds % 60))
+                border-right-width: {str(frame_width - (time_until.total_seconds() * frame_width) // self.creation_due_difference)} px;
+                }}
+                """)
+            self.days.setText("D: " + str(time_until.days))
+            self.hours.setText("H: " + str((time_until.days * 24 + time_until.seconds) // 3600))
+            self.minutes.setText("M: " + str((time_until.seconds % 3600) // 60))
+            self.seconds.setText("S: " + str(time_until.seconds % 60))
         else:
-            self.setStyleSheet('QFrame.Task {background-color: transparent;}')
+            self.setStyleSheet('QFrame.TaskWindow {background-color: transparent;}')
 
     #delete button connect
     def button_click(self):
@@ -203,7 +200,7 @@ class Task(QFrame):
         sender = self.sender()
         if sender.text() == "X":
             user_tasks.delete_task(self.identifier)
-            le_window.refresh_tasks()
+            gui_window.refresh_tasks()
 
 
 class TaskAddEditor(QDialog):
@@ -218,25 +215,25 @@ class TaskAddEditor(QDialog):
 
         self.setGeometry(50, 50, 300, 250)
 
-        self.le_tabs = QTabWidget()
-        self.le_tabs.tab_1 = QWidget()
-        self.le_tabs.tab_2 = QWidget()
+        self.tabs = QTabWidget()
+        self.tabs.tab_1 = QWidget()
+        self.tabs.tab_2 = QWidget()
         
-        self.le_tabs.addTab(self.le_tabs.tab_1, "basic info")
-        self.le_tabs.addTab(self.le_tabs.tab_2, "notifications")
+        self.tabs.addTab(self.tabs.tab_1, "basic info")
+        self.tabs.addTab(self.tabs.tab_2, "notifications")
 
         self.tab_1()
         self.tab_2()
 
         main_layout = QVBoxLayout()
-        main_layout.addWidget(self.le_tabs)
+        main_layout.addWidget(self.tabs)
 
         buttons = QHBoxLayout()
 
         button_ok = QPushButton(self.button_name)
         button_close = QPushButton("Cancel")
-        button_ok.clicked.connect(self.dialog_button_press)
-        button_close.clicked.connect(self.dialog_cancel_press)
+        button_ok.clicked.connect(self.dialog_button_click)
+        button_close.clicked.connect(self.dialog_cancel_click)
         buttons.addWidget(button_ok)
         buttons.addWidget(button_close)
 
@@ -278,7 +275,7 @@ class TaskAddEditor(QDialog):
         layout.addWidget(self.due_time_input)
         layout.addSpacing(20)
 
-        self.le_tabs.tab_1.setLayout(layout)
+        self.tabs.tab_1.setLayout(layout)
 
     #tab 2
     def tab_2(self):
@@ -318,11 +315,11 @@ class TaskAddEditor(QDialog):
         layout.addWidget(notifications_area)
 
         if self.identifier is not None:
-            le_task = user_tasks.get_task(self.identifier)
-            for notification_date in le_task.notifications:
+            active_task = user_tasks.get_task(self.identifier)
+            for notification_date in active_task.notifications:
                 self.notifications_layout.addWidget(Notification(datetime.strptime(notification_date, "%I:%M:%S %p")))
 
-        self.le_tabs.tab_2.setLayout(layout)
+        self.tabs.tab_2.setLayout(layout)
 
     #adds a notification to the layout of notifications
     def add_notification(self):
@@ -340,7 +337,7 @@ class TaskAddEditor(QDialog):
         self.notifications_layout.addWidget(Notification(self.time_input.time().toPyTime()))
 
     #when add is pressed
-    def dialog_button_press(self):
+    def dialog_button_click(self):
         if(input_error_box(self.due_time_input, self.due_date_input, self.task_name_input)):
 
             notification_dates = []
@@ -348,15 +345,24 @@ class TaskAddEditor(QDialog):
                 notification_dates.append(datetime.strptime(self.notifications_layout.itemAt(notification).widget().time_input, "%I:%M %p").strftime("%I:%M:%S %p"))
 
             if(self.button_name == 'Add'):
-                user_tasks.add_task(self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), datetime.today(), str(uuid.uuid4()), notification_dates)
+                user_tasks.add_task(
+                    self.task_name_input.text(), 
+                    datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), 
+                    datetime.today(), 
+                    str(uuid.uuid4()), 
+                    notification_dates)
             else:
-                user_tasks.edit_task(self.identifier, self.task_name_input.text(), datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), notification_dates)
+                user_tasks.edit_task(
+                    self.identifier, 
+                    self.task_name_input.text(), 
+                    datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), 
+                    notification_dates)
 
             self.reject()
-            le_window.refresh_tasks()
+            gui_window.refresh_tasks()
     
     #used in the input window and closes it
-    def dialog_cancel_press(self):
+    def dialog_cancel_click(self):
         self.reject()
 
 class Notification(QFrame):
@@ -397,6 +403,6 @@ def input_error_box(due_time_input, due_date_input, task_name_input):
 
 
 application = QApplication(sys.argv)
-le_window = App()
+gui_window = App()
 sys.exit(application.exec_())
 

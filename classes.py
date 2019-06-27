@@ -6,10 +6,12 @@ from threading import Timer
 from datetime import datetime
 from operator import itemgetter
 from win10toast import ToastNotifier
+
+
 notifier = ToastNotifier()
 
 #this is used for storing a list of tasks as well as adding them
-class User_tasks(object):
+class TaskCollection(object):
 
     # whole init needs redoing with main for the save functionality
     def __init__(self): 
@@ -19,14 +21,26 @@ class User_tasks(object):
 
         logger.log("User_Tasks Created")
 
-    def add_task(self, task_name, time_due, time_made, id_number, notifications=[]):
+    def find_task(self, task_id):
+        '''
+        searches task list to find task
+        '''
+        for task in self.tasks_list: 
+            if task.id_number == task_id: 
+                return task 
+
+
+    def add_task(self, task_name, time_due, time_made, id_number, notifications=[], save=True):
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
         # creates a Task object with params
-        self.tasks_list.append(Task(task_name, time_due, time_made, id_number, notifications)) 
-        self.save()
+        self.tasks_list.append(Task(task_name, time_due, time_made, id_number, notifications))
         logger.log("Adding Task")
+        
+        if save:
+            self.save()
+
 
     def display_tasks(self):
         '''
@@ -37,41 +51,42 @@ class User_tasks(object):
             task.display_task()
 
         logger.log("Displaying Tasks")
+
     
     def edit_task(self, task_id, name_change, date_change, notifications):
         '''
         calls the edit_name and edit_due_date functions with parameters passed in
         '''
 
-        for task in self.tasks_list:
-            if task.id_number == task_id:
-
-                task.edit_task(name_change, date_change, notifications)
-                logger.log("Editing Task")
-        
+        logger.log("Editing Task")
+        task = self.find_task(task_id)
+        task.edit_task(name_change, date_change)
         self.save()
+
     
     def delete_task(self, task_id):
         '''
         removes task from the list
         '''
-        print('passed in id: ' + str(task_id))
-        for task in self.tasks_list:
-            if task.id_number == task_id:
-                print("backend deleting: " + task.task_name)
-                self.tasks_list.remove(task)
+        print('passed in id: ' + str(task_id) + "and deleted that task")
+
+        task = self.find_task(task_id)
+        self.tasks_list.remove(task)
+        self.save()
         
         logger.log("Deleted Task")
                 
-        self.save()
 
     def notify_task(self, task_id, message):
         for task in self.tasks_list:
             if task.id_number == task_id:
                 task.notify(message)
 
-    def save(self):
 
+    def save(self):
+        '''
+        writes data to disk
+        '''
         to_save = []
 
         logger.log("Saved Data")
@@ -82,34 +97,37 @@ class User_tasks(object):
         save_location = os.path.dirname(os.path.abspath(__file__))
         saver = os.path.join(save_location, "save_files.txt")
 
-        json_dump = json.dumps(to_save)
 
         with open(saver, "w+") as handle:
-            print(json_dump, file=handle, end="")
+            print(json.dumps(to_save), file=handle, end="")
 
     def load(self):
-
-        save_location = os.path.dirname(os.path.abspath(__file__))
-        save_file = os.path.join(save_location, "save_files.txt")
-
+        '''
+        checks file for save data and loads it
+        '''
+        save_folder = os.path.dirname(os.path.abspath(__file__))
+        save_file = os.path.join(save_folder, "save_files.txt")
         with open(save_file, "r") as handle:
-            first = handle.read()
-            if not first:
-                logger.log("No Save Found")
-
-            elif first:
-                logger.log("Save Found")
-                logger.log("User Data Retrieved")
+            text = handle.read()
+            self.tasks_list = json.loads("[]" if text == "" else text)
                 
-                tasks_list = json.loads(first)
+        logger.log(f"Loaded {len(self.tasks_list)} tasks")
 
-                for task in tasks_list:
-                   self.add_task(task['task name'], datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"), datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"), task["task id"], task["notifications"])
+        for task in self.tasks_list:
+            self.add_task(
+                task['task name'],
+                datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"),
+                datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"),
+                task["task id"],
+                False
+            )
     
     def get_task(self, task_id):
         for task in self.tasks_list:
             if task.id_number == task_id:
                 return task
+
+    
 
     def sort_alphabet(self):
         # takes each object and sorts it by its self.name.... this is the same for the following sort functions
@@ -117,24 +135,27 @@ class User_tasks(object):
         logger.log("Sorted Alphabetically")
         self.save()
 
-    def sort_time(self):
+    def sort_time_remaining_asc(self):
         self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due, reverse=True)
         logger.log("Sorted by Time")
         self.save()
 
-    def sort_time_reverse(self):
+    def sort_time_remaining_desc(self):
         self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due)
         logger.log("Sorted by Reverse Time")
         self.save()
 
+    
     def notify_tasks(self):
         for task in self.tasks_list:
             task.notify_custom()
 
+    
     def sort_date_added(self):
         self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_made)
         logger.log("Sorted by Add Date")
         self.save()
+
 
 class Task(object):
 
@@ -146,24 +167,30 @@ class Task(object):
         self.id_number = id_number
         self.notifications = notifications
 
+    
     def notify(self, message):
-        notifier.show_toast(self.task_name,
-               message,
-               icon_path=None,
-               duration=5,
-               threaded=True)
+        notifier.show_toast(
+            self.task_name,
+            message,
+            icon_path=None,
+            duration=5,
+            threaded=True
+            )
 
+    
     def notify_custom(self):
         for notification_time in self.notifications:
             if (datetime.now()).strftime("%I:%M:%S %p") == (notification_time):
                 self.notify('notification for this task')
 
+    
     def edit_task(self, new_task_name, new_due_date, notifications):
 
         self.task_name = new_task_name
         self.time_due = new_due_date
         self.notifications = notifications
 
+    
     def display_task(self):
 
         print("task name: " + self.task_name)
@@ -171,13 +198,14 @@ class Task(object):
         print("date created: " + str(self.time_made))
         print("task id: " + str(self.id_number))
 
+    
     def get_dict(self):
 
-        le_dict = {
-            "task name" :  self.task_name,
-            "due date" :  self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
-            "date created" :  self.time_made.strftime("%m-/%d-/%Y, %H:%M:%S"),
-            "task id" :  self.id_number,
-            "notifications" : self.notifications
+        data = {
+            "task name":self.task_name,
+            "due date": self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
+            "date created": self.time_made.strftime("%m-/%d-/%Y, %H:%M:%S"),
+            "task id": self.id_number,
+            "notifications":self.notifications
         }
-        return le_dict
+        return data
