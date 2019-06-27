@@ -60,7 +60,7 @@ class TaskCollection(object):
 
         logger.log("Editing Task")
         task = self.find_task(task_id)
-        task.edit_task(name_change, date_change)
+        task.edit_task(name_change, date_change, notifications)
         self.save()
 
     
@@ -119,6 +119,7 @@ class TaskCollection(object):
                 datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"),
                 datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"),
                 task["task id"],
+                 task["notifications"],
                 False
             )
     
