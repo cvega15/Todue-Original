@@ -182,7 +182,7 @@ class Task(object):
     def notify_custom(self):
         for notification_time in self.notifications:
             if (datetime.now()).strftime("%I:%M:%S %p") == (notification_time):
-                self.notify('notification for this task')
+                self.notify('This is Your Daily Reminder that the Task is Due ' + str(self.time_due))
 
     
     def edit_task(self, new_task_name, new_due_date, notifications):
