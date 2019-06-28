@@ -22,3 +22,13 @@ Planned Features/Todo:
 
 Bug Fixes
 1. notifications not correctly checking due time/dates
+
+
+User Friendly Features:
+
+1: have you be able to type in a date thats in the past if you want
+2: Have a calender widget to add the date
+3: have a time list to add notifications
+4: have a custom notification message maybe?
+5: allow users to type in military time if they want to, and just save it as whatever time we want
+6: have users be able to type over the fields. currently, if you edit only the 3 in 30, you cannot type a 2 afterwards of you wabnted the time to be 32
