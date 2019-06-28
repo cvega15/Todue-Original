@@ -161,7 +161,6 @@ class TaskCollection(object):
 class Task(object):
 
     def __init__(self, task_name, time_due, time_made, id_number, notifications):
-
         self.task_name = task_name
         self.time_due = time_due
         self.time_made = time_made
@@ -186,14 +185,12 @@ class Task(object):
 
     
     def edit_task(self, new_task_name, new_due_date, notifications):
-
         self.task_name = new_task_name
         self.time_due = new_due_date
         self.notifications = notifications
 
     
     def display_task(self):
-
         print("task name: " + self.task_name)
         print("due date: " + str(self.time_due))
         print("date created: " + str(self.time_made))
@@ -201,7 +198,6 @@ class Task(object):
 
     
     def get_dict(self):
-
         data = {
             "task name":self.task_name,
             "due date": self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
