@@ -119,7 +119,7 @@ class TaskCollection(object):
                 datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"),
                 datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"),
                 task["task id"],
-                 task["notifications"],
+                task["notifications"],
                 False
             )
     
