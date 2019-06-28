@@ -124,7 +124,7 @@ class TaskWindow(QFrame):
         self.edit = QPushButton('/')
         self.delete.clicked.connect(self.button_click)
         self.delete.setFixedSize(25, 25)
-        self.edit.clicked.connect(lambda: TaskAddEditor('Edit task', 'Edit', self.identifier))
+        self.edit.clicked.connect(lambda: TaskAddEditor('Edit Task', 'Edit', self.identifier))
         self.edit.setFixedSize(25, 25)
         self.delete_and_edit.addWidget(self.delete)
         self.delete_and_edit.addWidget(self.edit)
@@ -219,8 +219,8 @@ class TaskAddEditor(QDialog):
         self.tabs.tab_1 = QWidget()
         self.tabs.tab_2 = QWidget()
         
-        self.tabs.addTab(self.tabs.tab_1, "basic info")
-        self.tabs.addTab(self.tabs.tab_2, "notifications")
+        self.tabs.addTab(self.tabs.tab_1, "Basic Info")
+        self.tabs.addTab(self.tabs.tab_2, "Notifications")
 
         self.tab_1()
         self.tab_2()
@@ -287,7 +287,7 @@ class TaskAddEditor(QDialog):
 
         add_notification_area = QHBoxLayout()
 
-        description = QLabel('Remind me everyday at: ')
+        description = QLabel('Remind Me Everyday At: ')
         self.time_input = QTimeEdit()
         add_notification = QPushButton('+')
         add_notification.setFixedSize(30, 30)
@@ -330,7 +330,7 @@ class TaskAddEditor(QDialog):
                 return 
             elif (self.notifications_layout.itemAt(notification).widget().time_input) == self.time_input.time().toPyTime().strftime('%I:%M %p'):
                 error = QMessageBox()
-                error.setText("please enter a different time")
+                error.setText("Time Already Set")
                 error.exec_()
                 return 
             
@@ -391,9 +391,9 @@ def input_error_box(due_time_input, due_date_input, task_name_input):
         error = QMessageBox()
         error.setText("Error")
         if(task_name_input.text() == ''):
-            error.setInformativeText("Please enter a task name")
+            error.setInformativeText("Please Enter a Task Name")
         else:
-            error.setInformativeText("please enter a future date")
+            error.setInformativeText("Please Enter a Date in the Future")
             error.setWindowTitle("Error")
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
