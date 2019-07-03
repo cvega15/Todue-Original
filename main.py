@@ -7,6 +7,7 @@ from datetime import timedelta
 from PyQt5.QtWidgets import (QTabWidget, QMessageBox, QComboBox, QGraphicsScene, QGraphicsView, QDateEdit, QTimeEdit, QDialog, QLineEdit, QFrame, QLabel, QSlider, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QWidget, QGroupBox, QScrollArea, QSizePolicy)
 from PyQt5.QtCore import (QTimer, Qt, QDate, QDateTime, QTime)
 import uuid
+import time
 
 logger.start("log.txt")
 logger.save_create("save_files.txt")
@@ -59,17 +60,16 @@ class App(QWidget):
         # calls backend sort functions
         if choice == 0:
             print('sorting alphabetically')
-            user_tasks.sort_alphabet()
+            self.refresh_tasks('alpha')
         elif choice == 1:
             print('sorting by date created')
-            user_tasks.sort_date_added()
+            self.refresh_tasks('da')
         elif choice == 2:
             print('sorting by furthest due date')
-            user_tasks.sort_time_remaining_asc()
+            self.refresh_tasks('tra')
         elif choice == 3:
             print('sorting by amount of time left')
-            user_tasks.sort_time_remaining_desc()
-        self.refresh_tasks()
+            self.refresh_tasks('trd')
         
 
     def create_task_area(self):
@@ -83,18 +83,22 @@ class App(QWidget):
         logger.log("Drawing GUI")
 
 
-    def refresh_tasks(self):
-        # goes through the entire user_tasks list and creates gui tasks based of those
+    def refresh_tasks(self, sort_by='alpha'):
+
+        # erase all current tasks in layout
         for task_num in range(self.tasks_layout.count()):
             self.tasks_layout.itemAt(task_num).widget().deleteLater()
 
-        for task in user_tasks.tasks_list:
-            self.tasks_layout.addWidget(TaskWindow(task.task_name, task.time_due, task.time_made, task.id_number))
+        # get current tasks from database
+        all_tasks = user_tasks.get_tasks(sort_by)
+        
+        #creates new task windows based off the database data
+        for task_tuple in all_tasks:
+            self.tasks_layout.addWidget(TaskWindow(task_tuple[0], task_tuple[1], task_tuple[2], task_tuple[3]))
 
 
     def countdown_update(self):
     # updates all of the tasks timers at the same time
-        user_tasks.notify_task
         for task in range(self.tasks_layout.count()):
             try:
                 self.tasks_layout.itemAt(task).widget().update_time()
@@ -105,7 +109,7 @@ class App(QWidget):
 class TaskWindow(QFrame):
 
     #initialze the TaskWindow class and all it's variables as well as create the gui
-    def __init__(self, task_name, due_date, time_made, identifier):
+    def __init__(self, identifier, task_name, due_date, time_made):
         super(TaskWindow, self).__init__()
         self.setFrameStyle(1)
 
@@ -171,15 +175,16 @@ class TaskWindow(QFrame):
 
             if(time_until.seconds == 1):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due")
-            elif(time_until.total_seconds == 86400):
-                user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 day")
             elif(time_until.total_seconds == 600):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 10 minutes")
             elif(time_until.total_seconds == 3600):
                 user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 hour")
-
+            elif(time_until.total_seconds == 86400):
+                user_tasks.notify_task(self.identifier, self.task_name + " is due in 1 day")
+          
             user_tasks.notify_tasks()
 
+            # draws the countdown bar on the task window
             self.setStyleSheet(f"""  
                 QFrame.TaskWindow
                 {{
@@ -244,6 +249,7 @@ class TaskAddEditor(QDialog):
         self.setWindowTitle(dialog_name)
         self.exec_()
 
+
     def tab_1(self):
         # main layout
         layout = QVBoxLayout()
@@ -257,13 +263,15 @@ class TaskAddEditor(QDialog):
             self.due_date_input = QDateEdit()
             self.due_date_input.setMinimumDate(QDate.currentDate())
             self.due_time_input = QTimeEdit()
+
         else:
-            for task in user_tasks.tasks_list:
-                if task.id_number == self.identifier:
-                    self.task_name_input = QLineEdit(task.task_name)
-                    self.due_date_input = QDateEdit(task.time_due.date())
-                    self.due_date_input.setMinimumDate(QDate.currentDate())
-                    self.due_time_input = QTimeEdit(task.time_due.time())
+
+            task_info = user_tasks.get_task(self.identifier)
+
+            self.task_name_input = QLineEdit(task_info[1])
+            self.due_date_input = QDateEdit(task_info[2].date())
+            self.due_date_input.setMinimumDate(QDate.currentDate())
+            self.due_time_input = QTimeEdit(task_info[2].time())
 
         layout.addWidget(task_name)
         layout.addWidget(self.task_name_input)
@@ -312,26 +320,30 @@ class TaskAddEditor(QDialog):
         layout.addWidget(notifications_area)
 
         if self.identifier is not None:
-            active_task = user_tasks.get_task(self.identifier)
-            for notification_date in active_task.notifications:
-                self.notifications_layout.addWidget(Notification(datetime.strptime(notification_date, "%I:%M:%S %p")))
+
+            #get a list of datetime objects
+            notifications = user_tasks.get_notifications(self.identifier)
+
+            #add notifications to the tab
+            for notification_date in notifications:
+                self.notifications_layout.addWidget(Notification(notification_date))
 
         self.tabs.tab_2.setLayout(layout)
 
 
     def add_notification(self):
         # adds a notification to the layout of notifications
-        for notification in range(self.notifications_layout.count()):
-            if datetime.strptime(self.notifications_layout.itemAt(notification).widget().time_input, "%I:%M %p").time() > self.time_input.time().toPyTime():
-                self.notifications_layout.insertWidget(notification, Notification(self.time_input.time().toPyTime()))
+        for index in range(self.notifications_layout.count()):
+            if (datetime.strptime(self.notifications_layout.itemAt(index).widget().test_text, "%I:%M %p").time()) > (self.time_input.time().toPyTime()):
+                self.notifications_layout.insertWidget(index, Notification((self.time_input.time().toPyTime()).strftime('%I:%M %p')))
                 return 
-            elif (self.notifications_layout.itemAt(notification).widget().time_input) == self.time_input.time().toPyTime().strftime('%I:%M %p'):
+            elif (self.notifications_layout.itemAt(index).widget().test_text) == self.time_input.time().toPyTime().strftime('%I:%M %p'):
                 error = QMessageBox()
                 error.setText("Time Already Set")
                 error.exec_()
                 return 
             
-        self.notifications_layout.addWidget(Notification(self.time_input.time().toPyTime()))
+        self.notifications_layout.addWidget(Notification((self.time_input.time().toPyTime()).strftime('%I:%M %p')))
 
 
     def dialog_button_click(self):
@@ -340,7 +352,7 @@ class TaskAddEditor(QDialog):
 
             notification_dates = []
             for notification in range(self.notifications_layout.count()):
-                notification_dates.append(datetime.strptime(self.notifications_layout.itemAt(notification).widget().time_input, "%I:%M %p").strftime("%I:%M:%S %p"))
+                notification_dates.append(self.notifications_layout.itemAt(notification).widget().test_text)
 
             if(self.button_name == 'Add'):
                 user_tasks.add_task(
@@ -351,7 +363,7 @@ class TaskAddEditor(QDialog):
                     notification_dates)
             else:
                 user_tasks.edit_task(
-                    self.identifier, 
+                    self.identifier,
                     self.task_name_input.text(), 
                     datetime.combine(self.due_date_input.date().toPyDate(), self.due_time_input.time().toPyTime()), 
                     notification_dates)
@@ -368,19 +380,17 @@ class TaskAddEditor(QDialog):
 class Notification(QFrame):
 
     def __init__(self, notification_time):
-        # initialize everything
+
         super(Notification, self).__init__()
         self.setFrameStyle(1)
+        self.test_text = notification_time
         main_layout = QHBoxLayout()
-        self.time_input = notification_time.strftime("%I:%M %p")
-        test2 = QLabel(self.time_input)
+        test2 = QLabel(notification_time)
         test3 = QPushButton('-')
         test3.setFixedSize(32, 22)
         test3.clicked.connect(lambda: self.deleteLater())
-
         main_layout.addWidget(test2)
         main_layout.addWidget(test3)
-
         self.setFixedHeight(45)
         self.setLayout(main_layout)
 

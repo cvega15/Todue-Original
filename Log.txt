@@ -1,6 +1,4 @@
-Sun Jun 30 17:24:37 2019 >>> Start
-Sun Jun 30 17:24:37 2019 >>> Loaded 0 tasks
-Sun Jun 30 17:24:37 2019 >>> User_Tasks Created
-Sun Jun 30 17:24:37 2019 >>> Drawing GUI
-Sun Jun 30 17:24:48 2019 >>> Adding Task
-Sun Jun 30 17:24:48 2019 >>> Saved Data
+Tue Jul  2 23:11:37 2019 >>> Start
+Tue Jul  2 23:11:37 2019 >>> User_Tasks Created
+Tue Jul  2 23:11:37 2019 >>> Drawing GUI
+Tue Jul  2 23:11:37 2019 >>> Sorted Alphabetically

@@ -14,207 +14,153 @@ notifier = ToastNotifier()
 #this is used for storing a list of tasks as well as adding them
 class TaskCollection(object):
 
-    # whole init needs redoing with main for the save functionality
-    def __init__(self): 
-        # creates task list which holds the tasks and loads the tasks if there are any
-        self.tasks_list = []
+    # constructor
+    def __init__(self):
         
-        # new sqlite stuff -------------------------------------
+        #creates a connection to the database and creates a database file
         self.conn = sqlite3.connect('user_data.db')
         self.curs = self.conn.cursor()
 
+        #creates a table to hold tasks if one doesn't exist
         with self.conn:
-            self.curs.execute('CREATE TABLE IF NOT EXISTS tasks(id_number INTIGER, task_name TEXT, time_due TEXT, time_made TEXT)')
-        # ------------------------------------------------------
-
-        self.load()
-
+            self.curs.execute("CREATE TABLE IF NOT EXISTS tasks(id_number TEXT, task_name TEXT, time_due TEXT, time_made TEXT)")
+        
         logger.log("User_Tasks Created")
 
-    def find_task(self, task_id):
-        '''
-        searches task list to find task
-        '''
-        for task in self.tasks_list: 
-            if task.id_number == task_id: 
-                return task 
 
 
-    def add_task(self, task_name, time_due, time_made, id_number, notifications=[], save=True):
+    # adds a task to the sqlite database 
+    def add_task(self, task_name, time_due, time_made, id_number, notifications=[]):
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
-        # creates a Task object with params
-        self.tasks_list.append(Task(task_name, time_due, time_made, id_number, notifications))
+
+        # new sqlite stuff
+        with self.conn:
+            self.curs.execute("INSERT INTO tasks(id_number, task_name, time_due, time_made) VALUES(?, ?, ?, ?)", (id_number, task_name, time_due.strftime('%m-%d-%Y, %H:%M:%S'), time_made.strftime('%m-%d-%Y, %H:%M:%S')))
+        with self.conn:
+            self.curs.execute(f"CREATE TABLE IF NOT EXISTS [{id_number}] (notification TEXT)")
+        for notification in notifications:
+            with self.conn:
+                self.curs.execute(f"INSERT INTO [{id_number}] (notification) VALUES(?);", (notification,))
+
         logger.log("Adding Task")
-        
-        if save:
-            self.save()
 
-
-    def display_tasks(self):
-        '''
-        displays tasks and their featues
-        '''
-        
-        for task in self.tasks_list:
-            task.display_task()
-
-        logger.log("Displaying Tasks")
-
-    
-    def edit_task(self, task_id, name_change, date_change, notifications):
+    # edits a task in the sqlite database
+    def edit_task(self, task_id, name_change, date_change, notifications=[]):
         '''
         calls the edit_name and edit_due_date functions with parameters passed in
         '''
 
-        logger.log("Editing Task")
-        task = self.find_task(task_id)
-        task.edit_task(name_change, date_change, notifications)
-        self.save()
+        #edits the task row in the tasks table
+        with self.conn:
+            self.curs.execute(f"UPDATE tasks SET task_name='{name_change}', time_due='{date_change.strftime('%m-%d-%Y, %H:%M:%S')}' WHERE id_number='{task_id}';")
 
-    
+        #edits the task's notification's table
+        with self.conn:
+            self.curs.execute(f"DROP TABLE [{task_id}]")
+        with self.conn:
+            self.curs.execute(f"CREATE TABLE IF NOT EXISTS [{task_id}](notification TEXT)")
+        for notification in notifications:
+            with self.conn:
+                self.curs.execute(f"INSERT INTO [{task_id}] (notification) VALUES(?);", (notification,))
+
+        logger.log("Editing Task")
+
+    # deletes a task in the sqlite database
     def delete_task(self, task_id):
         '''
         removes task from the list
         '''
-        print('passed in id: ' + str(task_id) + "and deleted that task")
 
-        task = self.find_task(task_id)
-        self.tasks_list.remove(task)
-        self.save()
-        
+        #deletes row in tasks table
+        with self.conn:
+            self.curs.execute(f"DELETE FROM tasks WHERE id_number='{task_id}';")
+
+        #deletes notifcation table for task
+        with self.conn:
+            self.curs.execute(f"DROP TABLE IF EXISTS [{task_id}];")
+
+        # logs
         logger.log("Deleted Task")
-                
-
-    def notify_task(self, task_id, message):
-        for task in self.tasks_list:
-            if task.id_number == task_id:
-                task.notify(message)
 
 
-    def save(self):
-        '''
-        writes data to disk
-        '''
-        to_save = []
 
-        for task in self.tasks_list:
-            to_add = task.get_dict()
-            # new sqlite stuff ---------------------------------------
-            with self.conn:
-                self.curs.execute('INSERT INTO tasks(id_number, task_name, time_due, time_made) VALUES(?, ?, ?, ?)', (to_add['task id'], to_add['task name'], to_add['due date'], to_add['date created']))
-            with self.conn:
-                self.curs.execute('CREATE TABLE IF NOT EXISTS [' + task.id_number + '](notification TEXT)')
-            for notification in task.notifications:
-                with self.conn:
-                    self.curs.execute('INSERT INTO [' + task.id_number + '](notification) VALUES(?);', [notification])
-            # --------------------------------------------------------
+    # returns a list of lists, each list in the list is a task's data (add decorators in the future for this, or something idk just make it look less trash)
+    def get_tasks(self, order='da'):
 
-            to_save.append(task.get_dict())
+        def get_by_alphabetic():
+            self.curs.execute("SELECT * FROM tasks ORDER BY task_name")
+            logger.log("Sorted Alphabetically")
 
-        save_location = os.path.dirname(os.path.abspath(__file__))
-        saver = os.path.join(save_location, "save_files.txt")
+        def get_by_time_remaining_asc():
+            self.curs.execute("SELECT * FROM tasks ORDER BY DATETIME(time_due) DESC")
+            logger.log("Sorted by Time")
 
+        def get_by_time_remaining_desc():
+            self.curs.execute("SELECT * FROM tasks ORDER BY DATETIME(time_due) ASC")
+            logger.log("Sorted by Reverse Time")
+        
+        def get_by_date_added():
+            self.curs.execute("SELECT * FROM tasks ORDER BY DATETIME(time_made) ASC")
+            logger.log("Sorted by Add Date")
 
-        with open(saver, "w+") as handle:
-            print(json.dumps(to_save), file=handle, end="")
+        with self.conn:
+            if order=='alpha':
+                get_by_alphabetic()
+            elif order=='tra':
+                get_by_time_remaining_asc()
+            elif order=='trd':
+                get_by_time_remaining_desc()
+            else:
+                get_by_date_added()
 
-        logger.log("Saved Data")
+            all_tasks = self.curs.fetchall()
+            return [[task[0], task[1], datetime.strptime(task[2], "%m-%d-%Y, %H:%M:%S"), datetime.strptime(task[3], "%m-%d-%Y, %H:%M:%S")] for task in all_tasks]
 
-    def load(self):
-        '''
-        checks file for save data and loads it
-        '''
-        save_folder = os.path.dirname(os.path.abspath(__file__))
-        save_file = os.path.join(save_folder, "save_files.txt")
-        with open(save_file, "r") as handle:
-            text = handle.read()
-            self.tasks_list = json.loads("[]" if text == "" else text)
-                
-        logger.log(f"Loaded {len(self.tasks_list)} tasks")
-
-        for task in self.tasks_list:
-            self.add_task(
-                task['task name'],
-                datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"),
-                datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"),
-                task["task id"],
-                task["notifications"],
-                False
-            )
-    
+    # returns a list of a task's data
     def get_task(self, task_id):
-        for task in self.tasks_list:
-            if task.id_number == task_id:
-                return task
 
-    def sort_alphabet(self):
-        # takes each object and sorts it by its self.name.... this is the same for the following sort functions
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.task_name)
-        logger.log("Sorted Alphabetically")
-        self.save()
+        with self.conn:
+            self.curs.execute(f"SELECT * FROM tasks WHERE id_number='{task_id}';")
+            task = self.curs.fetchall()[0]
+            return [task[0], task[1], datetime.strptime(task[2], "%m-%d-%Y, %H:%M:%S"), datetime.strptime(task[3], "%m-%d-%Y, %H:%M:%S")]
 
-    def sort_time_remaining_asc(self):
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due, reverse=True)
-        logger.log("Sorted by Time")
-        self.save()
+    # returns a list of datetimes
+    def get_notifications(self, task_id):
 
-    def sort_time_remaining_desc(self):
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due)
-        logger.log("Sorted by Reverse Time")
-        self.save()
-    
+        with self.conn:
+            self.curs.execute(f"SELECT * FROM [{task_id}]")
+            notifications = self.curs.fetchall()
+            return [notification[0] for notification in notifications]
+
+
+
+    # notifies all tasks in datbase 
     def notify_tasks(self):
-        for task in self.tasks_list:
-            task.notify_custom()
-    
-    def sort_date_added(self):
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_made)
-        logger.log("Sorted by Add Date")
-        self.save()
+        
+        with self.conn:
+            self.curs.execute("SELECT id_number FROM tasks")
+            tasks_list = self.curs.fetchall() 
 
+        for task_id in tasks_list:
+            notifications = self.get_notifications(task_id[0])
+            for notification in notifications:
+                if datetime.now().time().strftime("%H:%M:%S") == (datetime.strptime(notification, "%I:%M %p").time()).strftime("%H:%M:%S"):
+                    self.notify('your thing is due eventually')
 
-class Task(object):
+    # notifies single task
+    def notify_task(self, task_id, message):
+        self.notify(message)
 
-    def __init__(self, task_name, time_due, time_made, id_number, notifications):
-        self.task_name = task_name
-        self.time_due = time_due
-        self.time_made = time_made
-        self.id_number = id_number
-        self.notifications = notifications
-
+    # custom notification
     def notify(self, message):
         notifier.show_toast(
-            self.task_name,
-            message,
+            'test',
+            'message',
             icon_path=None,
             duration=5,
             threaded=True
             )
-    
-    def notify_custom(self):
-        for notification_time in self.notifications:
-            if (datetime.now()).strftime("%I:%M:%S %p") == (notification_time):
-                self.notify('This is Your Daily Reminder that the Task is Due ' + str(self.time_due))
 
-    def edit_task(self, new_task_name, new_due_date, notifications):
-        self.task_name = new_task_name
-        self.time_due = new_due_date
-        self.notifications = notifications
 
-    def display_task(self):
-        print("task name: " + self.task_name)
-        print("due date: " + str(self.time_due))
-        print("date created: " + str(self.time_made))
-        print("task id: " + str(self.id_number))
-
-    def get_dict(self):
-        data = {
-            "task name":self.task_name,
-            "due date": self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
-            "date created": self.time_made.strftime("%m-/%d-/%Y, %H:%M:%S"),
-            "task id": self.id_number,
-            "notifications":self.notifications
-        }
-        return data
