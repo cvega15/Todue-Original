@@ -7,7 +7,7 @@ from datetime import datetime
 from operator import itemgetter
 from win10toast import ToastNotifier
 import sqlite3
-
+from typing import List
 
 notifier = ToastNotifier()
 
@@ -30,7 +30,7 @@ class TaskCollection(object):
 
 
     # adds a task to the sqlite database 
-    def add_task(self, task_name, time_due, time_made, id_number, notifications=[]):
+    def add_task(self, task_name: str, time_due: datetime, time_made: datetime, id_number: str, notifications=[]) -> None:
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
@@ -40,14 +40,19 @@ class TaskCollection(object):
             self.curs.execute("INSERT INTO tasks(id_number, task_name, time_due, time_made) VALUES(?, ?, ?, ?)", (id_number, task_name, time_due.strftime('%m-%d-%Y, %H:%M:%S'), time_made.strftime('%m-%d-%Y, %H:%M:%S')))
         with self.conn:
             self.curs.execute(f"CREATE TABLE IF NOT EXISTS [{id_number}] (notification TEXT)")
+         ihjjjkjkjjkhjhkillme
         for notification in notifications:
             with self.conn:
                 self.curs.execute(f"INSERT INTO [{id_number}] (notification) VALUES(?);", (notification,))
+        '''
+        with self.conn:
+            [lambda: self.curs.execute(f"INSERT INTO [{id_number}] (notification) VALUES(?);", (notification,)) for notification in notifications]
+        '''
 
         logger.log("Adding Task")
 
     # edits a task in the sqlite database
-    def edit_task(self, task_id, name_change, date_change, notifications=[]):
+    def edit_task(self, task_id: str, name_change: str, date_change: datetime, notifications=[]) -> None:
         '''
         calls the edit_name and edit_due_date functions with parameters passed in
         '''
@@ -68,7 +73,7 @@ class TaskCollection(object):
         logger.log("Editing Task")
 
     # deletes a task in the sqlite database
-    def delete_task(self, task_id):
+    def delete_task(self, task_id: str) -> None:
         '''
         removes task from the list
         '''
@@ -87,7 +92,7 @@ class TaskCollection(object):
 
 
     # returns a list of lists, each list in the list is a task's data (add decorators in the future for this, or something idk just make it look less trash)
-    def get_tasks(self, order='da'):
+    def get_tasks(self, order: str ='da') -> List[List[str, str, datetime, datetime]]:
 
         def get_by_alphabetic():
             self.curs.execute("SELECT * FROM tasks ORDER BY task_name")
@@ -119,7 +124,7 @@ class TaskCollection(object):
             return [[task[0], task[1], datetime.strptime(task[2], "%m-%d-%Y, %H:%M:%S"), datetime.strptime(task[3], "%m-%d-%Y, %H:%M:%S")] for task in all_tasks]
 
     # returns a list of a task's data
-    def get_task(self, task_id):
+    def get_task(self, task_id: str) -> List[str, str, datetime, datetime]:
 
         with self.conn:
             self.curs.execute(f"SELECT * FROM tasks WHERE id_number='{task_id}';")
@@ -127,7 +132,7 @@ class TaskCollection(object):
             return [task[0], task[1], datetime.strptime(task[2], "%m-%d-%Y, %H:%M:%S"), datetime.strptime(task[3], "%m-%d-%Y, %H:%M:%S")]
 
     # returns a list of datetimes
-    def get_notifications(self, task_id):
+    def get_notifications(self, task_id: str) -> List[str]:
 
         with self.conn:
             self.curs.execute(f"SELECT * FROM [{task_id}]")
@@ -137,7 +142,7 @@ class TaskCollection(object):
 
 
     # notifies all tasks in datbase 
-    def notify_tasks(self):
+    def notify_tasks(self) -> None:
         
         with self.conn:
             self.curs.execute("SELECT id_number FROM tasks")
@@ -150,11 +155,11 @@ class TaskCollection(object):
                     self.notify('your thing is due eventually')
 
     # notifies single task
-    def notify_task(self, task_id, message):
+    def notify_task(self, task_id: str, message: str) -> None:
         self.notify(message)
 
     # custom notification
-    def notify(self, message):
+    def notify(self, message: str) -> None:
         notifier.show_toast(
             'test',
             'message',

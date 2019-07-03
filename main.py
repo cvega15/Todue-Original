@@ -81,8 +81,7 @@ class App(QWidget):
         self.tasks_layout = QVBoxLayout(widget)
         self.tasks_layout.setAlignment(Qt.AlignTop)
         logger.log("Drawing GUI")
-
-
+    
     def refresh_tasks(self, sort_by='alpha'):
 
         # erase all current tasks in layout
