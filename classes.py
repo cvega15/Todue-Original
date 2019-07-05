@@ -2,207 +2,135 @@ import logger
 import os                                          
 import json
 import time
-from threading import Timer
 from datetime import datetime
+from datetime import time
 from operator import itemgetter
-from win10toast import ToastNotifier
+import sqlite3
+from typing import List, Tuple
 
-
-notifier = ToastNotifier()
 
 #this is used for storing a list of tasks as well as adding them
 class TaskCollection(object):
 
-    # whole init needs redoing with main for the save functionality
-    def __init__(self): 
-        # creates task list which holds the tasks and loads the tasks if there are any
-        self.tasks_list = []
-        self.load()
+    # constructor
+    def __init__(self):
+        
+        #creates a connection to the database and creates a database file
+        self.conn = sqlite3.connect('user_data.db')
+        self.curs = self.conn.cursor()
 
+        #creates a table to hold tasks if one doesn't exist
+        with self.conn:
+            self.curs.execute("CREATE TABLE IF NOT EXISTS tasks(id_number TEXT, task_name TEXT, time_due TEXT, time_made TEXT, notifications TEXT)")
+        
         logger.log("User_Tasks Created")
 
-    def find_task(self, task_id):
-        '''
-        searches task list to find task
-        '''
-        for task in self.tasks_list: 
-            if task.id_number == task_id: 
-                return task 
 
 
-    def add_task(self, task_name, time_due, time_made, id_number, notifications=[], save=True):
+    # adds a task to the sqlite database 
+    def add_task(self, task_name: str, time_due: datetime, time_made: datetime, id_number: str, notifications: List[datetime.time] = []) -> None:
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
-        # creates a Task object with params
-        self.tasks_list.append(Task(task_name, time_due, time_made, id_number, notifications))
+
+        # new sqlite stuff
+        with self.conn:
+            self.curs.execute("INSERT INTO tasks(id_number, task_name, time_due, time_made, notifications) VALUES(?, ?, ?, ?, ?)", 
+            (id_number, task_name, time_due.strftime('%m-%d-%Y, %H:%M:%S'), time_made.strftime('%m-%d-%Y, %H:%M:%S'), self.serialize_notifications(notifications)))
+
+        print(self.serialize_notifications(notifications))
         logger.log("Adding Task")
-        
-        if save:
-            self.save()
 
-
-    def display_tasks(self):
-        '''
-        displays tasks and their featues
-        '''
-        
-        for task in self.tasks_list:
-            task.display_task()
-
-        logger.log("Displaying Tasks")
-
-    
-    def edit_task(self, task_id, name_change, date_change, notifications):
+    # edits a task in the sqlite database
+    def edit_task(self, task_id: str, name_change: str, date_change: datetime, notifications: List[datetime.time] = []) -> None:
         '''
         calls the edit_name and edit_due_date functions with parameters passed in
         '''
 
-        logger.log("Editing Task")
-        task = self.find_task(task_id)
-        task.edit_task(name_change, date_change, notifications)
-        self.save()
+        #edits the task row in the tasks table
+        with self.conn:
+            #self.curs.execute(f"UPDATE tasks SET task_name='{name_change}', time_due='{date_change.strftime('%m-%d-%Y, %H:%M:%S')}', notifications='{self.serialize_notifications(notifications)}' WHERE id_number='{task_id}';")
+            self.curs.execute(f"UPDATE tasks SET task_name = ?, time_due = ?, notifications = ? WHERE id_number = ?", 
+            (name_change, date_change.strftime('%m-%d-%Y, %H:%M:%S'), self.serialize_notifications(notifications), task_id))
 
-    
-    def delete_task(self, task_id):
+        logger.log("Editing Task")
+
+    # deletes a task in the sqlite database
+    def delete_task(self, task_id: str) -> None:
         '''
         removes task from the list
         '''
-        print('passed in id: ' + str(task_id) + "and deleted that task")
 
-        task = self.find_task(task_id)
-        self.tasks_list.remove(task)
-        self.save()
-        
+        #deletes row in tasks table
+        with self.conn:
+            self.curs.execute(f"DELETE FROM tasks WHERE id_number='{task_id}';")
+
+        # logs
         logger.log("Deleted Task")
-                
-
-    def notify_task(self, task_id, message):
-        for task in self.tasks_list:
-            if task.id_number == task_id:
-                task.notify(message)
 
 
-    def save(self):
-        '''
-        writes data to disk
-        '''
-        to_save = []
 
-        logger.log("Saved Data")
+    # returns a list of lists, each list in the list is a task's data (add decorators in the future for this, or something idk just make it look less trash if possible)
+    def get_tasks(self, order: str = 'da') -> List[Tuple[str, str, datetime, datetime]]:
 
-        for task in self.tasks_list:
-            to_save.append(task.get_dict())
+        def get_by_alphabetic():
+            self.curs.execute("SELECT * FROM tasks ORDER BY task_name")
+            logger.log("Sorted Alphabetically")
 
-        save_location = os.path.dirname(os.path.abspath(__file__))
-        saver = os.path.join(save_location, "save_files.txt")
+        def get_by_time_remaining_asc():
+            self.curs.execute("SELECT * FROM tasks ORDER BY DATETIME(time_due) DESC")
+            logger.log("Sorted by Time")
 
+        def get_by_time_remaining_desc():
+            self.curs.execute("SELECT * FROM tasks ORDER BY DATETIME(time_due) ASC")
+            logger.log("Sorted by Reverse Time")
+        
+        def get_by_date_added():
+            self.curs.execute("SELECT * FROM tasks ORDER BY DATETIME(time_made) ASC")
+            logger.log("Sorted by Add Date")
 
-        with open(saver, "w+") as handle:
-            print(json.dumps(to_save), file=handle, end="")
+        with self.conn:
+            if order=='alpha':
+                get_by_alphabetic()
+            elif order=='tra':
+                get_by_time_remaining_asc()
+            elif order=='trd':
+                get_by_time_remaining_desc()
+            else:
+                get_by_date_added()
 
-    def load(self):
-        '''
-        checks file for save data and loads it
-        '''
-        save_folder = os.path.dirname(os.path.abspath(__file__))
-        save_file = os.path.join(save_folder, "save_files.txt")
-        with open(save_file, "r") as handle:
-            text = handle.read()
-            self.tasks_list = json.loads("[]" if text == "" else text)
-                
-        logger.log(f"Loaded {len(self.tasks_list)} tasks")
+            all_tasks = self.curs.fetchall()
+            return [[task[0], task[1], datetime.strptime(task[2], "%m-%d-%Y, %H:%M:%S"), datetime.strptime(task[3], "%m-%d-%Y, %H:%M:%S"), self.deserialize_notifications(task[4])] for task in all_tasks]
 
-        for task in self.tasks_list:
-            self.add_task(
-                task['task name'],
-                datetime.strptime(task['due date'], "%m-/%d-/%Y, %H:%M:%S"),
-                datetime.strptime(task['date created'], "%m-/%d-/%Y, %H:%M:%S"),
-                task["task id"],
-                task["notifications"],
-                False
-            )
-    
-    def get_task(self, task_id):
-        for task in self.tasks_list:
-            if task.id_number == task_id:
-                return task
+    # returns a list of a task's data
+    def get_task(self, task_id: str) -> Tuple[str, str, datetime, datetime]:
 
-    
+        with self.conn:
+            self.curs.execute(f"SELECT * FROM tasks WHERE id_number='{task_id}';")
+            task = self.curs.fetchall()[0]
+            return [task[0], task[1], datetime.strptime(task[2], "%m-%d-%Y, %H:%M:%S"), datetime.strptime(task[3], "%m-%d-%Y, %H:%M:%S"), self.deserialize_notifications(task[4])]
 
-    def sort_alphabet(self):
-        # takes each object and sorts it by its self.name.... this is the same for the following sort functions
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.task_name)
-        logger.log("Sorted Alphabetically")
-        self.save()
+    # returns a list of datetimes
+    def get_notifications(self, task_id: str) -> List[datetime.time]:
 
-    def sort_time_remaining_asc(self):
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due, reverse=True)
-        logger.log("Sorted by Time")
-        self.save()
-
-    def sort_time_remaining_desc(self):
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_due)
-        logger.log("Sorted by Reverse Time")
-        self.save()
-
-    
-    def notify_tasks(self):
-        for task in self.tasks_list:
-            task.notify_custom()
-
-    
-    def sort_date_added(self):
-        self.tasks_list = sorted(self.tasks_list, key=lambda task: task.time_made)
-        logger.log("Sorted by Add Date")
-        self.save()
+        with self.conn:
+            self.curs.execute(f"SELECT notifications FROM tasks WHERE id_number = '{task_id}'")
+            return self.deserialize_notifications(self.curs.fetchall()[0][0])
 
 
-class Task(object):
 
-    def __init__(self, task_name, time_due, time_made, id_number, notifications):
-        self.task_name = task_name
-        self.time_due = time_due
-        self.time_made = time_made
-        self.id_number = id_number
-        self.notifications = notifications
+    #takes in a list of datetimes and returns a string in json format
+    def serialize_notifications(self, times: List[datetime.time] = []) -> str:
 
-    
-    def notify(self, message):
-        notifier.show_toast(
-            self.task_name,
-            message,
-            icon_path=None,
-            duration=5,
-            threaded=True
-            )
+        return str([time.strftime('%H:%M') for time in times])[1:-1]
 
-    
-    def notify_custom(self):
-        for notification_time in self.notifications:
-            if (datetime.now()).strftime("%I:%M:%S %p") == (notification_time):
-                self.notify('This is Your Daily Reminder that the Task is Due ' + str(self.time_due))
+    #takes in a "list" of strings and returns a list of datetimes
+    def deserialize_notifications(self, times: str) -> List[datetime.time]:
 
-    
-    def edit_task(self, new_task_name, new_due_date, notifications):
-        self.task_name = new_task_name
-        self.time_due = new_due_date
-        self.notifications = notifications
+        if times == '':
+            return []
 
-    
-    def display_task(self):
-        print("task name: " + self.task_name)
-        print("due date: " + str(self.time_due))
-        print("date created: " + str(self.time_made))
-        print("task id: " + str(self.id_number))
+        new_times = times.split(',')
+        return [datetime.strptime(time.lstrip()[1:-1], '%H:%M').time() for time in new_times]
 
-    
-    def get_dict(self):
-        data = {
-            "task name":self.task_name,
-            "due date": self.time_due.strftime("%m-/%d-/%Y, %H:%M:%S"),
-            "date created": self.time_made.strftime("%m-/%d-/%Y, %H:%M:%S"),
-            "task id": self.id_number,
-            "notifications":self.notifications
-        }
-        return data
+
