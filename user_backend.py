@@ -22,7 +22,7 @@ class TaskCollection(object):
 
         #creates a table to hold tasks if one doesn't exist
         with self.conn:
-            self.curs.execute("CREATE TABLE IF NOT EXISTS tasks(id_number TEXT, task_name TEXT, time_due TEXT, time_made TEXT, notifications TEXT, user_id INT)")
+            self.curs.execute("CREATE TABLE IF NOT EXISTS tasks(id_number TEXT, task_name TEXT, time_due TEXT, time_made TEXT, notifications TEXT, user_id TEXT)")
         
         logger.log("TaskCollection Created")
 
