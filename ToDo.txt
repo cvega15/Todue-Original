@@ -10,10 +10,10 @@ Planned Features/Todo:
 6.5 add a max character limit to task naming
 7.
 8. 
-9. 
+9. add intervals, so the user can enter something like: remind me every X minutes/hours/days 
 10. Add ability to run in the background
 11.
-12. Add reccuring notification feature, user will enter how many times a day they want to be reminded of task
+12.
 12.5 allow user to input a description of the task
 13. Add custom styling to gui
 14: Add Color Picker (Theme)

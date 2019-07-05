@@ -1,9 +1,8 @@
-Wed Jul  3 11:30:32 2019 >>> Start
-Wed Jul  3 11:30:32 2019 >>> User_Tasks Created
-Wed Jul  3 11:30:32 2019 >>> Drawing GUI
-Wed Jul  3 11:30:32 2019 >>> Sorted Alphabetically
-Wed Jul  3 11:30:40 2019 >>> Adding Task
-Wed Jul  3 11:30:40 2019 >>> Sorted Alphabetically
-Wed Jul  3 11:30:43 2019 >>> Sorted by Time
-Wed Jul  3 11:30:44 2019 >>> Deleted Task
-Wed Jul  3 11:30:44 2019 >>> Sorted Alphabetically
+Thu Jul  4 23:53:21 2019 >>> Start
+Thu Jul  4 23:53:21 2019 >>> User_Tasks Created
+Thu Jul  4 23:53:21 2019 >>> Drawing GUI
+Thu Jul  4 23:53:21 2019 >>> Sorted Alphabetically
+Thu Jul  4 23:53:31 2019 >>> Editing Task
+Thu Jul  4 23:53:31 2019 >>> Sorted Alphabetically
+Thu Jul  4 23:53:36 2019 >>> Deleted Task
+Thu Jul  4 23:53:36 2019 >>> Sorted Alphabetically
