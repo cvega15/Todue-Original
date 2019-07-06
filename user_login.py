@@ -12,13 +12,14 @@ class Users(object):
 
         # creates a table to hold user data if one doesn't exist
         with self.conn:
-            self.curs.execute("CREATE TABLE IF NOT EXISTS users(user_id TEXT, username TEXT, password TEXT, time_made TEXT)")
-    
+            self.curs.execute("CREATE TABLE IF NOT EXISTS users(user_id INTIGER, username TEXT, password TEXT, email TEXT, time_created TEXT")
+
     def check_credentials(self):
         '''
         Checks if password is correct etc. (NOT secure at all though) - TODO NEED GUI
         '''
         return True
+
     def user_credentials(self): # TODO Encryption
         '''
         bring in input from username and password fields

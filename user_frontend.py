@@ -14,8 +14,11 @@ from typing import List
 
 logger.start("log.txt")
 logger.save_create("save_files.txt")
-current_user = user_login.Users()
-
+#current_user = user_login.Users()
+    
+user_tasks = user_backend.TaskCollection(current_user.user_id)
+ 
+'''
 if current_user.check_credentials(): # TODO While loop with multiple guesses
     user_tasks = user_backend.TaskCollection(current_user.user_id)
     notifier = ToastNotifier()
@@ -23,7 +26,7 @@ if current_user.check_credentials(): # TODO While loop with multiple guesses
 else:
     logger.log("User Invalidated")
     exit()
-
+'''
 
 # the main gui area
 class App(QWidget):

@@ -17,32 +17,32 @@ class TaskCollection(object):
         self.user_id = user_id
 
         #creates a connection to the database and creates a database file
-        self.conn = sqlite3.connect('user_data.db')
+        self.conn = sqlite3.connect('master.db')
         self.curs = self.conn.cursor()
 
         #creates a table to hold tasks if one doesn't exist
         with self.conn:
-            self.curs.execute("CREATE TABLE IF NOT EXISTS tasks(id_number TEXT, task_name TEXT, time_due TEXT, time_made TEXT, notifications TEXT, user_id TEXT)")
+            self.curs.execute("CREATE TABLE IF NOT EXISTS tasks(user_id INTIGER, task_id INTIGER, task_name TEXT, time_due TEXT, time_made TEXT, notifications TEXT)")
         
         logger.log("TaskCollection Created")
 
 
 
-    # adds a task to the sqlite database 
-    def add_task(self, task_name: str, time_due: datetime, time_made: datetime, id_number: str, notifications: List[datetime.time] = []) -> None:
+    # adds a task to the sqlite database # TODO change the default value to None, debug any errors that arise from this 
+    def add_task(self, user_id: int, task_id: int, task_name: str, time_due: datetime, time_made: datetime, notifications: List[datetime.time] = []) -> None:
         '''
         adds a task with parameters, uses today as default time_made parameter
         '''
 
         # new sqlite stuff
         with self.conn:
-            self.curs.execute("INSERT INTO tasks(id_number, task_name, time_due, time_made, notifications) VALUES(:id, :name, :time_due, :time_made, :notifications, :user_id)", 
-            {'id':id_number, 
-             'name':task_name, 
+            self.curs.execute("INSERT INTO tasks(user_id, task_id, task_name, time_due, time_made, notifications) VALUES(:user_id, :task_id, :task_name, :time_due, :time_made, :notifications)", 
+            {'user_id':user_id, 
+             'task_id':task_id,
+             'task_name':task_name, 
              'time_due':time_due.strftime('%m-%d-%Y, %H:%M:%S'), 
              'time_made':time_made.strftime('%m-%d-%Y, %H:%M:%S'), 
-             'notifications':self.serialize_notifications(notifications), 
-             'user_id':self.user_id})
+             'notifications':self.serialize_notifications(notifications) })
 
         print(self.serialize_notifications(notifications))
         logger.log("Adding Task")
@@ -121,7 +121,6 @@ class TaskCollection(object):
         with self.conn:
             self.curs.execute(f"SELECT notifications FROM tasks WHERE id_number = '{task_id}'")
             return self.deserialize_notifications(self.curs.fetchall()[0][0])
-
 
 
     #
