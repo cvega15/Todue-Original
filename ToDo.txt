@@ -4,8 +4,8 @@ Planned Features/Todo:
 2. sqlite                                    -- MOST IMPORTANT FOR FINAL
 3. browser gui                               -- MOST IMPORTANT FOR FINAL
 4. Flask
-5. User accounts and encryption
-5.5.
+5. User accounts and encryption -- WIP
+5.5. LOGIN SCREEN
 6. 
 6.5 add a max character limit to task naming
 7.
