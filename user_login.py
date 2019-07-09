@@ -1,13 +1,13 @@
-import logger
-import sqlite3
-import uuid
+from logger import log
+from sqlite3 import connect
+from uuid import uuid4
 
 
 class Users(object):
 
     def __init__(self):
 
-        self.conn = sqlite3.connect('master.db')
+        self.conn = connect('master.db')
         self.curs = self.conn.cursor()
 
         # creates a table to hold user data if one doesn't exist
@@ -24,8 +24,8 @@ class Users(object):
         '''
         bring in input from username and password fields
         '''
-        logger.log("Checking User")
+        log("Checking User")
         self.current_username = ""                  # INPUT VVVVVV
         self.current_password = ""
         self.current_email = ""
-        self.current_user_id = str(uuid.uuid4())
+        self.current_user_id = str(uuid4())
