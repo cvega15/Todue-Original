@@ -1,5 +1,7 @@
 Planned Features/Todo:
 
+------------------------------> The todo for online: db server, rest server
+
 1. Settings bar where you can edit all the sttings like theme, and other things
 2. sqlite                                    -- MOST IMPORTANT FOR FINAL
 3. browser gui                               -- MOST IMPORTANT FOR FINAL
@@ -8,7 +10,7 @@ Planned Features/Todo:
 5.5. LOGIN SCREEN --> LOG IN WITH GOOGLE/GITHUB
 6. 
 6.5 add a max character limit to task naming
-7.
+7. 
 8. 
 9. add intervals, so the user can enter something like: remind me every X minutes/hours/days 
 10. Add ability to run in the background
