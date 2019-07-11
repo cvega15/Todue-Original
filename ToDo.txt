@@ -6,7 +6,7 @@ Planned Features/Todo:
 4. Flask
 5. User accounts and encryption -- WIP
 5.5. LOGIN SCREEN
-6. 
+6.Test from server 
 6.5 add a max character limit to task naming
 7.
 8. 
