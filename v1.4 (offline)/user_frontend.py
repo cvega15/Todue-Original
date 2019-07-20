@@ -34,7 +34,7 @@ class App(QWidget):
     #initialize all of the variables and call gui functions
     def __init__(self):
         super(App, self).__init__()
-        self.setWindowTitle('to due')
+        self.setWindowTitle('v1.4.0')
         self.setGeometry(300, 200, 600, 600)
         self.create_task_area()
         self.vertical_layout = QVBoxLayout(self)
