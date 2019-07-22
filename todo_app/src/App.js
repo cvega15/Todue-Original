@@ -1,18 +1,20 @@
 import React from 'react';
-import Task from './components/Task';
 import Header from './components/Header';
 import Footer from './components/footer';
+import TasksArea from './components/TasksArea';
 import './AppStyles.css';
 
-function App(){
-    return(
-        <div>
-            <Header />
-            <Task />
-            <Task />
-            <Footer />
-        </div>
-    )
-};
+class App extends React.Component {
+    render() {
+       
+        return (
+            <div>
+                <Header />
+                <TasksArea />
+                <Footer />
+            </div>
+        ) 
+    }
+}
 
 export default App;
