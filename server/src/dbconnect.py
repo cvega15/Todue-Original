@@ -19,20 +19,23 @@ import psycopg2
 from dbconfig import postgresdatabase, postgrespassword, postgresusername
 
 # Try to connect
+def db_retrieve_all(db):
+    try:
+        conn = psycopg2.connect(host = "localhost", dbname=dbconfig.db, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
+    except:
+        print("I am unable to connect to the database.")
+        exit()
+        
+    curs = conn.cursor()  
 
-try:
-    conn = psycopg2.connect(host = "localhost", dbname=dbconfig.postgresdatabase, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
-except:
-    print("I am unable to connect to the database.")
-    exit()
-    
-curs = conn.cursor()  
+    try:
+        cur.execute("SELECT * from users")
+    except:
+        print("I can't SELECT from users")
 
-try:
-    cur.execute("SELECT * from users")
-except:
-    print("I can't SELECT from users")
+    rows = curs.fetchall()
+    for row in rows:
+        return row
 
-rows = curs.fetchall()
-for row in rows:
-    print("   ", row)
+def db_retrieve_tasks(user_id):
+    pass
