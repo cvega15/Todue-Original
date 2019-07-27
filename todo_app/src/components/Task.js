@@ -54,7 +54,7 @@ class App extends React.Component{
                     <h2>task name</h2>
                     <input type="text" ref="new_task_name" defaultValue={this.props.task_name} required /> 
                     <h2>due date</h2> 
-                    <input type="text" ref="new_due_date" defaultValue={this.props.due_date} required /> 
+                    <input type="date" ref="new_due_date" defaultValue={this.props.due_date} required /> 
                     <br />
 
                     <button onClick={this.save_changes}>save</button> 

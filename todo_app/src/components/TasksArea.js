@@ -1,6 +1,6 @@
 import React from 'react';
 import Task from './Task';
-import ModalEdAdd from './ModalEdAdd';
+import ModalAdd from './ModalAdd';
 import tasks_data from '../../src/TasksData';
 
 class App extends React.Component{
@@ -12,14 +12,12 @@ class App extends React.Component{
         super();
         this.state = {
             tasks: tasks_data, // An array[] of task objects
-            edadd_mode: false, // Determines wether the component shows the modal for editing/adding
         };
 
         // Binds functions so it can be used elsewhere in the class
         this.add_task = this.add_task.bind(this);
         this.edit_task = this.edit_task.bind(this);
         this.remove_task = this.remove_task.bind(this);
-        this.show_modal = this.show_modal.bind(this);
     };
 
     // Creates a new task with the data passed in
@@ -63,20 +61,6 @@ class App extends React.Component{
         });
     };
 
-    // Toggles the modal window
-    show_modal(){
-
-        if(this.state.edadd_mode === false){
-            this.setState({
-                edadd_mode: true
-            });
-        }else{
-            this.setState({
-                edadd_mode: false
-            });
-        };
-    };
-
     // Reserved react function used for rendering the page
     render(){
         
@@ -91,23 +75,26 @@ class App extends React.Component{
             />
         );
 
-        if(this.state.edadd_mode === true){
+        if(this.props.showing_modal){
             return(
                 <div className="tasks_area">
-                    <ModalEdAdd 
+                    <ModalAdd 
+                        show_modal={this.props.show_modal}
                         modal_mode={this.state.modal_mode}
                         edadd_change={this.show_modal}
                         add_task_to_area={this.add_task} 
                     />
-                    <button>add task</button>
+                
                     {AllTasks}
                 </div>
             );
         }else{
             return(
                 <div className="tasks_area">
-                    <button onClick={() => this.show_modal()} >add task</button>
-                    {AllTasks}
+                    <br />
+                    <div className="tasks_area_scroll">
+                        {AllTasks}
+                    </div>
                 </div>
             );
         };

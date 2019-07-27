@@ -1,16 +1,19 @@
 .header{
+    top: 0;
+    left: 0;
     background-color: yellow;
     text-align: center;
+    position: fixed;
+    width: 100%;
 }
 
 .task{
     background-color: grey;
-    text-align: center;
 }
 
 .tasks_area{
-    background-color: lightcoral;
     overflow: scroll;
+    height: 100%;
 }
 
 .footer{

@@ -17,8 +17,8 @@ class App extends React.Component{
     on_submit(event){
 
         event.preventDefault();
-        this.props.edadd_change();
         this.props.add_task_to_area(this.state.task_name, this.state.due_date);
+        this.props.show_modal();
     };
 
     handle_change(event){
@@ -34,18 +34,20 @@ class App extends React.Component{
                 <div className="modal_content">
                     <h1>please enter new task information</h1>
                     <form>
-                        <label>name</label>     
+                        <label>new name</label>     
                         <input type="text" 
                                name="task_name" 
                                onChange={this.handle_change} 
                                required />
-                        <label>date</label> 
-                        <input type="text" 
+                        <br />
+                        <label>new date</label> 
+                        <input type="date" 
                                name="due_date" 
                                onChange={this.handle_change} 
                                required />
+                        <br /> 
                         <button onClick={(event) => this.on_submit(event)}>save</button>
-                        <button onClick={this.props.edadd_change}>cancel</button>
+                        <button onClick={this.props.show_modal}>cancel</button>
                     </form> 
                 </div>
             </div>
