@@ -39,3 +39,7 @@ def db_retrieve_all(db):
 
 def db_retrieve_tasks(user_id):
     pass
+
+def task_info(task_id):
+    # returns stuff about task
+    pass
