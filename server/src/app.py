@@ -5,10 +5,6 @@ import json
 # must have dbconfig file
 from dbconfig import postgresdatabase, postgrespassword, postgresusername
 
-def convert(tup, di): 
-    di = dict(tup) 
-    return di 
-
 app = Flask(__name__)
 api = Api(app)
 
@@ -16,21 +12,27 @@ class Task(Resource):
     """
     Return Info about one task
     """
-    def get(self, task_id):
+    def get(self):
+        """
+        used for the edit task feature (returns all bits about the task)
+        """
+#    TODO: somehow needs to know what ID
+
         conn = psycopg2.connect(host = "localhost", dbname=dbconfig.tasksdatabase, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
         curs = conn.cursor()
         cur.execute("SELECT * from users where task_id = %s" % task_id)
         rows = curs.fetchall()
-        return json.dumps(convert(rows, {}))
+        return json.dumps(rows, dict(rows))
 
-    def post(self, task_id):
+    def post(self):
         x = 'JSON TEXT INPUT'
         xjson = json.loads(x) # for every post
 
         conn = psycopg2.connect(host = "localhost", dbname=dbconfig.tasksdatabase, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
         curs = conn.cursor()
-        cur.execute("") # TODO: NEW INPUT HERE from variable (EDIT METHOD)
-        # might need return??
+        # TODO: convert the json to be able to fit into the cur.execute
+        cur.execute("UPDATE tasks SET (task_name, time_due, time_made, notifications) VALUES (%s, %s, %s, %s) WHERE task_id = %s", (task_name, time_due, time_made, notifications, task_id))
+        return x
 
 api.add_resource(Task, '/user/' + user_id + task_id + '/') - # TODO: Make sure people cant edit the url to see someone else's task (check id's before display)
 
@@ -40,6 +42,9 @@ class TodoList(Resource):
     Return list of tasks for one user
     """
     def get(self, user_id):
+        """
+        Get all tasks
+        """
         conn = psycopg2.connect(host = "localhost", dbname=dbconfig.tasksdatabase, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
         curs = conn.cursor()
         cur.execute("SELECT * from users where user_id = %s" % user_id)
@@ -48,12 +53,16 @@ class TodoList(Resource):
 
 
     def post(self, user_id):
+        """
+        CREATE NEW
+        """
+        x = 'JSON TEXT INPUT'
+        xjson = json.loads(x) # for every post
+
         conn = psycopg2.connect(host = "localhost", dbname=dbconfig.tasksdatabase, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
         curs = conn.cursor()
-        cur.execute("SELECT * from users where user_id = %s" % user_id)
-        rows = curs.fetchall()
-        for row in rows:
-            return row
+        cur.execute("INSERT INTO tasks (user_id, task_id, task_name, time_due, time_made, notifications) VALUES (%s, %s, %s, %s, %s, %s)", (user_id, task_id, task_name, time_due, time_made, notifications))
+        return x
 
 
 api.add_resource(Task, '/user/' + user_id + '/') # TODO: How to set user_id
