@@ -1,17 +1,16 @@
 import React from 'react';
 import Task from './Task';
-import ModalAdd from './ModalAdd';
-import tasks_data from '../../src/TasksData';
 
 class App extends React.Component{
 
     // Initializes the class and all it's variables and methods
-    constructor(){
+    constructor(props){
 
         // Gets functions from parent class then sets the state
-        super();
+        super(props);
+
         this.state = {
-            tasks: tasks_data, // An array[] of task objects
+            tasks: props.tasks // An array[] of task objects
         };
 
         // Binds functions so it can be used elsewhere in the class
@@ -63,7 +62,6 @@ class App extends React.Component{
 
     // Reserved react function used for rendering the page
     render(){
-        
         const AllTasks = this.state.tasks.map((task, index) => <Task 
                 key={task.id}
                 index={index} 
@@ -74,30 +72,11 @@ class App extends React.Component{
                 edit_task_from_area={this.edit_task} 
             />
         );
-
-        if(this.props.showing_modal){
-            return(
-                <div className="tasks_area">
-                    <ModalAdd 
-                        show_modal={this.props.show_modal}
-                        modal_mode={this.state.modal_mode}
-                        edadd_change={this.show_modal}
-                        add_task_to_area={this.add_task} 
-                    />
-                
-                    {AllTasks}
-                </div>
-            );
-        }else{
-            return(
-                <div className="tasks_area">
-                    <br />
-                    <div className="tasks_area_scroll">
-                        {AllTasks}
-                    </div>
-                </div>
-            );
-        };
+        return(
+            <div className="tasks_area">
+                {AllTasks}
+            </div>
+        );
     };
 };
 

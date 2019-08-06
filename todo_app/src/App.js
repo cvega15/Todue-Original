@@ -1,6 +1,7 @@
 import React from 'react';
-import Header from './components/Header';
 import TasksArea from './components/TasksArea';
+import AddTask from './components/AddTask';
+import Navbar from './components/Navbar';
 import './AppStyles.css';
 
 class App extends React.Component {
@@ -8,20 +9,11 @@ class App extends React.Component {
     constructor(){
         super();
         this.state = {
-            showing_modal: false
-        };
-        this.show_modal = this.show_modal.bind(this);
-    };
-
-    show_modal(){
-        if(this.state.showing_modal === false){
-            this.setState({
-                showing_modal: true
-            });
-        }else{
-            this.setState({
-                showing_modal: false
-            });
+            tasks: [
+                { name: 'feed fish', date: '10/23/2019', id: 1},
+                { name: 'take out trash', date: '12/06/2019', id: 2},
+                { name: 'get lit', date: '13/07/2019', id: 3},
+            ]
         };
     };
 
@@ -29,8 +21,9 @@ class App extends React.Component {
        
         return (
             <div className="everything">
-                <Header show_modal={this.show_modal} />
-                <TasksArea showing_modal={this.state.showing_modal} show_modal={this.show_modal} />
+                <Navbar />  
+                <AddTask />
+                <TasksArea tasks={this.state.tasks}/>
             </div>
         );
     };
