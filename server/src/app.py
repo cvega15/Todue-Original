@@ -25,14 +25,19 @@ class Task(Resource):
         return json.dumps(rows, dict(rows))
 
     def post(self):
-        x = 'JSON TEXT INPUT'
-        xjson = json.loads(x) # for every post
+        data = request.data
+        datadict = json.loads(data) # for every post
+
+        task_name = datadict["task_name"]
+        time_due = datadict["time_due"] 
+        notifications = datadict["notifications"]
+        task_id = datadict["task_id"]
 
         conn = psycopg2.connect(host = "localhost", dbname=dbconfig.tasksdatabase, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
         curs = conn.cursor()
         # TODO: convert the json to be able to fit into the cur.execute
         cur.execute("UPDATE tasks SET (task_name, time_due, time_made, notifications) VALUES (%s, %s, %s, %s) WHERE task_id = %s", (task_name, time_due, time_made, notifications, task_id))
-        return x
+        return data
 
 api.add_resource(Task, '/user/' + user_id + task_id + '/') - # TODO: Make sure people cant edit the url to see someone else's task (check id's before display)
 
@@ -56,13 +61,20 @@ class TodoList(Resource):
         """
         CREATE NEW
         """
-        x = 'JSON TEXT INPUT'
-        xjson = json.loads(x) # for every post
+        data = request.data
+        datadict = json.loads(data) # for every post
+
+        user_id = datadict["user_id"]
+        task_id = datadict["task_id"]
+        task_name = datadict["task_name"]
+        time_due = datadict["time_due"] 
+        time_made = datadict["time_made"]
+        notifications = datadict["notifications"]
 
         conn = psycopg2.connect(host = "localhost", dbname=dbconfig.tasksdatabase, user=dbconfig.postgresusername, password=dbconfig.postgrespassword) # ALTER USER postgres PASSWORD 'pswchange';
         curs = conn.cursor()
         cur.execute("INSERT INTO tasks (user_id, task_id, task_name, time_due, time_made, notifications) VALUES (%s, %s, %s, %s, %s, %s)", (user_id, task_id, task_name, time_due, time_made, notifications))
-        return x
+        return data
 
 
 api.add_resource(Task, '/user/' + user_id + '/') # TODO: How to set user_id
