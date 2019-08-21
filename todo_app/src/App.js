@@ -1,32 +1,25 @@
 import React from 'react';
-import TasksArea from './components/TasksArea';
-import AddTask from './components/AddTask';
 import Navbar from './components/Navbar';
-import './AppStyles.css';
+import Settings from './components/Settings';
+import Home from './components/Home';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 class App extends React.Component {
-
-    constructor(){
-        super();
-        this.state = {
-            tasks: [
-                { name: 'feed fish', date: '10/23/2019', id: 1},
-                { name: 'take out trash', date: '12/06/2019', id: 2},
-                { name: 'get lit', date: '13/07/2019', id: 3},
-            ]
-        };
-    };
 
     render(){
        
         return (
-            <div className="everything">
-                <Navbar />  
-                <AddTask />
-                <TasksArea tasks={this.state.tasks}/>
-            </div>
+            <BrowserRouter> 
+                <div className="App">
+                    <Switch>
+                        <Route exact path='/' component={Home} />
+                        <Route exact path='/settings' component={Settings} />
+                    </Switch>
+                    <Navbar />
+                </div>
+            </BrowserRouter>
         );
     };
 };
 
-export default App;
+export default App; 

@@ -1,0 +1,53 @@
+html, body{
+    margin: 0;
+    padding: 0;
+}
+
+.header{
+    display: flex;
+    position: fixed;
+    flex: 1;
+    justify-content: space-between;
+    width: 100%;
+    background-color: darkgrey;
+    top: 0;
+}
+
+.navbar{   
+    display: flex;
+    position: fixed;
+    flex: 1;
+    justify-content: center; 
+    height: 45px;
+    width: 100%;
+    bottom: 0;
+}
+
+.navlink{
+    text-decoration: none;
+    color: black;
+    text-align: center;
+    width: 100%;
+    background-color: bisque;
+    outline-style: none;
+    outline-color: black;
+    outline-width: 0.01px;
+}
+
+.navlink:hover{
+    color: gray;
+    background-color: blanchedalmond;
+}
+
+.task{
+    background-color: paleturquoise;
+    outline-style: solid;
+    outline-color: lightgray;
+    outline-width: 0.01px;
+}
+
+.tasks-area{
+    margin-top: 66px;
+    padding-bottom: 45px;
+}
+

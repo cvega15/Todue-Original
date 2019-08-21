@@ -1,5 +1,6 @@
 import React from 'react';
 import Task from './Task';
+import { connect } from 'react-redux';
 
 class App extends React.Component{
 
@@ -8,10 +9,6 @@ class App extends React.Component{
 
         // Gets functions from parent class then sets the state
         super(props);
-
-        this.state = {
-            tasks: props.tasks // An array[] of task objects
-        };
 
         // Binds functions so it can be used elsewhere in the class
         this.add_task = this.add_task.bind(this);
@@ -62,22 +59,27 @@ class App extends React.Component{
 
     // Reserved react function used for rendering the page
     render(){
-        const AllTasks = this.state.tasks.map((task, index) => <Task 
+
+        const AllTasks = this.props.tasks.map((task, index) => <Task 
+                index={index}
                 key={task.id}
-                index={index} 
                 task_name={task.task_name} 
                 due_date={task.due_date} 
-                delete_task_from_area={this.remove_task}
-                show_modal_area={this.show_modal}
-                edit_task_from_area={this.edit_task} 
             />
         );
+
         return(
-            <div className="tasks_area">
-                {AllTasks}
+            <div className="tasks-area">
+                { AllTasks }
             </div>
         );
     };
 };
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        tasks: state.task.todos
+    }; 
+};
+
+export default connect(mapStateToProps)(App);
