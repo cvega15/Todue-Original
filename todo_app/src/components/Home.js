@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import TasksArea from './TasksArea';
+import Modal from './Modal';
 
 class Home extends React.Component {
 
@@ -8,8 +9,9 @@ class Home extends React.Component {
        
         return (
             <div className="home">
+                <Modal />
                 <Header />
-                <TasksArea />
+                <TasksArea /> 
             </div>
         );
     };

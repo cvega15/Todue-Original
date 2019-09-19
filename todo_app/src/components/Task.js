@@ -1,41 +1,44 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { TasksContext } from '../contexts/TasksContext';
+import { ModalContext } from '../contexts/ModalContext';
 
 class App extends React.Component{
 
+    static contextType = ModalContext;
     // Constructs everything
     constructor(props){
-
+        
         super(props);
         this.state = {
-
             task_name: this.props.task_name,
-            due_date: this.props.due_date 
+            due_date: this.props.due_date,
+            due_time: this.props.due_time,
+            notifications: this.props.notifications,
+            task_id: this.props.id
         };
-
-        //this.edit_mode = this.edit_mode.bind(this); <--- this is example code for how to bind a function to the this keyword
+        this.handleEdit = this.handleEdit.bind(this);
     };
 
-    handleClick = () => {
-        this.props.deletePost(this.props.index);
+    handleEdit(){
+        this.context.toggleModal(this.state);
     };
 
     render(){
         return(
-            <div className="task">
-                <h2 style={{ margin: "0", }}>{this.props.task_name}</h2>
-                <h3>due: {this.props.due_date}</h3>
-                <button>edit task</button> 
-                <button onClick={this.handleClick}>delete task</button>
-            </div>
+            <TasksContext.Consumer>{(context => {
+                const { deleteTask } = context;
+                return(
+                    <div className="task">
+                        <h2 style={{ margin: "0", }}>{this.props.task_name}</h2>
+                        <h3>due date: {this.props.due_date}</h3>
+                        <h3>due time: {this.props.due_time}</h3>
+                        <button onClick={ this.handleEdit }>edit task</button> 
+                        <button onClick={ () => deleteTask(this.props.id) }>delete task</button>
+                    </div>
+                )
+            })}</TasksContext.Consumer>
         );
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return{
-        deletePost: (id) => { dispatch({type: 'DELETE_POST', id: id }) }
-    }
-}
-
-export default connect(mapDispatchToProps)(App);
+export default App;

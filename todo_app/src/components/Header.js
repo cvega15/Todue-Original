@@ -1,25 +1,16 @@
 import React from 'react';
 import Timer from './Timer';
+import { ModalContext } from '../contexts/ModalContext';
 
 class Header extends React.Component {
 
-    constructor(props){
-
-        super(props);
-        this.state={
-            show_modal: false
-        };
-    };
-
-    handleClick(){
-        
-    };
-
+    static contextType = ModalContext;
     render(){
+        const { toggleModal } = this.context;
         return(
             <div className='header'>
                 <Timer />
-                <button onClick={this.handleClick}>add task</button> 
+                <button onClick={ () => toggleModal(null) }>add task</button> 
             </div>
         );
     };

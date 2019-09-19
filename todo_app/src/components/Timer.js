@@ -1,6 +1,4 @@
 import React from 'react';
-import Header from './Header';
-import TasksArea from './TasksArea';
 
 class Home extends React.Component {
 
@@ -19,7 +17,7 @@ class Home extends React.Component {
     }
 
     componentDidMount(){
-        setInterval(()=>this.changeTime(),1000) 
+        setInterval(()=>this.changeTime(), 1000) 
     }
 
     render(){
