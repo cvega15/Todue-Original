@@ -10,7 +10,7 @@ class Home extends React.Component {
         return (
             <div className="home">
                 <Modal />
-                <Header />
+                <Header title="users tasks" />
                 <TasksArea /> 
             </div>
         );

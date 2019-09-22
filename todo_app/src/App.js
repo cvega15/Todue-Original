@@ -14,12 +14,12 @@ class App extends React.Component {
             <ModalContextProvider>
                 <TasksContextProvider>
                     <BrowserRouter> 
-                        <div className="App">
+                        <div className="app">
                             <Switch>
                                 <Route exact path='/' component={Home} />
                                 <Route exact path='/settings' component={Settings} />
                             </Switch>
-                            <Navbar/>
+                            <Navbar />
                         </div>
                     </BrowserRouter>
                 </TasksContextProvider>

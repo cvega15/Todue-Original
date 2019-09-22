@@ -29,9 +29,9 @@ class App extends React.Component{
                 const { deleteTask } = context;
                 return(
                     <div className="task">
-                        <h2 style={{ margin: "0", }}>{this.props.task_name}</h2>
-                        <h3>due date: {this.props.due_date}</h3>
-                        <h3>due time: {this.props.due_time}</h3>
+                        <h2 style={{ margin: "0", }}>{ this.props.task_name }</h2>
+                        <h3>due date: { this.props.due_date }</h3>
+                        <h3>due time: { this.props.due_time }</h3>
                         <button onClick={ this.handleEdit }>edit task</button> 
                         <button onClick={ () => deleteTask(this.props.id) }>delete task</button>
                     </div>

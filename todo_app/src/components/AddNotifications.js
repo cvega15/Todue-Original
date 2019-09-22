@@ -19,7 +19,7 @@ class AddNotifications extends React.Component{
             var new_notifications = this.state.notifications;
             new_notifications.push(to_add);
             this.setState({notifications: new_notifications});
-            this.props.handleNotifications(this.state.notifications)
+            this.props.handleNotifications(this.state.notifications);
         };
     };
 
@@ -27,10 +27,12 @@ class AddNotifications extends React.Component{
         var new_notifications = this.state.notifications;
         new_notifications = new_notifications.filter(notification => notification !== to_delete)
         this.setState({notifications: new_notifications});
+        console.log(this.state.notifications)
         this.props.handleNotifications(this.state.notifications)
     };
 
     render(){
+
         const all_notifications = this.state.notifications.map((notification, index) => <Notification 
                 key={index}    
                 notification_time={notification} 

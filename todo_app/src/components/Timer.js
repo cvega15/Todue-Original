@@ -9,7 +9,7 @@ class Home extends React.Component {
             time: new Date()
         };
     };
-
+    
     changeTime(){
         this.setState({
             time: new Date()

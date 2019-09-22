@@ -5,16 +5,13 @@ export const TasksContext = createContext();
 class TasksContextProvider extends Component {
     
     state = {
-        tasks: [
-            {task_name: "smoke weed", due_date: "2019-09-09", due_time: "02:31", notifications: "06:50,10:30,09:15", id: 347},
-            {task_name: "beat meat", due_date: "2019-09-12", due_time: "06:30", notifications: "06:50,10:30", id: 152}
-        ],
+        tasks: [],
     };
 
     addTask = (task_name, due_date, due_time, notifications) => {
         if(task_name === null){
             task_name = "untitled";
-        }
+        };
 
         var new_tasks = this.state.tasks;
         var new_task = {task_name: task_name, due_date: due_date, due_time: due_time, notifications: notifications, id: Math.random() * 1000}
@@ -23,20 +20,20 @@ class TasksContextProvider extends Component {
         this.setState({
             tasks: new_tasks
         });
+        console.log(this.state.tasks)
     };
 
-    editTask = (task_name, due_date, due_time, task_id) => {
-        
-        var new_task = {task_name: task_name, due_date: due_date, due_time: due_time, id: task_id}
-
+    editTask = (task_name, due_date, due_time, notifications, task_id) => {
+        var new_task = {task_name: task_name, due_date: due_date, due_time: due_time, notifications: notifications, id: task_id}
         var i;
         for(i = 0; i < this.state.tasks.length; i++){
             if(this.state.tasks[i].id === task_id){
                 var new_tasks = this.state.tasks;
                 this.state.tasks.splice(i, 1, new_task)
                 this.setState({
-                    tasks: new_tasks 
+                    tasks: new_tasks
                 });
+                console.log(this.state.tasks)
                 return
             };
         };
@@ -50,6 +47,7 @@ class TasksContextProvider extends Component {
         this.setState({
             tasks: new_tasks 
         });
+        console.log(this.state.tasks)
     };
 
     render() {

@@ -14,7 +14,7 @@ class ModalContextProvider extends Component {
             this.setState({ isShowing: true });
         }else{
             this.setState({ isShowing: false });
-        };
+        }; 
     };
 
     render() {
