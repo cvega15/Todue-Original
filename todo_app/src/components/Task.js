@@ -7,20 +7,13 @@ class App extends React.Component{
     static contextType = ModalContext;
     // Constructs everything
     constructor(props){
-        
+
         super(props);
-        this.state = {
-            task_name: this.props.task_name,
-            due_date: this.props.due_date,
-            due_time: this.props.due_time,
-            notifications: this.props.notifications,
-            task_id: this.props.id
-        };
         this.handleEdit = this.handleEdit.bind(this);
     };
 
     handleEdit(){
-        this.context.toggleModal(this.state);
+        this.context.toggleModal(this.props);
     };
 
     render(){
@@ -33,7 +26,7 @@ class App extends React.Component{
                         <h3>due date: { this.props.due_date }</h3>
                         <h3>due time: { this.props.due_time }</h3>
                         <button onClick={ this.handleEdit }>edit task</button> 
-                        <button onClick={ () => deleteTask(this.props.id) }>delete task</button>
+                        <button onClick={ ()=>deleteTask(this.props.task_id) }>delete task</button>
                     </div>
                 )
             })}</TasksContext.Consumer>

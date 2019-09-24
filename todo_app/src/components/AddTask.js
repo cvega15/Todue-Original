@@ -19,11 +19,20 @@ class AddTask extends React.Component{
                 notifications: [],
             };
         }else{
+            if(this.props.task_data.notifications[0] === ""){
+                var notificationz = [];
+            }else{
+                var notificationz = this.props.task_data.notifications;
+            }
+
             this.state = {
                 task_name: this.props.task_data.task_name,
                 due_date: this.props.task_data.due_date,
                 due_time: this.props.task_data.due_time,
-                notifications: this.props.task_data.notifications,
+
+                notifications: notificationz,
+
+                task_id: this.props.task_data.task_id,
             };
         };
         this.handleNotifications = this.handleNotifications.bind(this);
@@ -49,7 +58,7 @@ class AddTask extends React.Component{
 
     handleSubmitEdit = (e) => {
         e.preventDefault();
-        this.context.editTask(this.state.task_name, this.state.due_date, this.state.due_time, this.state.notifications.join(), this.props.task_data.task_id);
+        this.context.editTask(this.state.task_name, this.state.due_date, this.state.due_time, this.state.notifications.join(), this.state.task_id);
         this.props.toggleModal();
     };
 

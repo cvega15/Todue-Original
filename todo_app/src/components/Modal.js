@@ -27,15 +27,12 @@ class Modal extends React.Component{
     render(){
         const { isShowing, task_data } = this.context;
         const { toggleModal } = this.context;
-        
         let title;
         if(task_data === null){
             title = <h1>Add Task</h1>;
         }else{
             title = <h1>Edit Task</h1>;
         }
-
-
         if(isShowing === true){
             return(
                 <TasksContext.Consumer>{(context) => {
