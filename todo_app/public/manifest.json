@@ -1,0 +1,10 @@
+{
+    "name": "To Due",
+    "short_name": "ToDue",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background-color": "#FFE9D2",
+    "theme_color": "#EFE1C4",
+    "orientation": "portrait-primary"
+
+}

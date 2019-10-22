@@ -10,6 +10,7 @@ class AddTask extends React.Component{
         super(props);
 
         var current_date = new Date().toISOString().slice(0, 10);
+        
 
         if(this.props.task_data === null){
             this.state = {
@@ -19,28 +20,28 @@ class AddTask extends React.Component{
                 notifications: [],
             };
         }else{
+            var notificationz;
             if(this.props.task_data.notifications[0] === ""){
-                var notificationz = [];
+                notificationz = [];
             }else{
-                var notificationz = this.props.task_data.notifications;
+                notificationz = this.props.task_data.notifications;
             }
-
             this.state = {
                 task_name: this.props.task_data.task_name,
                 due_date: this.props.task_data.due_date,
                 due_time: this.props.task_data.due_time,
-
                 notifications: notificationz,
-
                 task_id: this.props.task_data.task_id,
+                time_made: this.props.task_data.time_made,
             };
         };
+        
         this.handleNotifications = this.handleNotifications.bind(this);
     };
 
-    handleChange = (e) => {
+    handleChange = (event) => {
         this.setState({
-            [e.target.id]: e.target.value
+            [event.target.id]: event.target.value
         });
     };
 
@@ -50,19 +51,19 @@ class AddTask extends React.Component{
         });
     };
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        this.context.addTask(this.state.task_name, this.state.due_date, this.state.due_time, this.state.notifications.join());
+    handleSubmit = (event) => {
+        this.context.addTask(this.state.task_name, this.state.due_date + ' ' + this.state.due_time, this.state.notifications.join());
         this.props.toggleModal();
     };
 
-    handleSubmitEdit = (e) => {
-        e.preventDefault();
-        this.context.editTask(this.state.task_name, this.state.due_date, this.state.due_time, this.state.notifications.join(), this.state.task_id);
+    handleSubmitEdit = (event) => {
+        event.preventDefault();
+        this.context.editTask(this.state.task_name, this.state.time_made, this.state.due_date + ' ' + this.state.due_time, this.state.notifications.join(), this.state.task_id);
         this.props.toggleModal();
     };
 
     render(){
+
         if(this.props.task_data === null){
 
             return(
@@ -75,10 +76,10 @@ class AddTask extends React.Component{
                                     <input type="text" id="task_name" onChange={this.handleChange} />
                                     <br />
                                     <label>date</label> 
-                                    <input type="date" id="due_date" defaultValue={this.state.due_date} onChange={this.handleChange} />
+                                    <input type="date" id="due_date" defaultValue={this.state.due_date} onChange={this.handleChange} required />
                                     <br />
                                     <label>time</label>
-                                    <input type="time" id="due_time" defaultValue={this.state.due_time} onChange={this.handleChange} />
+                                    <input type="time" id="due_time" defaultValue={this.state.due_time} onChange={this.handleChange} required />
                                     <br />
                                 </div>
                             </form> 
@@ -100,10 +101,10 @@ class AddTask extends React.Component{
                                     <input type="text" id="task_name" onChange={this.handleChange} defaultValue={this.state.task_name} />
                                     <br />
                                     <label>date</label> 
-                                    <input type="date" id="due_date" onChange={this.handleChange} defaultValue={this.state.due_date} />
+                                    <input type="date" id="due_date" onChange={this.handleChange} defaultValue={this.state.due_date} required />
                                     <br /> 
                                     <label>time</label>
-                                    <input type="time" id="due_time" onChange={this.handleChange} defaultValue={this.state.due_time} />
+                                    <input type="time" id="due_time" onChange={this.handleChange} defaultValue={this.state.due_time} required />
                                     <br />
                                 </div>
                             </form> 

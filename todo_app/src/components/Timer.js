@@ -19,7 +19,11 @@ class Home extends React.Component {
     componentDidMount(){
         setInterval(()=>this.changeTime(), 1000) 
     }
-
+    /*
+    componentWillUnmount(){
+        clearInterval()
+    }
+    */
     render(){
        
         return (

@@ -12,7 +12,6 @@ class Header extends React.Component {
             return(
                 <div className='header'>
                     { title }
-
                     <button onClick={ () => toggleModal(null) }>add task</button> 
                 
                 </div>
@@ -20,6 +19,7 @@ class Header extends React.Component {
         }else{
             return(
                 <div className='header'>
+                    
                     { title }
                 </div>
             );
