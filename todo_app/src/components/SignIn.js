@@ -7,9 +7,10 @@ import { TasksContext } from '../contexts/TasksContext';
 class SignIn extends React.Component {
 
     static contextType = UserContext;
-    //constructor(props){
-    //    super(props);
-    //};
+
+    constructor(props){
+        super(props)
+    }
 
     signOut = () => {
         this.context.toggleLogin()
@@ -19,13 +20,20 @@ class SignIn extends React.Component {
     render(){
         if(this.context.logged_in){
             return (
-                <div>
-                    <GoogleLogout
-                        clientId = "195081855240-jjsqpn2t0oucb8ets7li98p8vodja8jd.apps.googleusercontent.com"
-                        buttonText = "logout"
-                        onLogoutSuccess = {this.signOut}
-                    ></GoogleLogout>
-                </div>
+                <TasksContext.Consumer>{(TasksContext) => {
+                    return(
+                        <div>
+                            <GoogleLogout
+                                clientId = "195081855240-jjsqpn2t0oucb8ets7li98p8vodja8jd.apps.googleusercontent.com"
+                                buttonText = "logout"
+                                onLogoutSuccess = {(response) => {
+                                    this.signOut()
+                                    TasksContext.clearEverything()
+                                }}
+                            ></GoogleLogout>
+                        </div>
+                    )
+                }}</TasksContext.Consumer>
             );
         }else{
             return(
@@ -39,10 +47,12 @@ class SignIn extends React.Component {
                                     buttonText="Login with google :3"
                                     onSuccess={(response) => {
                                         var id_token = response.getAuthResponse().id_token;
-
+                                        var settings = response.getAuthResponse().settings;
+                                        
                                         this.context.toggleLogin();
                                         this.context.setId(id_token);
-                                        
+                                        this.context.getSettings();    
+                                    
                                         fetch('http://34.67.56.249:5000/sign-up-in', {
                                             method: 'POST',
                                             body: JSON.stringify(id_token)

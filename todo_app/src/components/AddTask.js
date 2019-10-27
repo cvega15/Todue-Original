@@ -10,7 +10,6 @@ class AddTask extends React.Component{
         super(props);
 
         var current_date = new Date().toISOString().slice(0, 10);
-        
 
         if(this.props.task_data === null){
             this.state = {
@@ -87,7 +86,6 @@ class AddTask extends React.Component{
                         <AddNotifications handleNotifications={this.handleNotifications} notifications={this.state.notifications} />
                     </div>
 
-                    <button className="save-button" form="new-form">save</button>
                 </div>
             );
         }else{
@@ -112,7 +110,6 @@ class AddTask extends React.Component{
                         <AddNotifications handleNotifications={this.handleNotifications} notifications={this.state.notifications} />
                     </div>
 
-                    <button className="save-button" form="new-form">save</button>
                 </div>
             );
         };

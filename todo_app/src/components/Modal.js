@@ -3,6 +3,7 @@ import AddTask from './AddTask';
 import { ModalContext } from '../contexts/ModalContext';
 import { TasksContext } from '../contexts/TasksContext';
 
+
 class Modal extends React.Component{
 
     static contextType = ModalContext;
@@ -38,14 +39,15 @@ class Modal extends React.Component{
                 <TasksContext.Consumer>{(context) => {
                     return(
                         <div className="modal">
+
                             <div className="modal-box">
                                 <div className="modal-header">
-                                    {title}
                                     <button onClick={ toggleModal } >close</button>
+                                    {title}
+                                    <button form="new-form">save</button>
                                 </div>
 
                                 <AddTask toggleModal={ toggleModal } task_data={ task_data }/>
-
                             </div>
                             <div className="modal-background" onClick={ toggleModal }></div>
                         </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import Header from './Header';
 import TasksArea from './TasksArea';
 import Modal from './Modal';
+import Navbar from './Navbar';
 
 class Home extends React.Component {
 
@@ -10,8 +11,9 @@ class Home extends React.Component {
         return (
             <div className="home">
                 <Modal />
-                <Header title="users tasks" />
+                <Header title="users tasks" button_text="add task"/>
                 <TasksArea /> 
+                <Navbar />
             </div>
         );
     };

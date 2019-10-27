@@ -1,6 +1,8 @@
 import React from 'react';
 import { TasksContext } from '../contexts/TasksContext';
 import { ModalContext } from '../contexts/ModalContext';
+import { UserContext } from '../contexts/UserContext';
+import turn_to_12 from '../Tools';
 
 class App extends React.Component{
 
@@ -67,34 +69,40 @@ class App extends React.Component{
         var styling = {
             width: percentage + '%',
         };
-
         return(
-            <TasksContext.Consumer>{(context => {
-                const { deleteTask } = context;
-                return(
-                    <div className="task">
-                        <div className="task-content">
-                            <div className="left-task">
-                                <h2 style={{ margin: "0", }}>{ this.props.task_name }</h2>
-                                <h3>{ this.props.due_date }</h3>
-                                <h3>{ this.props.due_time }</h3>
-                                <button onClick={ this.handleEdit }>edit task</button>
-                                <button onClick={ () => deleteTask(this.props.task_id) }>delete task</button>
-                            </div>
-                            <div className="right-task">
-                                <div>
-                                    <h3>dys: { this.dys }</h3>
-                                    <h3>hrs: { this.hrs }</h3>
-                                    <h3>min: { this.min }</h3>
-                                    <h3>sec: { this.sec }</h3>
+            <UserContext.Consumer>{(UserContext => (
+                <TasksContext.Consumer>{(TasksContext => {
+                    const { clock_mode } = UserContext
+                    const { deleteTask } = TasksContext;
+                    var le_time = this.props.due_time;
+                    if(!clock_mode){
+                        var le_time = turn_to_12(this.props.due_time);
+                    }
+                    return(
+                        <div className="task">
+                            <div className="task-content">
+                                <div className="left-task">
+                                    <h2 style={{ margin: "0", }}>{ this.props.task_name }</h2>
+                                    <h3>{ this.props.due_date }</h3>
+                                    <h3>{ le_time }</h3>
+                                    <button onClick={ this.handleEdit }>edit task</button>
+                                    <button onClick={ () => deleteTask(this.props.task_id) }>delete task</button>
+                                </div>
+                                <div className="right-task">
+                                    <div>
+                                        <h3>dys: { this.dys }</h3>
+                                        <h3>hrs: { this.hrs }</h3>
+                                        <h3>min: { this.min }</h3>
+                                        <h3>sec: { this.sec }</h3>
+                                    </div>
                                 </div>
                             </div>
+                            <div className="bar" style={ styling }></div>
                         </div>
-                        <div className="bar" style={ styling }></div>
-                    </div>
-                    
-                )
-            })}</TasksContext.Consumer>
+                        
+                    )
+                })}</TasksContext.Consumer>
+            ))}</UserContext.Consumer>
         );
     };
 };

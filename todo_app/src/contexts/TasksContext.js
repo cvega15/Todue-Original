@@ -12,48 +12,11 @@ class TasksContextProvider extends Component {
 
         this.state = {
             tasks: [],
-            ticket: [],
-            online: true,
         };
-        this.addToTicket = this.addToTicket.bind(this);
-        this.sendTicket = this.sendTicket.bind(this);
-        this.checkConnection = this.checkConnection.bind(this);
+
         this.sendAllTasks = this.sendAllTasks.bind(this);
         this.getTasks = this.getTasks.bind(this);
-    };
-
-    checkConnection(){
-        console.log('program offline')
-
-        var checker = setInterval(() => {
-            if(navigator.onLine){
-                this.sendTicket()
-                this.setState({
-                    online: true,
-                })
-                clearInterval(checker);
-                return;
-            };
-        }, 2000);
-    };
-    
-    sendTicket(){
-
-        fetch('http://34.67.56.249:5000/recieve-ticket', {
-            method: 'POST',
-            headers: {
-                'Authorization': this.context.id_token,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state.ticket)
-        }).then(() => {
-            this.setState({
-                ticket: [],
-            })
-            return true;
-        }).catch((error) => {
-            return false;
-        });
+        this.clearEverything = this.clearEverything.bind(this);
     };
 
     sendAllTasks(){
@@ -68,26 +31,9 @@ class TasksContextProvider extends Component {
             }).then(response => {
                 this.getTasks();
             }).catch((error) => {
-                if(this.state.online){
-                    this.checkConnection();
-                };
-                this.setState({
-                    online: false,
-                });
+                this.context.goOffline();
             });
         };
-    };
-
-    addToTicket(data, mode){
-
-        if(mode === "add"){
-            this.state.ticket.push({data, mode})
-        }else if(mode === "edit"){
-            this.state.ticket.push({data, mode})
-        }else{
-            this.state.ticket.push({data, mode})
-        }
-        console.log(this.state.ticket);
     };
 
     addTask = (task_name, due_time, notifications, task_id) => {
@@ -119,13 +65,9 @@ class TasksContextProvider extends Component {
                 },
                 body: JSON.stringify(new_task)
             }).catch((error) => {
-                if(this.state.online){
-                    this.checkConnection();
-                };
-                this.addToTicket(new_task, "add");
-                this.setState({
-                    online: false,
-                });
+                console.log('adding task failed')
+                this.context.goOffline();
+                this.context.addTaskToTicket(new_task, "add");
             });
         };
     };
@@ -152,13 +94,9 @@ class TasksContextProvider extends Component {
                         },
                         body: JSON.stringify(new_task)
                     }).catch((error) => {
-                        if(this.state.online){
-                            this.checkConnection();
-                        };
-                        this.addToTicket(new_task, "edit");
-                        this.setState({
-                            online: false,
-                        });
+                        console.log('editing task failed')
+                        this.context.goOffline();
+                        this.context.addTaskToTicket(new_task, "edit");
                     });
                     return;
                 };
@@ -184,13 +122,9 @@ class TasksContextProvider extends Component {
                 },
                 body: JSON.stringify(task_id)
             }).catch((error) => {
-                if(this.state.online){
-                    this.checkConnection();
-                };
-                this.addToTicket(task_id, "delete");
-                this.setState({
-                    online: false,
-                }); 
+                console.log('deleting task failed')
+                this.context.goOffline();
+                this.context.addTaskToTicket(task_id, "delete");
             });
         };
     };
@@ -209,12 +143,17 @@ class TasksContextProvider extends Component {
                     tasks: tasks
                 });
             }).catch((error) => {
-                this.setState({
-                    online: false,
-                });
+                console.log('getting tasks failed')
+                this.context.goOffline();
             });
         }
     }
+
+    clearEverything(){
+        this.setState({
+            tasks: [],
+        });
+    };
 
     componentDidMount(){
         this.getTasks();
@@ -222,7 +161,7 @@ class TasksContextProvider extends Component {
 
     render() {
         return ( 
-            <TasksContext.Provider value={{...this.state, addTask: this.addTask, deleteTask: this.deleteTask, editTask: this.editTask, sendAllTasks: this.sendAllTasks, getTasks: this.getTasks}}>
+            <TasksContext.Provider value={{...this.state, clearEverything: this.clearEverything, addTask: this.addTask, deleteTask: this.deleteTask, editTask: this.editTask, sendAllTasks: this.sendAllTasks, getTasks: this.getTasks}}>
                 {this.props.children}
             </TasksContext.Provider>
         );

@@ -11,6 +11,7 @@ class Header extends React.Component {
         if(title === 'users tasks'){
             return(
                 <div className='header'>
+
                     { title }
                     <button onClick={ () => toggleModal(null) }>add task</button> 
                 
