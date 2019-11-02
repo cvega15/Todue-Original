@@ -44,7 +44,7 @@ class SignIn extends React.Component {
                             {
                                 <GoogleLogin
                                     clientId="195081855240-jjsqpn2t0oucb8ets7li98p8vodja8jd.apps.googleusercontent.com"
-                                    buttonText="Login with google :3"
+                                    buttonText="Login with google"
                                     onSuccess={(response) => {
                                         var id_token = response.getAuthResponse().id_token;
                                         

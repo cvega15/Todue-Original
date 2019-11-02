@@ -89,10 +89,10 @@ class App extends React.Component{
                                         <h3>{ this.props.due_date }</h3>
                                         <h3>{ le_time }</h3>
                                     </div>
-                                    {/*
+                                    
                                     <button onClick={ this.handleEdit }>edit task</button>
                                     <button onClick={ () => deleteTask(this.props.task_id) }>delete task</button>                                    
-                                    */}
+                                    
                                 </div>
                                 <div className="right-task">
                                     <div>

@@ -248,7 +248,7 @@ input:checked + .slider:before{
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
 .icon{
@@ -302,7 +302,7 @@ input:checked + .slider:before{
 
 .notifications-area{
     overflow: auto;
-    background-color: gray;
+    background-color: var(--barBackground);
 }
 
 .save-button{

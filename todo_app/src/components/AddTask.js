@@ -99,10 +99,10 @@ class AddTask extends React.Component{
                                     <input className="text-input" type="text" maxLength="40" id="task_name" onChange={this.handleChange} defaultValue={this.state.task_name} />
                                     <br />
                                     <h2>date</h2> 
-                                    <input type="date" id="due_date" onChange={this.handleChange} defaultValue={this.state.due_date} required />
+                                    <input className="text-input" type="date" id="due_date" onChange={this.handleChange} defaultValue={this.state.due_date} required />
                                     <br /> 
                                     <h2>time</h2>
-                                    <input type="time" id="due_time" onChange={this.handleChange} defaultValue={this.state.due_time} required />
+                                    <input className="text-input" type="time" id="due_time" onChange={this.handleChange} defaultValue={this.state.due_time} required />
                                     <br />
                                 </div>
                             </form> 
