@@ -142,6 +142,8 @@ class TasksContextProvider extends Component {
                 this.setState({
                     tasks: tasks
                 });
+                this.context.syncTrue()
+
             }).catch((error) => {
                 console.log('getting tasks failed')
                 this.context.goOffline();
@@ -153,10 +155,6 @@ class TasksContextProvider extends Component {
         this.setState({
             tasks: [],
         });
-    };
-
-    componentDidMount(){
-        this.getTasks();
     };
 
     render() {

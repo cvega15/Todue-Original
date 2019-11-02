@@ -10,6 +10,7 @@ class UserContextProvider extends Component {
         this.state = {
             id_token: '',
             logged_in: false,
+            is_synced: false,
             light_mode: false,
             clock_mode: false,
             online: true,
@@ -31,7 +32,6 @@ class UserContextProvider extends Component {
                 this.sendSettings();
                 clearInterval(checker);
                 return;
-
             };
         }, 2000);
     };
@@ -47,15 +47,13 @@ class UserContextProvider extends Component {
             body: JSON.stringify(this.state.ticket)
         }).then(response => {
             this.setState({
-                ticket: []
+                ticket: [],
+                is_synced: true
             })
-            console.log('ticket sending successful')
-            console.log('returning true')
+
             this.sendSettings();
             return true;
         }).catch((error) => {
-            console.log('ticket sending failed')
-            console.log("returning false")
             return false;
         });
     };
@@ -106,7 +104,7 @@ class UserContextProvider extends Component {
 
                 var obj = JSON.parse(data)
                 this.setState({
-                    clock_mode: obj.clock_mode
+                    clock_mode: obj.clock_mode,
                 });
 
             }).catch((error) => {
@@ -119,7 +117,10 @@ class UserContextProvider extends Component {
     goOffline(){
         if(this.state.online){
             this.checkConnection();
-            this.setState({online: false});
+            this.setState({
+                online: false,
+                is_synced: false
+            });
         }else{
             console.log('go offline called: already offline')
         };
@@ -146,6 +147,7 @@ class UserContextProvider extends Component {
     toggleLogin = () => {
         if(this.state.logged_in === false){
             this.setState({ logged_in: true });
+            //this.eventSource = new EventSource("events");
         }else{
             this.setState({ 
                 logged_in: false,
@@ -165,9 +167,17 @@ class UserContextProvider extends Component {
         })
     }
 
+    syncTrue = () => {
+        this.setState({
+            is_synced: true
+        })
+    }
+
     render() {
+
+
         return ( 
-            <UserContext.Provider value={{...this.state, toggleDarkMode: this.toggleDarkMode, toggleClockMode: this.toggleClockMode, addTaskToTicket: this.addTaskToTicket, sendSettings: this.sendSettings, getSettings: this.getSettings, goOffline: this.goOffline, toggleLogin: this.toggleLogin, setId: this.setId, destroyId: this.destroyId}}>
+            <UserContext.Provider value={{...this.state, syncTrue: this.syncTrue, toggleDarkMode: this.toggleDarkMode, toggleClockMode: this.toggleClockMode, addTaskToTicket: this.addTaskToTicket, sendSettings: this.sendSettings, getSettings: this.getSettings, goOffline: this.goOffline, toggleLogin: this.toggleLogin, setId: this.setId, destroyId: this.destroyId}}>
                 {this.props.children}
             </UserContext.Provider>
         );

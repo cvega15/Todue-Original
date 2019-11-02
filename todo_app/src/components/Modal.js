@@ -42,9 +42,9 @@ class Modal extends React.Component{
 
                             <div className="modal-box">
                                 <div className="modal-header">
-                                    <button onClick={ toggleModal } >close</button>
+                                    <button className="modal-button" onClick={ toggleModal } >close</button>
                                     {title}
-                                    <button form="new-form">save</button>
+                                    <button className="modal-button" form="new-form">save</button>
                                 </div>
 
                                 <AddTask toggleModal={ toggleModal } task_data={ task_data }/>

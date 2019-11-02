@@ -47,11 +47,11 @@ class SignIn extends React.Component {
                                     buttonText="Login with google :3"
                                     onSuccess={(response) => {
                                         var id_token = response.getAuthResponse().id_token;
-                                        var settings = response.getAuthResponse().settings;
                                         
-                                        this.context.toggleLogin();
                                         this.context.setId(id_token);
-                                        this.context.getSettings();    
+                                        this.context.toggleLogin();
+                                        TasksContext.getTasks();
+                                        this.context.getSettings();
                                     
                                         fetch('http://34.67.56.249:5000/sign-up-in', {
                                             method: 'POST',

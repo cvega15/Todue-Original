@@ -11,17 +11,26 @@ html, body{
 }
 
 html[theme="dark"]{
-    --primaryBackground: #000000;
-    --headerBackground: rgb(19, 19, 19);
-    --mainText: #EBEBEB;
-    --navLinkBackground: rgb(12, 12, 12);
+    --primaryBackground: #040a0e;
+    --headerBackground: #051f2c;
+    --mainText: #eaecec;
+    --navLinkBackground: #051f2c;
+    --barBackground: #03141b;
+
+    --switchBackground: #10303f;
+    --switchSlider: #eaecec;
+    
 }
 
 html[theme="light"]{
-    --primaryBackground: white;
-    --headerBackground: #C0C0C0;
-    --mainText: #080808;
-    --navLinkBackground: #C0C0C0;
+    --primaryBackground: #dfe7ec;
+    --headerBackground: #9cc0d8;
+    --mainText: #111116;
+    --navLinkBackground: #9cc0d8;
+    --barBackground: #a1c9db;
+
+    --switchBackground: #5a94af;
+    --switchSlider: #eaecec;
 }
 
 #root{
@@ -41,18 +50,18 @@ html[theme="light"]{
     display: flex;
     flex-direction: column;
     background-color: var(--primaryBackground);
+    font-family: sans-serif;
 }
 
 .navbar{   
-    min-height: 20px;
-    height: 8%;
     display: flex;
     justify-content: center;
 }
 
 .navlink{
+    font-size: 3vh;
     text-decoration: none;
-    color: var(--mainText);;
+    color: var(--mainText);
     text-align: center;
     width: 100%;
     background-color: var(--navLinkBackground);
@@ -70,7 +79,45 @@ html[theme="light"]{
     flex-direction: column;
 }
 
+
+.tasks-area{
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+.settings-area{
+    padding-left: 1.5vh;
+    padding-right: 1.5vh;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.not-synced{
+    text-align: center;
+    margin: 0;
+    color: rgb(219, 0, 0);
+    background-color: rgba(105, 32, 32, 0.404);
+    padding: 1.2vh;
+    border-radius: 20px;
+}
+
+.is-synced{
+    text-align: center;
+    margin: 0;
+    color: rgb(0, 221, 11);
+    background-color: rgba(32, 105, 42, 0.404);
+    padding: 1.2vh;
+    border-radius: 20px;
+}
+
 .settings{
+    position: static;
+    font-size: 2.5vh;
     color: var(--mainText);
     height: 100%;
     display: flex;
@@ -78,19 +125,85 @@ html[theme="light"]{
     overflow: auto;
 }
 
-.header{
-    color: var(--mainText);
-    min-height: 20px;
-    height: 10%;
+.setting-text{
+    padding-top: 1.5vh;
+    padding-left: 1.5vh;
+    margin: 0;
+}
+
+.setting{
+    position: relative;
     display: flex;
+}
+
+.toggle-switch{
+    border-top: 2vh;
+    height: 6vh;
+    width: 12vh;
+    position: relative;
+    display: inline;
+}
+
+.toggle-switch input{
+    display: none;
+}
+
+.slider{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    cursor: pointer;
+    border-radius: 40px;
+    background-color: var(--switchBackground);
+    transition: .1s;
+}
+
+.slider:before{
+    position: absolute;
+    background-color: var(--switchSlider);
+    height: 5vh;
+    width: 5vh;
+    content: "";
+    bottom: 9%;
+    left: 6%;
+    border-radius: 50%;
+    transition: .1s;
+}
+
+input:checked + .slider{
+    background-color: var(--switchBackground);
+
+}
+
+input:checked + .slider:before{
+    transform: translate(5.5vh);
+}
+
+.add-button:hover{
+    cursor: pointer;
+    background-color: blanchedalmond;
+}
+
+.header{
+    padding-left: 2%;
+    font-size: 2vh;
+    display: flex;
+    text-align: top;
+    color: var(--mainText);
     justify-content: space-between;
     background-color: var(--headerBackground);
+    
 }
 
 .task{
+    font-size: 2vh;
     color: var(--mainText);
     position: relative;
     width: 100%;
+
+
 }
 
 .bar{
@@ -99,7 +212,7 @@ html[theme="light"]{
     top: 0;
     left: 0;
     height: 100%;
-    background-color: rgba(32, 54, 143, 0.3);
+    background-color: var(--barBackground);
     
 }
 
@@ -115,12 +228,16 @@ html[theme="light"]{
     
 }
 
-.tasks-area{
-    position: relative;
-    height: 100%;
+.left-task{
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    justify-content: space-between;
+    padding-left: 2vh;
+    width: 65%;
+}
+
+.right-task{
+    padding-right: 2vh;
 }
 
 .modal-background{
@@ -134,174 +251,49 @@ html[theme="light"]{
     background-color: rgba(0, 0, 0, 0.6);
 }
 
+.icon{
+    fill: var(--mainText);
+}
+
 .modal-box{
     color: var(--mainText);
     position: absolute;
     margin: auto;
-    top: 1;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 4;
-    background-color: rgb(15, 15, 15);
+    background-color: var(--primaryBackground);
     width: 95%;
     height: 95%;
     display: flex;
     flex-direction: column;
 }
 
-.modal-header{
+.modal-button{
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
     color: var(--mainText);
-    display: flex;
-    justify-content: space-between;
+    font-size: 3vh;
 }
 
-.notifications-header{
-    position: relative;
+.text-input{
+    width: 80%;
+    height: 3.5vh;
 }
 
-.notifications-area{
-    overflow: auto;
-    background-color: gray;
-}
-
-.save-button{
-    height: 10%;
-}
-
-.page{
-    display: flex;
-    flex-direction: column;
-    min-width: 100%;
-    scroll-snap-align: start;
-}
-
-.modal-pages{
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: both mandatory;
-    height: 100%;
-}
-
-.modal-content{
-    display: flex;
-    flex-direction: column;
-    height: 90%;
-}
-
-
-/*
-.app{
-    position: absolute;  
-    margin: auto;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--primaryBackground);
-}
-
-.navbar{   
-    min-height: 20px;
-    height: 8%;
-    display: flex;
-    justify-content: center;
-}
-
-.navlink{
-    text-decoration: none;
-    color: black;
-    text-align: center;
-    width: 100%;
-    background-color: var(--navLinkBackground);
-}
-
-.navlink:hover{
-    color: gray;
+.modal-button:hover{
     background-color: blanchedalmond;
 }
 
-.home{
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.settings{
-    color: var(--mainText);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-}
-
-.header{
-    min-height: 20px;
-    height: 10%;
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--headerBackground);;
-}
-
-.task{
-
-    width: 100%;
-    background-color: red;
-}
-
-.bar{
-    height: 10%;
-}
-
-.task-content{
-    justify-content: space-between;
-    display: flex;
-    width: 100%;
-    outline-style: solid;
-    outline-color: lightgray;
-    outline-width: 0.01px;
-    
-}
-
-.tasks-area{
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-}
-
-.modal-background{
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-box{
-    position: absolute;
-    margin: auto;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    background-color: #fefefe;
-    width: 95%;
-    height: 85%;
-    display: flex;
-    flex-direction: column;
-}
-
 .modal-header{
+    font-size: 1.8vh;
+    color: var(--mainText);
     display: flex;
     justify-content: space-between;
+    background-color: var(--headerBackground);
 }
 
 .notifications-header{
@@ -338,4 +330,3 @@ html[theme="light"]{
     height: 90%;
 }
 
-*/

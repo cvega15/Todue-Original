@@ -42,8 +42,9 @@ class AddNotifications extends React.Component{
         return(
             <div className="page">
                 <div className="notifications-header">
+                    <h2>daily notifications</h2>
                     <div>
-                        <input type="time" defaultValue="00:00" id="notification-input" required></input>
+                        <input className="text-input" type="time" defaultValue="00:00" id="notification-input" required></input>
                         <button onClick={() => {this.addNotification(document.getElementById('notification-input'))}}>Add</button>
                     </div>
                 </div>

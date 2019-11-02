@@ -2,6 +2,7 @@ import React from 'react';
 import { TasksContext } from '../contexts/TasksContext';
 import { ModalContext } from '../contexts/ModalContext';
 import { UserContext } from '../contexts/UserContext';
+import { useSwipeable } from 'react-swipeable';
 import turn_to_12 from '../Tools';
 
 class App extends React.Component{
@@ -27,6 +28,7 @@ class App extends React.Component{
         }
 
         this.handleEdit = this.handleEdit.bind(this);
+
     };
 
     componentDidMount(){
@@ -82,11 +84,15 @@ class App extends React.Component{
                         <div className="task">
                             <div className="task-content">
                                 <div className="left-task">
-                                    <h2 style={{ margin: "0", }}>{ this.props.task_name }</h2>
-                                    <h3>{ this.props.due_date }</h3>
-                                    <h3>{ le_time }</h3>
+                                    <h2 style={{fontSize: "2.2vh", marginBottom: "0", width: "100%", wordWrap: "break-word"}}>{ this.props.task_name }</h2>
+                                    <div>
+                                        <h3>{ this.props.due_date }</h3>
+                                        <h3>{ le_time }</h3>
+                                    </div>
+                                    {/*
                                     <button onClick={ this.handleEdit }>edit task</button>
-                                    <button onClick={ () => deleteTask(this.props.task_id) }>delete task</button>
+                                    <button onClick={ () => deleteTask(this.props.task_id) }>delete task</button>                                    
+                                    */}
                                 </div>
                                 <div className="right-task">
                                     <div>

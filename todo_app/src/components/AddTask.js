@@ -71,14 +71,14 @@ class AddTask extends React.Component{
                         <div className="page">
                             <form id="new-form" onSubmit={this.handleSubmit}>
                                 <div>
-                                    <label>name</label>
-                                    <input type="text" id="task_name" onChange={this.handleChange} />
+                                    <h2>name</h2>
+                                    <input className="text-input" type="text" maxLength="40" id="task_name" onChange={this.handleChange} />
                                     <br />
-                                    <label>date</label> 
-                                    <input type="date" id="due_date" defaultValue={this.state.due_date} onChange={this.handleChange} required />
+                                    <h2>date</h2> 
+                                    <input className="text-input" type="date" id="due_date" defaultValue={this.state.due_date} onChange={this.handleChange} required />
                                     <br />
-                                    <label>time</label>
-                                    <input type="time" id="due_time" defaultValue={this.state.due_time} onChange={this.handleChange} required />
+                                    <h2>time</h2>
+                                    <input className="text-input" type="time" id="due_time" defaultValue={this.state.due_time} onChange={this.handleChange} required />
                                     <br />
                                 </div>
                             </form> 
@@ -95,13 +95,13 @@ class AddTask extends React.Component{
                         <div className="page">
                             <form id="new-form" onSubmit={this.handleSubmitEdit}>
                                 <div>
-                                    <label>name</label>
-                                    <input type="text" id="task_name" onChange={this.handleChange} defaultValue={this.state.task_name} />
+                                    <h2>name</h2>
+                                    <input className="text-input" type="text" maxLength="40" id="task_name" onChange={this.handleChange} defaultValue={this.state.task_name} />
                                     <br />
-                                    <label>date</label> 
+                                    <h2>date</h2> 
                                     <input type="date" id="due_date" onChange={this.handleChange} defaultValue={this.state.due_date} required />
                                     <br /> 
-                                    <label>time</label>
+                                    <h2>time</h2>
                                     <input type="time" id="due_time" onChange={this.handleChange} defaultValue={this.state.due_time} required />
                                     <br />
                                 </div>
