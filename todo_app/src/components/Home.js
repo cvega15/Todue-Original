@@ -7,9 +7,11 @@ import Navbar from './Navbar';
 class Home extends React.Component {
 
     render(){
-       
+        Notification.requestPermission().then(function(result) {
+            console.log('permission granted')
+        });
         return (
-            <div className="home">
+            <div className="home" ref="node">
                 <Modal />
                 <Header title="users tasks" button_text="add task"/>
                 <TasksArea /> 

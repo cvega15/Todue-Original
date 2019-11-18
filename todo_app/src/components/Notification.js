@@ -8,14 +8,14 @@ class Notification extends React.Component{
 
     render(){
         
-        var le_time = this.props.notification_time;
+        var notification = this.props.notification_time;
         if(!this.context.clock_mode){
-            le_time = turn_to_12(this.props.notification_time);
+            notification = turn_to_12(this.props.notification_time);
         }
         return(
-            <div>
-                <h3>{ le_time }</h3>
-                <button onClick={() => {this.props.delete_notification(this.props.notification_time)}}>delete</button>
+            <div className="notification">
+                <h3 style={{marginLeft: "1.7vh"}}>{ notification }</h3>
+                <button onClick={() => {this.props.delete_notification(this.props.notification_time)}} className="delete-notification-button">delete</button>
             </div>
         );
     };

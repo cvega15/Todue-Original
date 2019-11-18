@@ -1,10 +1,22 @@
 {
     "name": "To Due",
     "short_name": "ToDue",
+    "icons": [
+        {
+            "src": "./ToDue512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        },
+        {
+            "src": "./ToDue192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ],
     "start_url": "/index.html",
     "display": "standalone",
-    "background-color": "#FFE9D2",
-    "theme_color": "#EFE1C4",
+    "background_color": "#051f2c",
+    "theme_color": "#051f2c",
     "orientation": "portrait-primary"
-
+    
 }

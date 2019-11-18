@@ -7,7 +7,7 @@ html, body{
     left: 0;
     bottom: 0;
     right: 0;
-    background-color: aqua;
+    background-color: #051f2c;
 }
 
 html[theme="dark"]{
@@ -16,10 +16,10 @@ html[theme="dark"]{
     --mainText: #eaecec;
     --navLinkBackground: #051f2c;
     --barBackground: #03141b;
+    --hoverColor: #122730;
 
     --switchBackground: #10303f;
     --switchSlider: #eaecec;
-    
 }
 
 html[theme="light"]{
@@ -50,7 +50,7 @@ html[theme="light"]{
     display: flex;
     flex-direction: column;
     background-color: var(--primaryBackground);
-    font-family: sans-serif;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
 .navbar{   
@@ -67,9 +67,8 @@ html[theme="light"]{
     background-color: var(--navLinkBackground);
 }
 
-.navlink:hover{
-    color: gray;
-    background-color: blanchedalmond;
+.navlink:active{
+    background-color: black;
 }
 
 .home{
@@ -79,14 +78,15 @@ html[theme="light"]{
     flex-direction: column;
 }
 
-
 .tasks-area{
     position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
     overflow: auto;
+    overflow-x: hidden;
 }
+
 .settings-area{
     padding-left: 1.5vh;
     padding-right: 1.5vh;
@@ -149,6 +149,7 @@ html[theme="light"]{
 }
 
 .slider{
+    -webkit-tap-highlight-color: transparent;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -181,10 +182,48 @@ input:checked + .slider:before{
     transform: translate(5.5vh);
 }
 
-.add-button:hover{
-    cursor: pointer;
-    background-color: blanchedalmond;
+@media(hover: hover) and (pointer: fine){
+    .add-button:hover{
+        cursor: pointer;
+        background-color: var(--hoverColor);
+    }
+
+    .page-change:hover{
+        cursor: pointer;
+        background-color: var(--hoverColor);
+    }
+
+    .task-button-edit:hover{
+        background-color: rgb(0, 170, 9);
+    }
+    
+    .task-button-delete:hover{
+        background-color: rgb(170, 0, 0);
+    }
+
+    .delete-notification-button:hover{
+        background-color: var(--hoverColor);
+        border: none;
+        cursor: pointer;
+    }
+
+    .add-notification-button:hover{
+        cursor: pointer;
+        background-color: var(--hoverColor);
+        border-radius: 0px 10px 10px 0px;
+    }
+    
+    .modal-button:hover{
+        background-color: var(--hoverColor);
+    }
+
+    .navlink:hover{
+        color: gray;
+        background-color: var(--hoverColor);
+    }
 }
+
+
 
 .header{
     padding-left: 2%;
@@ -198,26 +237,24 @@ input:checked + .slider:before{
 }
 
 .task{
+    user-select: none;
+    transition: 0.2s;
+    display: flex;
     font-size: 2vh;
     color: var(--mainText);
     position: relative;
     width: 100%;
-
-
 }
 
 .bar{
-    z-index: 1;
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
     background-color: var(--barBackground);
-    
 }
 
 .task-content{
-    z-index: 2;
     position: relative;
     justify-content: space-between;
     display: flex;
@@ -225,7 +262,6 @@ input:checked + .slider:before{
     outline-style: solid;
     outline-color: lightgray;
     outline-width: 0.01px;
-    
 }
 
 .left-task{
@@ -238,6 +274,51 @@ input:checked + .slider:before{
 
 .right-task{
     padding-right: 2vh;
+    width: 10vh;
+}
+
+.task-main{
+    position: relative;
+}
+
+.task-background{
+    width: 100%;
+    height: 100%;
+    background-color: var(--primaryBackground);
+    position: absolute;
+}
+
+.button-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.task-button-edit{
+    -webkit-tap-highlight-color: transparent;
+    color: var(--mainText);
+    cursor: pointer;
+    font-size: 2.5vh;
+    background-color: rgb(0, 220, 10);
+    border: 0;
+    text-align: left;
+    width: 50%;
+    height: 100%;
+}
+
+.task-button-delete{
+    -webkit-tap-highlight-color: transparent;
+    color: var(--mainText);
+    font-size: 2.5vh;
+    cursor: pointer;
+    background-color: rgb(220, 0, 0);
+    border: 0;
+    text-align: right;
+    width: 50%;
+    height: 100%;
 }
 
 .modal-background{
@@ -269,6 +350,7 @@ input:checked + .slider:before{
     height: 95%;
     display: flex;
     flex-direction: column;
+    border-radius: 15px;
 }
 
 .modal-button{
@@ -280,12 +362,12 @@ input:checked + .slider:before{
 }
 
 .text-input{
-    width: 80%;
-    height: 3.5vh;
-}
-
-.modal-button:hover{
-    background-color: blanchedalmond;
+    font-size: 2vh;
+    border-radius: 8px;
+    border: none;
+    width: 100%;
+    height: 4.5vh;
+    background-color: rgba(239, 248, 255, 0.932)
 }
 
 .modal-header{
@@ -294,6 +376,7 @@ input:checked + .slider:before{
     display: flex;
     justify-content: space-between;
     background-color: var(--headerBackground);
+    border-radius: 15px 15px 0px 0px;
 }
 
 .notifications-header{
@@ -301,8 +384,10 @@ input:checked + .slider:before{
 }
 
 .notifications-area{
+    height: 71%;
     overflow: auto;
     background-color: var(--barBackground);
+    border-radius: 15px 15px 15px 15px;
 }
 
 .save-button{
@@ -310,6 +395,7 @@ input:checked + .slider:before{
 }
 
 .page{
+    font-size: 1.8vh;
     display: flex;
     flex-direction: column;
     min-width: 100%;
@@ -317,11 +403,17 @@ input:checked + .slider:before{
 }
 
 .modal-pages{
+    text-align: center;
+    scroll-behavior: smooth;
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
     scroll-snap-type: both mandatory;
     height: 100%;
+}
+
+.modal-pages::-webkit-scrollbar{
+    display: none;
 }
 
 .modal-content{
@@ -330,3 +422,105 @@ input:checked + .slider:before{
     height: 90%;
 }
 
+.page-indicator{
+    background-color: rgba(212, 212, 212, 0.363);
+    width: 1vh;
+    height: 1vh;
+    border-radius: 50%;
+    margin: 1vh;
+}
+
+#new-form{
+    height: 100%;
+    text-align: left;
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+.page-change{
+    background-color: transparent;
+    border-color: transparent;
+    text-decoration: none;
+    text-align: center;
+    color: var(--mainText);
+    font-size: 6vh;
+    font-weight: bold;
+
+}
+
+.page-change:focus{
+    outline: 0;
+}
+
+.page-change:active:after{
+    color: red;
+}
+
+.page-change:active{
+    background-color: white;
+}
+
+
+.add-notification-button{
+    padding: 0;
+    background-color: var(--navLinkBackground);
+    width: 9vh;
+    border: transparent;
+    font-size: 7vh;
+    font-weight: bold;
+    color: var(--mainText);
+    border-radius: 0px 10px 10px 0px;
+}
+
+.add-notification-button:focus{
+    outline: 0;
+}
+
+.add-notification-button:active{
+    background-color: white;
+}
+
+.notification{
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.delete-notification-button{
+    font-size: 2vh;
+    background-color: var(--navLinkBackground);
+    border: none;
+    width: 30%;
+    color: var(--mainText)
+}
+
+.delete-notification-button:focus{
+    outline: 0;
+}
+
+.add-button:active{
+    background-color: white;
+}
+
+.front-page-text{
+    max-width: 650px;
+    width: 100%;
+    font-size: 2.3vh;
+    text-align: center;
+}
+
+.front-page-image{
+    overflow-wrap: normal; 
+    width: 100%;
+    max-width: 400px;
+    border-radius: 7px;
+    border-color: var(--switchSlider);
+}
+
+.sign-in{
+    background-color: var(--headerBackground);
+    border-radius: 15px;
+    max-width: 650px;
+    width: 100%;
+    text-align: center;
+}

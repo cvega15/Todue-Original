@@ -8,10 +8,6 @@ class SignIn extends React.Component {
 
     static contextType = UserContext;
 
-    constructor(props){
-        super(props)
-    }
-
     signOut = () => {
         this.context.toggleLogin()
         this.context.destroyId()
@@ -45,6 +41,7 @@ class SignIn extends React.Component {
                                 <GoogleLogin
                                     clientId="195081855240-jjsqpn2t0oucb8ets7li98p8vodja8jd.apps.googleusercontent.com"
                                     buttonText="Login with google"
+                                    theme="dark"
                                     onSuccess={(response) => {
                                         var id_token = response.getAuthResponse().id_token;
                                         

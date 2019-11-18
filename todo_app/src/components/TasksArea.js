@@ -27,6 +27,8 @@ class App extends React.Component{
     };
     
     render(){
+
+
     
         const AllTasks = this.context.tasks.map((task) => <Task
                 now={this.state.now}

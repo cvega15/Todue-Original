@@ -33,23 +33,26 @@ class AddNotifications extends React.Component{
 
     render(){
 
-        const all_notifications = this.state.notifications.map((notification, index) => <Notification 
+        const all_notifications = (this.state.notifications.sort()).map((notification, index) => <Notification 
                 key={index}
                 notification_time={notification}
                 delete_notification={this.deleteNotification}
             />)
 
         return(
-            <div className="page">
-                <div className="notifications-header">
-                    <h2>daily notifications</h2>
-                    <div>
-                        <input className="text-input" type="time" defaultValue="00:00" id="notification-input" required></input>
-                        <button onClick={() => {this.addNotification(document.getElementById('notification-input'))}}>Add</button>
+            <div className="page" id="page-2">
+                <div id="new-form">
+                    <div className="notifications-header">
+                        <h2 className="form-label">daily recurring notifications</h2>
+                        <div style={{display: "flex"}}>
+                            <input className="text-input" style={{height: "8vh", borderRadius: "15px 0px 0px 15px"}} type="time" defaultValue="00:00" id="notification-input" required></input>
+                            <button className="add-notification-button" onClick={() => {this.addNotification(document.getElementById('notification-input'))}}>+</button>
+                        </div>
                     </div>
-                </div>
-                <div className="notifications-area">
-                    { all_notifications }
+                    <br></br>
+                    <div className="notifications-area">
+                        { all_notifications }
+                    </div>
                 </div>
             </div>
         );
