@@ -1,5 +1,6 @@
 import React, { createContext, Component } from 'react';
 import { UserContext } from '../contexts/UserContext';
+import logo from '../images/ToDue192.png';
 
 export const TasksContext = createContext();
 
@@ -10,9 +11,19 @@ class TasksContextProvider extends Component {
     constructor(props){
         super(props);
 
+        var tasks = [];
+        var all_notifications = [];
+
+        if(localStorage.getItem('tasks') !== null){
+            var tasks = JSON.parse(localStorage.getItem('tasks'));
+        };
+        if(localStorage.getItem('all_notifications') !== null){
+            var all_notifications = JSON.parse(localStorage.getItem('all_notifications'));
+        };
+
         this.state = {
-            tasks: [],
-            all_notifications: [],
+            tasks: tasks,
+            all_notifications: all_notifications,
             now: new Date()
         };
 
@@ -29,19 +40,35 @@ class TasksContextProvider extends Component {
         this.deleteNotifications = this.deleteNotifications.bind(this);
     };
 
+    componentDidUpdate(){
+        console.log('component did update');
+        localStorage.setItem('tasks', JSON.stringify(this.state.tasks));
+        localStorage.setItem('all_notifications', JSON.stringify(this.state.all_notifications));
+        
+    };
+
+    componentDidMount(){ 
+        if(this.context.logged_in){
+            this.getTasks();
+        }
+        var interval_id = setInterval(() => this.checkNotifications(), 3000);
+        this.interval_id = interval_id;
+        
+    };
+
     sendAllTasks(){
         if(this.context.logged_in){
-            fetch('http://34.67.56.249:5000/recieve-all-tasks', {
+            fetch('http://34.67.56.249/recieve-all-tasks', {
                 method: 'POST',
                 headers: {
-                    'Authorization': this.context.id_token,
+                    'Authorization': localStorage.getItem('id_token'),
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(this.state.tasks)
             }).then(response => {
                 this.getTasks();
             }).catch((error) => {
-                this.context.goOffline();
+                this.context.goOffline(error);
             });
         };
     };
@@ -66,7 +93,7 @@ class TasksContextProvider extends Component {
         var new_tasks = this.state.tasks;
         var new_task = {task_name: task_name, due_time: due_time, notifications: notifications, task_id: new_task_id, time_made: current_time, last_updated: current_time.getTime()}
         new_tasks.push(new_task);
-
+        
         this.setState({
             tasks: new_tasks
         }, () => {
@@ -75,16 +102,16 @@ class TasksContextProvider extends Component {
         });
         
         if(this.context.logged_in){
-            fetch('http://34.67.56.249:5000/post-task', {
+            fetch('http://34.67.56.249/post-task', {
                 method: 'POST',
                 headers: {
-                    'Authorization': this.context.id_token,
+                    'Authorization': localStorage.getItem('id_token'),
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(new_task)
             }).catch((error) => {
                 console.log('adding task failed')
-                this.context.goOffline();
+                this.context.goOffline(error);
                 this.context.addTaskToTicket(new_task, "add");
             });
         };
@@ -111,16 +138,16 @@ class TasksContextProvider extends Component {
                 });
 
                 if(this.context.logged_in){
-                    fetch('http://34.67.56.249:5000/edit-task', {
+                    fetch('http://34.67.56.249/edit-task', {
                         method: 'POST',
                         headers: {
-                            'Authorization': this.context.id_token,
+                            'Authorization': localStorage.getItem('id_token'),
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(new_task)
                     }).catch((error) => {
                         console.log('editing task failed')
-                        this.context.goOffline();
+                        this.context.goOffline(error);
                         this.context.addTaskToTicket(new_task, "edit");
                     });
                     return;
@@ -142,31 +169,37 @@ class TasksContextProvider extends Component {
         });
 
         if(this.context.logged_in){
-            fetch('http://34.67.56.249:5000/delete-task', {
+            fetch('http://34.67.56.249/delete-task', {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': this.context.id_token,
+                    'Authorization': localStorage.getItem('id_token'),
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(task_id)
             }).catch((error) => {
                 console.log('deleting task failed')
-                this.context.goOffline();
+                this.context.goOffline(error);
                 this.context.addTaskToTicket(task_id, "delete");
             });
         };
     };
 
     getTasks(){
+        console.log("getting tasks")
         if(this.context.logged_in){
-            fetch('http://34.67.56.249:5000/get-tasks', {
+            fetch('http://34.67.56.249/get-tasks', {
                 method: 'GET',
                 headers: {
-                    'Authorization': this.context.id_token,
+                    'Authorization': localStorage.getItem('id_token'),
                 }
             }).then(response => {
+                console.log(response)
+                if(response.ok === false){
+                    throw "error"
+                }
                 return response.json();
             }).then(tasks => {
+                console.log('thenning 2')
                 this.setState({
                     tasks: tasks
                 }, () => {
@@ -176,8 +209,12 @@ class TasksContextProvider extends Component {
                 this.context.syncTrue()
 
             }).catch((error) => {
+
+                // Take everything from local storage and put it in the state's tasks
+
                 console.log('getting tasks failed')
-                this.context.goOffline();
+                console.log(error)
+                this.context.goOffline(error);
             });
         }
     }
@@ -237,11 +274,6 @@ class TasksContextProvider extends Component {
         };
         this.notifications_index = 0;
     };
-    
-    componentDidMount(){
-        var interval_id = setInterval(() => this.checkNotifications(), 3000);
-        this.interval_id = interval_id;
-    };
 
     deleteNotifications(id){
         var new_notifications = this.state.all_notifications.filter(notification => notification.id !== id);
@@ -253,13 +285,13 @@ class TasksContextProvider extends Component {
             console.log('daily notification')
             new Notification('To Due', {
                 body: 'Daily reminder: ' + this.state.tasks.find(notification => notification.task_id === id).task_name,
-                icon: '../toDue192.png'
+                icon: logo
             });
         }else if(type === 'final'){
 
             new Notification('To Due', {
                 body: 'Now due! ' + this.state.tasks.find(notification => notification.task_id === id).task_name,
-                icon: '../toDue192.png'
+                icon: logo
             });
         };
     };

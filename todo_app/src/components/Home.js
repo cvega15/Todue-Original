@@ -14,7 +14,7 @@ class Home extends React.Component {
             <div className="home" ref="node">
                 <Modal />
                 <Header title="users tasks" button_text="add task"/>
-                <TasksArea /> 
+                <TasksArea />
                 <Navbar />
             </div>
         );

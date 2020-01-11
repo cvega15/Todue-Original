@@ -16,6 +16,7 @@ class App extends React.Component{
     componentDidMount(){
         var interval_id = setInterval(()=>this.updateTime(), 1000);
         this.interval_id = interval_id
+
     };
 
     componentWillUnmount(){
@@ -28,8 +29,6 @@ class App extends React.Component{
     
     render(){
 
-
-    
         const AllTasks = this.context.tasks.map((task) => <Task
                 now={this.state.now}
                 task_name={task.task_name}

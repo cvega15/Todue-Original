@@ -8,11 +8,6 @@ class SignIn extends React.Component {
 
     static contextType = UserContext;
 
-    signOut = () => {
-        this.context.toggleLogin()
-        this.context.destroyId()
-    }
-
     render(){
         if(this.context.logged_in){
             return (
@@ -23,8 +18,9 @@ class SignIn extends React.Component {
                                 clientId = "195081855240-jjsqpn2t0oucb8ets7li98p8vodja8jd.apps.googleusercontent.com"
                                 buttonText = "logout"
                                 onLogoutSuccess = {(response) => {
-                                    this.signOut()
-                                    TasksContext.clearEverything()
+                                    this.context.toggleLogin();
+                                    localStorage.clear();
+                                    TasksContext.clearEverything();
                                 }}
                             ></GoogleLogout>
                         </div>
@@ -42,20 +38,32 @@ class SignIn extends React.Component {
                                     clientId="195081855240-jjsqpn2t0oucb8ets7li98p8vodja8jd.apps.googleusercontent.com"
                                     buttonText="Login with google"
                                     theme="dark"
+                                    accessType="offline"
+                                    responseType="code"
+                                    isSignedIn="true"
+                                    prompt="none"
+                                    redirectUri="http://localhost:3000/settings"
                                     onSuccess={(response) => {
-                                        var id_token = response.getAuthResponse().id_token;
-                                        
-                                        this.context.setId(id_token);
-                                        this.context.toggleLogin();
-                                        TasksContext.getTasks();
-                                        this.context.getSettings();
-                                    
-                                        fetch('http://34.67.56.249:5000/sign-up-in', {
+                                        console.log(response)
+                                        var authorization_code = response.code;
+                                        localStorage.setItem('auth_code', authorization_code)
+                                        fetch("http://34.67.56.249/sign-up-in", {
                                             method: 'POST',
-                                            body: JSON.stringify(id_token)
-                                        }).then(() => {
-                                            TasksContext.sendAllTasks();
+                                            body: authorization_code
+                                        }).then(response => {
+                                            return response.json()
+                                        }).then(data => {
+                                            console.log(data)
+                                            this.context.toggleLogin();
+
+                                            console.log(typeof data.refresh_token);
+                                            localStorage.setItem('refresh_token', data.refresh_token);
+                                            localStorage.setItem('id_token', data.id_token);
+                                            TasksContext.getTasks();
+                                            this.context.getSettings();
+
                                         })
+                            
                                     }}
                                     onFailure={() => {console.log('couldnt sign in')}}
                                     cookiePolicy={'single_host_origin'}

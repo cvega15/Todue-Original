@@ -9,7 +9,13 @@ class Settings extends React.Component {
     static contextType = UserContext;
 
     render(){
+        //console.log('settings rendering, logged in is: ' + this.context.logged_in.toString())
+        //console.log('is logged in: ' + this.context.logged_in.toString())
+        //console.log('ticket length: ' + this.context.ticket.length.toString())
+        //console.log('is synced: ' + this.context.is_synced.toString())
         let is_synced
+        
+        console.log('sync status: ' + this.context.is_synced.toString())
         if(this.context.is_synced && !this.context.ticket.length && this.context.logged_in){
             is_synced = <h3 className="is-synced">synced with database!</h3>
         }else{
