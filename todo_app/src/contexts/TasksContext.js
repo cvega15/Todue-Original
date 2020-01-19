@@ -190,7 +190,7 @@ class TasksContextProvider extends Component {
             fetch('http://34.67.56.249/get-tasks', {
                 method: 'GET',
                 headers: {
-                    'Authorization': localStorage.getItem('id_token'),
+                    'Authorization': localStorage.getItem('access_token'),
                 }
             }).then(response => {
                 console.log(response)

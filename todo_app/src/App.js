@@ -8,10 +8,10 @@ import TasksContextProvider from './contexts/TasksContext';
 import UserContext from './contexts/UserContext';
 
 class App extends React.Component {
-
     render(){
         
         return (
+
             <UserContext>
                 <ModalContextProvider>
                     <TasksContextProvider>

@@ -54,6 +54,14 @@ class UserContextProvider extends Component {
     };
 
     componentDidMount(){
+        window.gapi.load('auth2', () => {
+
+            this.GoogleAuth = window.gapi.auth2.init({client_id: '195081855240-jjsqpn2t0oucb8ets7li98p8vodja8jd.apps.googleusercontent.com',})
+            this.GoogleAuth.then(() => {
+                console.log('on init')
+            })
+        })
+ 
         if(this.state.logged_in){
             this.checkConnection();
         }
@@ -149,7 +157,7 @@ class UserContextProvider extends Component {
             fetch('http://34.67.56.249/get-settings', {
                 method: 'GET',
                 headers: {
-                    'Authorization': localStorage.getItem('id_token'),
+                    'Authorization': localStorage.getItem('access_token'),
                     'Content-Type': 'application/json'
                 },
             }).then(response => {
@@ -194,12 +202,13 @@ class UserContextProvider extends Component {
 
     toggleLogin = () => {
         if(this.state.logged_in === false){
+            console.log('logging in') 
             this.setState({ logged_in: true });
-            //this.eventSource = new EventSource("events");
+             
         }else{
-            this.setState({ 
-                logged_in: false,
-            });
+            console.log('logout')
+            this.setState({ logged_in: false });
+            //this.GoogleAuth.SignOut()
         }; 
     };
 
