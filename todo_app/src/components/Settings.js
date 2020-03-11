@@ -3,6 +3,7 @@ import Header from './Header';
 import { UserContext } from '../contexts/UserContext';
 import SignIn from './SignIn';
 import Navbar from './Navbar';
+import GoogleLogin from 'react-google-login';
 
 class Settings extends React.Component {
 
