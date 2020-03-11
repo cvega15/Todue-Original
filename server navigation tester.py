@@ -6,7 +6,6 @@ app = Flask(__name__)
 def hello():
     return "Hello World!"
 
-
 # requests the return function above
 import requests
 r = requests.get('https://github.com/timeline.json')
@@ -55,3 +54,6 @@ def create_app(config_filename):
 if __name__ == "__main__":
     app = create_app("config")
     app.run(debug=True)
+
+
+
