@@ -1,0 +1,526 @@
+html, body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #051f2c;
+}
+
+html[theme="dark"]{
+    --primaryBackground: #040a0e;
+    --headerBackground: #051f2c;
+    --mainText: #eaecec;
+    --navLinkBackground: #051f2c;
+    --barBackground: #03141b;
+    --hoverColor: #122730;
+
+    --switchBackground: #10303f;
+    --switchSlider: #eaecec;
+}
+
+html[theme="light"]{
+    --primaryBackground: #dfe7ec;
+    --headerBackground: #9cc0d8;
+    --mainText: #111116;
+    --navLinkBackground: #9cc0d8;
+    --barBackground: #a1c9db;
+
+    --switchBackground: #5a94af;
+    --switchSlider: #eaecec;
+}
+
+#root{
+    width: 100%;
+    height: 100%;
+}
+
+.app{
+    position: static;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primaryBackground);
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+.navbar{   
+    display: flex;
+    justify-content: center;
+}
+
+.navlink{
+    font-size: 3vh;
+    text-decoration: none;
+    color: var(--mainText);
+    text-align: center;
+    width: 100%;
+    background-color: var(--navLinkBackground);
+}
+
+.navlink:active{
+    background-color: black;
+}
+
+.home{
+    position: static;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tasks-area{
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.settings-area{
+    padding-left: 1.5vh;
+    padding-right: 1.5vh;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.not-synced{
+    text-align: center;
+    margin: 0;
+    color: rgb(219, 0, 0);
+    background-color: rgba(105, 32, 32, 0.404);
+    padding: 1.2vh;
+    border-radius: 20px;
+}
+
+.is-synced{
+    text-align: center;
+    margin: 0;
+    color: rgb(0, 221, 11);
+    background-color: rgba(32, 105, 42, 0.404);
+    padding: 1.2vh;
+    border-radius: 20px;
+}
+
+.settings{
+    position: static;
+    font-size: 2.5vh;
+    color: var(--mainText);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.setting-text{
+    padding-top: 1.5vh;
+    padding-left: 1.5vh;
+    margin: 0;
+}
+
+.setting{
+    position: relative;
+    display: flex;
+}
+
+.toggle-switch{
+    border-top: 2vh;
+    height: 6vh;
+    width: 12vh;
+    position: relative;
+    display: inline;
+}
+
+.toggle-switch input{
+    display: none;
+}
+
+.slider{
+    -webkit-tap-highlight-color: transparent;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    cursor: pointer;
+    border-radius: 40px;
+    background-color: var(--switchBackground);
+    transition: .1s;
+}
+
+.slider:before{
+    position: absolute;
+    background-color: var(--switchSlider);
+    height: 5vh;
+    width: 5vh;
+    content: "";
+    bottom: 9%;
+    left: 6%;
+    border-radius: 50%;
+    transition: .1s;
+}
+
+input:checked + .slider{
+    background-color: var(--switchBackground);
+
+}
+
+input:checked + .slider:before{
+    transform: translate(5.5vh);
+}
+
+@media(hover: hover) and (pointer: fine){
+    .add-button:hover{
+        cursor: pointer;
+        background-color: var(--hoverColor);
+    }
+
+    .page-change:hover{
+        cursor: pointer;
+        background-color: var(--hoverColor);
+    }
+
+    .task-button-edit:hover{
+        background-color: rgb(0, 170, 9);
+    }
+    
+    .task-button-delete:hover{
+        background-color: rgb(170, 0, 0);
+    }
+
+    .delete-notification-button:hover{
+        background-color: var(--hoverColor);
+        border: none;
+        cursor: pointer;
+    }
+
+    .add-notification-button:hover{
+        cursor: pointer;
+        background-color: var(--hoverColor);
+        border-radius: 0px 10px 10px 0px;
+    }
+    
+    .modal-button:hover{
+        background-color: var(--hoverColor);
+    }
+
+    .navlink:hover{
+        color: gray;
+        background-color: var(--hoverColor);
+    }
+}
+
+
+
+.header{
+    padding-left: 2%;
+    font-size: 2vh;
+    display: flex;
+    text-align: top;
+    color: var(--mainText);
+    justify-content: space-between;
+    background-color: var(--headerBackground);
+    
+}
+
+.task{
+    user-select: none;
+    transition: 0.2s;
+    display: flex;
+    font-size: 2vh;
+    color: var(--mainText);
+    position: relative;
+    width: 100%;
+}
+
+.bar{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--barBackground);
+}
+
+.task-content{
+    position: relative;
+    justify-content: space-between;
+    display: flex;
+    width: 100%;
+    outline-style: solid;
+    outline-color: lightgray;
+    outline-width: 0.01px;
+}
+
+.left-task{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-left: 2vh;
+    width: 65%;
+}
+
+.right-task{
+    padding-right: 2vh;
+    width: 10vh;
+}
+
+.task-main{
+    position: relative;
+}
+
+.task-background{
+    width: 100%;
+    height: 100%;
+    background-color: var(--primaryBackground);
+    position: absolute;
+}
+
+.button-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.task-button-edit{
+    -webkit-tap-highlight-color: transparent;
+    color: var(--mainText);
+    cursor: pointer;
+    font-size: 2.5vh;
+    background-color: rgb(0, 220, 10);
+    border: 0;
+    text-align: left;
+    width: 50%;
+    height: 100%;
+}
+
+.task-button-delete{
+    -webkit-tap-highlight-color: transparent;
+    color: var(--mainText);
+    font-size: 2.5vh;
+    cursor: pointer;
+    background-color: rgb(220, 0, 0);
+    border: 0;
+    text-align: right;
+    width: 50%;
+    height: 100%;
+}
+
+.modal-background{
+    position: fixed;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.icon{
+    fill: var(--mainText);
+}
+
+.modal-box{
+    color: var(--mainText);
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    background-color: var(--primaryBackground);
+    width: 95%;
+    height: 95%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+}
+
+.modal-button{
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    color: var(--mainText);
+    font-size: 3vh;
+}
+
+.text-input{
+    font-size: 2vh;
+    border-radius: 8px;
+    border: none;
+    width: 100%;
+    height: 4.5vh;
+    background-color: rgba(239, 248, 255, 0.932)
+}
+
+.modal-header{
+    font-size: 1.8vh;
+    color: var(--mainText);
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--headerBackground);
+    border-radius: 15px 15px 0px 0px;
+}
+
+.notifications-header{
+    position: relative;
+}
+
+.notifications-area{
+    height: 71%;
+    overflow: auto;
+    background-color: var(--barBackground);
+    border-radius: 15px 15px 15px 15px;
+}
+
+.save-button{
+    height: 10%;
+}
+
+.page{
+    font-size: 1.8vh;
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    scroll-snap-align: start;
+}
+
+.modal-pages{
+    text-align: center;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: both mandatory;
+    height: 100%;
+}
+
+.modal-pages::-webkit-scrollbar{
+    display: none;
+}
+
+.modal-content{
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+}
+
+.page-indicator{
+    background-color: rgba(212, 212, 212, 0.363);
+    width: 1vh;
+    height: 1vh;
+    border-radius: 50%;
+    margin: 1vh;
+}
+
+#new-form{
+    height: 100%;
+    text-align: left;
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+.page-change{
+    background-color: transparent;
+    border-color: transparent;
+    text-decoration: none;
+    text-align: center;
+    color: var(--mainText);
+    font-size: 6vh;
+    font-weight: bold;
+
+}
+
+.page-change:focus{
+    outline: 0;
+}
+
+.page-change:active:after{
+    color: red;
+}
+
+.page-change:active{
+    background-color: white;
+}
+
+
+.add-notification-button{
+    padding: 0;
+    background-color: var(--navLinkBackground);
+    width: 9vh;
+    border: transparent;
+    font-size: 7vh;
+    font-weight: bold;
+    color: var(--mainText);
+    border-radius: 0px 10px 10px 0px;
+}
+
+.add-notification-button:focus{
+    outline: 0;
+}
+
+.add-notification-button:active{
+    background-color: white;
+}
+
+.notification{
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.delete-notification-button{
+    font-size: 2vh;
+    background-color: var(--navLinkBackground);
+    border: none;
+    width: 30%;
+    color: var(--mainText)
+}
+
+.delete-notification-button:focus{
+    outline: 0;
+}
+
+.add-button:active{
+    background-color: white;
+}
+
+.front-page-text{
+    max-width: 650px;
+    width: 100%;
+    font-size: 2.3vh;
+    text-align: center;
+}
+
+.front-page-image{
+    overflow-wrap: normal; 
+    width: 100%;
+    max-width: 400px;
+    border-radius: 7px;
+    border-color: var(--switchSlider);
+}
+
+.sign-in{
+    background-color: var(--headerBackground);
+    border-radius: 15px;
+    max-width: 650px;
+    width: 100%;
+    text-align: center;
+}
