@@ -109,6 +109,12 @@ class TasksContextProvider extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(new_task)
+            }).then(response => {
+                if(response.status == 401){
+                    this.context.toggleLogin()
+                    this.clearEverything()
+                    localStorage.clear();
+                }
             }).catch((error) => {
                 console.log('adding task failed')
                 this.context.goOffline(error);
@@ -145,6 +151,12 @@ class TasksContextProvider extends Component {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(new_task)
+                    }).then(response => {
+                        if(response.status == 401){
+                            this.context.toggleLogin()
+                            this.clearEverything()
+                            localStorage.clear();
+                        }
                     }).catch((error) => {
                         console.log('editing task failed')
                         this.context.goOffline(error);
@@ -176,6 +188,12 @@ class TasksContextProvider extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(task_id)
+            }).then(response => {
+                if(response.status == 401){
+                    this.context.toggleLogin()
+                    this.clearEverything()
+                    localStorage.clear();
+                }
             }).catch((error) => {
                 console.log('deleting task failed')
                 this.context.goOffline(error);
@@ -193,9 +211,13 @@ class TasksContextProvider extends Component {
                     'Authorization': localStorage.getItem('id_token'),
                 }
             }).then(response => {
-                console.log(response)
                 if(response.ok === false){
                     throw "error"
+                }else if(response.status == 401){
+                    this.context.toggleLogin()
+                    this.clearEverything()
+                    localStorage.clear();
+                    return
                 }
                 return response.json();
             }).then(tasks => {

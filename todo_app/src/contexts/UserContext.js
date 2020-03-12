@@ -167,8 +167,13 @@ class UserContextProvider extends Component {
                     'Content-Type': 'application/json'
                 },
             }).then(response => {
+
                 if(response.ok === false){
                     throw response
+                }else if(response.status == 400){
+                    this.context.toggleLogin()
+                    this.clearEverything()
+                    localStorage.clear();
                 }
                 return response.json();
             }).then(data => {
