@@ -19,17 +19,17 @@ class AddTask extends React.Component{
                 notifications: [],
             };
         }else{
-            var notificationz;
+            var all_notifications;
             if(this.props.task_data.notifications[0] === ""){
-                notificationz = [];
+                all_notifications = [];
             }else{
-                notificationz = this.props.task_data.notifications;
+                all_notifications = this.props.task_data.notifications;
             }
             this.state = {
                 task_name: this.props.task_data.task_name,
                 due_date: this.props.task_data.due_date,
                 due_time: this.props.task_data.due_time,
-                notifications: notificationz,
+                notifications: all_notifications,
                 task_id: this.props.task_data.task_id,
                 time_made: this.props.task_data.time_made,
             };
