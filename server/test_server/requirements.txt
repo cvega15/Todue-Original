@@ -34,5 +34,5 @@ SecretStorage==2.3.1
 six==1.12.0
 ufw==0.35
 unattended-upgrades==0.1
-urllib3==1.19.1
+urllib3==1.24.2
 Werkzeug==0.16.0
